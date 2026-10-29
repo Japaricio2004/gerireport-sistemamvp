@@ -49,7 +49,7 @@ fields.forEach((id) => {
 });
 
 if (reportForm) {
-  reportForm.addEventListener("submit", (e) => {
+  reportForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const data = {
@@ -63,7 +63,7 @@ if (reportForm) {
     reports.unshift(data);
     saveReports(reports);
 
-    alert("Reporte guardado correctamente en la demo MVP.");
+    await showAppDialog({ title: "Reporte guardado", message: "El reporte ficticio ya está disponible en el historial." });
     window.location.href = `reporte-detalle.html?id=${data.id}`;
   });
 }

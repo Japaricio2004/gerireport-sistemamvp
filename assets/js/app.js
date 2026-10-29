@@ -12,6 +12,49 @@
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("sidebar");
 
+function showAppDialog({ title = "GeriReport", message = "", kind = "alert", confirmLabel = "Entendido", cancelLabel = "Cancelar", placeholder = "" } = {}) {
+  return new Promise((resolve) => {
+    const previousFocus = document.activeElement;
+    const overlay = document.createElement("div");
+    overlay.className = "app-dialog-backdrop";
+    overlay.innerHTML = `
+      <section class="app-dialog" role="${kind === "alert" ? "alertdialog" : "dialog"}" aria-modal="true" aria-labelledby="appDialogTitle" aria-describedby="appDialogMessage">
+        <span class="app-dialog-icon" aria-hidden="true"><i class="fas ${kind === "confirm" ? "fa-circle-question" : kind === "prompt" ? "fa-pen-to-square" : "fa-circle-info"}"></i></span>
+        <h2 id="appDialogTitle"></h2>
+        <p id="appDialogMessage"></p>
+        ${kind === "prompt" ? `<input class="app-dialog-input" type="text" placeholder="">` : ""}
+        <div class="app-dialog-actions">
+          ${kind === "alert" ? "" : `<button class="app-dialog-button secondary" type="button" data-dialog-cancel>${cancelLabel}</button>`}
+          <button class="app-dialog-button primary" type="button" data-dialog-confirm>${confirmLabel}</button>
+        </div>
+      </section>`;
+    overlay.querySelector("#appDialogTitle").textContent = title;
+    overlay.querySelector("#appDialogMessage").textContent = message;
+    const input = overlay.querySelector(".app-dialog-input");
+    if (input) input.placeholder = placeholder;
+    document.body.append(overlay);
+
+    const finish = (value) => {
+      document.removeEventListener("keydown", onKeydown);
+      overlay.remove();
+      if (previousFocus && previousFocus.isConnected) previousFocus.focus();
+      resolve(value);
+    };
+    const confirm = () => finish(kind === "prompt" ? input.value : true);
+    const onKeydown = (event) => {
+      if (event.key === "Escape") finish(kind === "alert" ? true : kind === "prompt" ? null : false);
+      if (event.key === "Enter" && (event.target === input || event.target === overlay.querySelector("[data-dialog-confirm]"))) confirm();
+    };
+    overlay.querySelector("[data-dialog-confirm]").addEventListener("click", confirm);
+    overlay.querySelector("[data-dialog-cancel]")?.addEventListener("click", () => finish(kind === "prompt" ? null : false));
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) finish(kind === "alert" ? true : kind === "prompt" ? null : false);
+    });
+    document.addEventListener("keydown", onKeydown);
+    (input || overlay.querySelector("[data-dialog-confirm]")).focus();
+  });
+}
+
 if (menuBtn && sidebar) {
   menuBtn.addEventListener("click", () => {
     sidebar.classList.toggle("open");

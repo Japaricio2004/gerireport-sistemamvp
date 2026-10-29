@@ -1,7 +1,8 @@
 GERIREPORT - MVP DEL SISTEMA GERIÁTRICO (v2 - Modo Turno)
 
-Este ZIP contiene la versión mejorada del MVP GeriReport, construida
-sobre el prototipo original (HTML + CSS + JavaScript, sin backend).
+Este proyecto mejora el prototipo GeriReport con un panel principal en React y
+un estilo común para todos los flujos. Conserva los formularios y registros del
+prototipo, que se guardan en el navegador y no requieren backend.
 
 FLUJO PRINCIPAL A DEMOSTRAR:
 Login → Pacientes → Iniciar turno → Modo Turno (registrar información) →
@@ -39,18 +40,27 @@ Funcionalidades nuevas (MVP):
 - Datos ficticios de ejemplo (paciente María López y otros) para poder
   demostrar el prototipo sin cargar información manualmente.
 
-Todo se guarda en localStorage del navegador (sin backend, sin base de datos).
+La demo incluye seis pacientes ficticios y reportes de ejemplo, con registros
+estables y alertas para recorrer los estados principales. Pacientes, turnos,
+tareas y reportes se guardan en localStorage (sin backend ni base de datos).
+En "Historial", usa "Restablecer demo" para recuperar los datos iniciales.
+El tablero de seguimiento permite mover las tareas entre estados y conserva
+esos cambios en el navegador hasta restablecer la demo.
 
 Cómo usarlo:
-1. Descomprime el ZIP.
-2. Abre index.html en tu navegador.
-3. Ve a "Pacientes" y presiona "Iniciar turno" sobre María López (o cualquier
+1. Instala Node.js.
+2. En la carpeta del proyecto, ejecuta `npm install` y luego `npm run dev`.
+3. Abre en el navegador la dirección local que muestre Vite.
+4. Ve a "Pacientes" y presiona "Iniciar turno" sobre María López (o cualquier
    paciente) para ver el flujo completo del Modo Turno.
-4. Registra información, revisa la línea temporal, finaliza el turno y
+5. Registra información, revisa la línea temporal, finaliza el turno y
    genera el reporte.
-5. Consulta "Reportes" para ver el historial y "Vista familiar" para ver el
+6. Consulta "Reportes" para ver el historial y "Vista familiar" para ver el
    resumen simplificado.
 
+Para preparar la versión de publicación, ejecuta `npm run build`. Los archivos
+quedan en `dist/`.
+
 Nota:
-Este es un prototipo universitario hecho solo con HTML, CSS y JavaScript.
+Este es un prototipo universitario con React y flujos heredados en HTML/CSS/JavaScript.
 No realiza diagnósticos médicos ni reemplaza un sistema clínico real.

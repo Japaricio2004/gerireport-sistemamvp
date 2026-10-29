@@ -94,11 +94,13 @@ function renderReports() {
   }).join("");
 }
 
-function clearReports() {
-  if (confirm("¿Deseas limpiar todos los reportes guardados en esta demo?")) {
-    localStorage.removeItem("gerireport_reports");
-    renderReports();
-  }
+async function resetDemo() {
+  const confirmed = await showAppDialog({ title: "Restablecer prototipo", message: "Se restaurarán los datos ficticios y se borrarán los cambios guardados en este navegador. ¿Continuar?", kind: "confirm", confirmLabel: "Restablecer" });
+  if (!confirmed) return;
+
+  ["gerireport_patients", "gerireport_reports", "gerireport_active_turno", "gerireport_tasks", "gerireport_seeded_v1", "gerireport_seeded_v2"]
+    .forEach((key) => localStorage.removeItem(key));
+  window.location.href = "../index.html";
 }
 
 populateFilter();

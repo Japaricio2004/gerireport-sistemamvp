@@ -8,19 +8,43 @@ const defaultPatients = [
     name: "María López",
     age: 82,
     condition: "Control de medicación y movilidad reducida",
-    family: "Lucía López"
+    family: "Lucía López",
+    status: "Estable"
   },
   {
     name: "Jorge Gálvez",
     age: 77,
     condition: "Hipertensión y control de presión arterial",
-    family: "Carlos Gálvez"
+    family: "Carlos Gálvez",
+    status: "Estable"
   },
   {
     name: "Elena Campos",
     age: 89,
     condition: "Seguimiento diario, hidratación y alimentación",
-    family: "Rosa Campos"
+    family: "Rosa Campos",
+    status: "Estable"
+  },
+  {
+    name: "Alberto Morales",
+    age: 81,
+    condition: "Insuficiencia cardíaca, control de líquidos",
+    family: "Laura Morales",
+    status: "Alerta"
+  },
+  {
+    name: "Clara Vargas",
+    age: 84,
+    condition: "Acompañamiento y estimulación cognitiva",
+    family: "Pedro Vargas",
+    status: "Estable"
+  },
+  {
+    name: "Rosa Paredes",
+    age: 76,
+    condition: "EPOC, oxígeno domiciliario, control respiratorio",
+    family: "Carlos Paredes",
+    status: "Crítico"
   }
 ];
 
@@ -30,7 +54,9 @@ function getPatients() {
     localStorage.setItem("gerireport_patients", JSON.stringify(defaultPatients));
     return defaultPatients;
   }
-  return stored;
+  const patients = [...stored, ...defaultPatients.filter((demo) => !stored.some((patient) => patient.name === demo.name))];
+  if (patients.length !== stored.length) savePatients(patients);
+  return patients;
 }
 
 function savePatients(patients) {
@@ -46,23 +72,27 @@ function renderPatients() {
   grid.innerHTML = patients.map((p) => {
     const initials = p.name.split(" ").slice(0, 2).map(x => x[0]).join("").toUpperCase();
     const isActivePatient = activeTurno && activeTurno.patient === p.name;
+    const status = p.status || "Estable";
+    const statusClass = { Alerta: "alerta", Crítico: "critico", Seguimiento: "seguimiento" }[status] || "estable";
     const turnoBtn = isActivePatient
-      ? `<button class="primary-btn full" onclick="location.href='turno.html'">Continuar turno activo</button>`
-      : `<button class="primary-btn full" onclick="startTurno('${p.name.replace(/'/g, "\\'")}')">🕐 Iniciar turno</button>`;
+      ? `<button class="btn-action btn-turno" onclick="location.href='turno.html'"><i class="fas fa-play"></i> Continuar turno</button>`
+      : `<button class="btn-action btn-turno" onclick="startTurno('${p.name.replace(/'/g, "\\'")}')"><i class="fas fa-play"></i> Iniciar turno</button>`;
 
     return `
       <article class="patient-card">
-        <div class="avatar">${initials}</div>
-        <h3>${p.name}</h3>
-        <p>${p.condition}</p>
-        <div class="patient-meta">
-          <span><b>Edad:</b> ${p.age} años</span>
-          <span><b>Familiar:</b> ${p.family}</span>
-          <span><b>Estado:</b> En seguimiento</span>
+        <div class="card-header">
+          <div class="avatar">${initials}</div>
+          <div class="header-info"><span class="name">${p.name}</span><span class="age">${p.age} años</span></div>
+          <span class="status-badge ${statusClass}">${status}</span>
         </div>
-        <div class="patient-card-actions">
+        <div class="card-body">
+          <div class="detail"><i class="fas fa-stethoscope"></i><span class="label">Condición:</span><span class="value">${p.condition}</span></div>
+          <div class="detail"><i class="fas fa-user"></i><span class="label">Familiar:</span><span class="value">${p.family}</span></div>
+          <div class="detail"><i class="fas fa-clock"></i><span class="label">Estado:</span><span class="value">En seguimiento</span></div>
+        </div>
+        <div class="card-footer">
           ${turnoBtn}
-          <a class="ghost-btn small full" href="reportes.html?paciente=${encodeURIComponent(p.name)}">Ver historial</a>
+          <a class="btn-action btn-historial" href="reportes.html?paciente=${encodeURIComponent(p.name)}"><i class="fas fa-clock-rotate-left"></i> Ver historial</a>
         </div>
       </article>
     `;
@@ -70,20 +100,23 @@ function renderPatients() {
 }
 
 function openPatientModal() {
-  document.getElementById("patientModal").classList.add("show");
+  document.getElementById("patientModal").classList.add("active");
 }
 
 function closePatientModal() {
-  document.getElementById("patientModal").classList.remove("show");
+  document.getElementById("patientModal").classList.remove("active");
 }
 
-function startTurno(patientName) {
+async function startTurno(patientName) {
   const existing = getActiveTurno();
 
   if (existing && existing.patient !== patientName) {
-    const confirmSwitch = confirm(
-      `Ya existe un turno activo para ${existing.patient}. ¿Deseas descartarlo e iniciar un nuevo turno para ${patientName}?`
-    );
+    const confirmSwitch = await showAppDialog({
+      title: "Ya hay un turno activo",
+      message: `El turno de ${existing.patient} sigue abierto. ¿Quieres cerrarlo e iniciar uno para ${patientName}?`,
+      kind: "confirm",
+      confirmLabel: "Cambiar turno"
+    });
     if (!confirmSwitch) return;
   } else if (existing && existing.patient === patientName) {
     window.location.href = "turno.html";
@@ -113,7 +146,8 @@ if (form) {
       name: document.getElementById("patientName").value,
       age: document.getElementById("patientAge").value,
       condition: document.getElementById("patientCondition").value,
-      family: document.getElementById("patientFamily").value
+      family: document.getElementById("patientFamily").value,
+      status: "Estable"
     });
     savePatients(patients);
     form.reset();

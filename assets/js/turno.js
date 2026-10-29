@@ -34,11 +34,11 @@ function init() {
 }
 
 function openModal(id) {
-  document.getElementById(id).classList.add("show");
+  document.getElementById(id).classList.add("active");
 }
 
 function closeModal(id) {
-  document.getElementById(id).classList.remove("show");
+  document.getElementById(id).classList.remove("active");
   const form = document.querySelector(`#${id} form`);
   if (form) form.reset();
   const medTime = document.getElementById("m_time");
@@ -158,14 +158,14 @@ document.getElementById("sleepForm")?.addEventListener("submit", (e) => {
   closeModal("sleepModal");
 });
 
-document.getElementById("hygieneForm")?.addEventListener("submit", (e) => {
+document.getElementById("hygieneForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const checked = Array.from(
     document.querySelectorAll("#hygieneForm input[type='checkbox']:checked")
   ).map((c) => c.value);
 
   if (checked.length === 0) {
-    alert("Selecciona al menos una actividad de higiene.");
+    await showAppDialog({ title: "Completa el registro", message: "Selecciona al menos una actividad de higiene." });
     return;
   }
 
@@ -194,8 +194,8 @@ function recordWellbeing(state) {
   closeModal("wellbeingModal");
 }
 
-function recordWellbeingOther() {
-  const custom = prompt("Describe el estado observado:");
+async function recordWellbeingOther() {
+  const custom = await showAppDialog({ title: "Registrar bienestar", message: "Describe brevemente el estado observado.", kind: "prompt", confirmLabel: "Guardar", placeholder: "Ej. Se muestra tranquilo" });
   if (custom && custom.trim()) {
     recordWellbeing(custom.trim());
   }
@@ -249,9 +249,10 @@ function renderTimeline() {
 
 /* --------------------------- Finalizar turno ------------------------- */
 
-document.getElementById("finalizarTurnoBtn")?.addEventListener("click", () => {
+document.getElementById("finalizarTurnoBtn")?.addEventListener("click", async () => {
   if (turno.records.length === 0) {
-    if (!confirm("Aún no has registrado información en este turno. ¿Deseas finalizarlo de todas formas?")) {
+    const confirmed = await showAppDialog({ title: "Finalizar turno sin registros", message: "Aún no has registrado información en este turno. ¿Deseas finalizarlo de todas formas?", kind: "confirm", confirmLabel: "Finalizar turno" });
+    if (!confirmed) {
       return;
     }
   }
