@@ -1,66 +1,79 @@
-GERIREPORT - MVP DEL SISTEMA GERIÁTRICO (v2 - Modo Turno)
+# GeriReport
 
-Este proyecto mejora el prototipo GeriReport con un panel principal en React y
-un estilo común para todos los flujos. Conserva los formularios y registros del
-prototipo, que se guardan en el navegador y no requieren backend.
+Prototipo interactivo para registrar y consultar turnos de cuidado domiciliario. Incluye un dashboard hecho con React y flujos de demostración en HTML, CSS y JavaScript.
 
-FLUJO PRINCIPAL A DEMOSTRAR:
-Login → Pacientes → Iniciar turno → Modo Turno (registrar información) →
-Línea temporal → Alerta si hay valor fuera de rango → Finalizar turno →
-Resumen → Generar reporte → Reporte → Historial → Vista familiar
+> **Solo demostración:** todos los pacientes y reportes son ficticios. La aplicación guarda datos en el navegador, no tiene backend y no debe usarse para decisiones clínicas.
 
-Páginas incluidas:
-- index.html                  Dashboard principal.
-- pages/login.html            Login demo (acceso libre).
-- pages/pacientes.html        Registro/listado de pacientes + botón "Iniciar turno".
-- pages/turno.html            Modo Turno: registro rápido de signos vitales,
-                               medicación, alimentación, sueño, higiene,
-                               bienestar e incidentes, con línea temporal y
-                               alertas de valores fuera de rango.
-- pages/reporte-detalle.html  Vista completa de un reporte, con botón
-                               "Descargar / Imprimir" (usa window.print()).
-- pages/reportes.html         Historial de reportes agrupado por paciente
-                               (turnos + reportes rápidos), con filtro.
-- pages/nuevo-reporte.html    Formulario manual de reporte rápido (se conserva
-                               del prototipo original).
-- pages/seguimiento.html      Tablero de alertas y tareas (kanban demo).
-- pages/vista-familiar.html   Vista simplificada para familiares, sin
-                               información técnica.
+## Requisitos
 
-Funcionalidades nuevas (MVP):
-- Modo Turno con registro rápido por categorías (signos vitales, medicación,
-  alimentación, sueño, higiene, bienestar, incidentes) usando modales.
-- Línea temporal automática de cada turno.
-- Alertas visuales cuando un signo vital se sale del rango configurado
-  (demostrativo, no es un diagnóstico médico).
-- Finalización de turno con resumen y generación automática de reporte.
-- Reporte detallado, listo para imprimir o guardar como PDF desde el navegador.
-- Historial de turnos por paciente (trazabilidad).
-- Vista familiar simplificada con el estado del último turno.
-- Datos ficticios de ejemplo (paciente María López y otros) para poder
-  demostrar el prototipo sin cargar información manualmente.
+- Node.js 18.x, 20.x o 22+ (versiones compatibles con Vite 6).
+- npm.
 
-La demo incluye seis pacientes ficticios y reportes de ejemplo, con registros
-estables y alertas para recorrer los estados principales. Pacientes, turnos,
-tareas y reportes se guardan en localStorage (sin backend ni base de datos).
-En "Historial", usa "Restablecer demo" para recuperar los datos iniciales.
-El tablero de seguimiento permite mover las tareas entre estados y conserva
-esos cambios en el navegador hasta restablecer la demo.
+## Ejecutar en local
 
-Cómo usarlo:
-1. Instala Node.js.
-2. En la carpeta del proyecto, ejecuta `npm install` y luego `npm run dev`.
-3. Abre en el navegador la dirección local que muestre Vite.
-4. Ve a "Pacientes" y presiona "Iniciar turno" sobre María López (o cualquier
-   paciente) para ver el flujo completo del Modo Turno.
-5. Registra información, revisa la línea temporal, finaliza el turno y
-   genera el reporte.
-6. Consulta "Reportes" para ver el historial y "Vista familiar" para ver el
-   resumen simplificado.
+```bash
+npm ci
+npm run dev
+```
 
-Para preparar la versión de publicación, ejecuta `npm run build`. Los archivos
-quedan en `dist/`.
+Abre la dirección que Vite muestra en la terminal, normalmente `http://localhost:5173/`. El dashboard está en la raíz. Para entrar a la pantalla de acceso demo directamente, abre `/pages/login.html`; cualquier correo y contraseña permiten continuar.
 
-Nota:
-Este es un prototipo universitario con React y flujos heredados en HTML/CSS/JavaScript.
-No realiza diagnósticos médicos ni reemplaza un sistema clínico real.
+Para generar y revisar la versión de producción:
+
+```bash
+npm run build
+npx vite preview
+```
+
+Vite crea los archivos de publicación en `dist/`. El servidor de desarrollo es solo para trabajar en local.
+
+## Recorrido de la demo
+
+1. En el dashboard, abre **Pacientes**.
+2. Pulsa **Iniciar turno** en cualquier tarjeta. Si ya hay otro turno abierto, el prototipo te pedirá confirmar el cambio.
+3. En **Modo Turno**, registra signos vitales, medicación, alimentación, sueño, higiene, bienestar o un incidente. Cada registro aparece en la línea temporal.
+4. Finaliza el turno, revisa el resumen y genera el reporte.
+5. Consulta el reporte en **Reportes**, abre su detalle o revisa el resumen desde **Vista familiar**.
+6. En **Seguimiento**, mueve las tareas demo entre sus estados.
+
+Los formularios, confirmaciones y avisos usan componentes de la interfaz. Los indicadores de signos vitales son ejemplos configurados para la demo; no constituyen diagnóstico ni recomendación médica.
+
+## Pantallas
+
+| Ruta | Contenido |
+| --- | --- |
+| `/` | Dashboard React con accesos y resumen del prototipo |
+| `/pages/login.html` | Acceso ficticio para la demostración |
+| `/pages/pacientes.html` | Pacientes demo, alta local, inicio de turno e historial por paciente |
+| `/pages/turno.html` | Registro del turno, modales, alertas y línea temporal |
+| `/pages/nuevo-reporte.html` | Creación manual de un reporte |
+| `/pages/reportes.html` | Historial, filtro por paciente y restablecimiento de la demo |
+| `/pages/reporte-detalle.html` | Detalle de un reporte e impresión del navegador |
+| `/pages/seguimiento.html` | Tareas demo que se pueden cambiar de estado |
+| `/pages/vista-familiar.html` | Resumen simplificado para familiares |
+| `/LANDING.html` | Página informativa independiente del prototipo |
+
+## Datos de demostración
+
+Al abrir la app por primera vez se cargan seis pacientes y reportes de ejemplo. Los cambios se conservan en `localStorage` del navegador: pacientes, turno activo, reportes y tareas. No se sincronizan entre navegadores ni dispositivos.
+
+Para volver al estado inicial, usa **Restablecer demo** en la pantalla de reportes. Esto elimina los cambios guardados por este prototipo en el navegador actual y vuelve a cargar los datos ficticios.
+
+## Tecnologías
+
+- React 19 y React DOM para el dashboard.
+- Vite 6 para desarrollo y compilación multipágina.
+- HTML, CSS y JavaScript para las pantallas del flujo demo.
+- `localStorage` como almacenamiento local temporal.
+
+## Estructura del proyecto
+
+```text
+src/main.jsx              Dashboard React
+pages/                    Pantallas HTML del prototipo
+assets/css/                Estilos generales y tema visual
+assets/js/                 Interacciones, datos demo y lógica local
+assets/img/                Recursos gráficos
+LANDING.html               Página informativa
+vite.config.js             Configuración multipágina de Vite
+```
