@@ -1,0 +1,158 @@
+/* The sidebar lives outside page layouts and keeps its own fixed visual system. */
+.workspace-layout {
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100dvh - var(--workspace-header-height, 0px));
+}
+.workspace-page {
+  flex: 1;
+  min-width: 0;
+}
+.workspace-page > .dashboard-shell {
+  display: block;
+  min-width: 0;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar {
+  box-sizing: border-box;
+  width: 276px !important;
+  min-width: 276px;
+  max-width: 276px;
+  flex: 0 0 276px;
+  padding: 25px 18px !important;
+  margin: 0 !important;
+  position: sticky !important;
+  top: var(--workspace-header-height, 0px) !important;
+  height: calc(100dvh - var(--workspace-header-height, 0px)) !important;
+  min-height: 0 !important;
+  align-self: flex-start;
+  background: linear-gradient(180deg, #fff 75%, #f5f9f6) !important;
+  border: 0 !important;
+  border-right: 1px solid #e3ece8 !important;
+  color: #1e3430 !important;
+  font-family: "Montserrat", "Segoe UI", sans-serif !important;
+  font-size: 18px;
+  line-height: 1.5;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar * {
+  box-sizing: border-box;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .nav {
+  display: flex !important;
+  flex: 1 0 auto;
+  flex-direction: column;
+  gap: 4px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .nav a {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start !important;
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  flex: 0 0 48px;
+  gap: 12px !important;
+  margin: 0 !important;
+  padding: 13px 15px !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  color: #697d75 !important;
+  font-family: "Montserrat", "Segoe UI", sans-serif !important;
+  font-size: 14.4px !important;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: normal;
+  text-decoration: none;
+  box-shadow: none !important;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .nav a:hover {
+  background: #f4f8f6 !important;
+  color: #216d5d !important;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .nav a.active {
+  background: #eaf4ef !important;
+  color: #216d5d !important;
+  font-weight: 600;
+  box-shadow: inset 3px 0 #216d5d !important;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .nav a i {
+  width: 20px;
+  flex: 0 0 20px;
+  margin: 0 !important;
+  font-size: 17.1px !important;
+  color: #8a9b94;
+  text-align: center;
+}
+body
+  .workspace-frame
+  > .workspace-layout
+  > .care-sidebar
+  .nav
+  a:is(.active, :hover)
+  i {
+  color: #216d5d !important;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .nav a:last-child {
+  margin-top: 14px !important;
+  border-top: 1px solid #e8eee9 !important;
+  border-radius: 0 0 9px 9px !important;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar #sidebarTurnoCard {
+  flex: 0 0 auto;
+  display: grid !important;
+  gap: 15px;
+  padding: 16px !important;
+  margin: 24px 0 0 !important;
+  border: 1px solid #dce9e1 !important;
+  border-radius: 12px !important;
+  background: linear-gradient(145deg, #f3f8f5, #edf5f0) !important;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .shift-card-title {
+  font-size: 16.2px;
+  line-height: 1.4;
+}
+body
+  .workspace-frame
+  > .workspace-layout
+  > .care-sidebar
+  .shift-card-description {
+  margin: 6px 0 0;
+  font-size: 14.4px;
+  line-height: 1.6;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .shift-card-action {
+  font-size: 14.4px;
+  min-height: 44px;
+}
+@media (max-width: 760px) {
+  .workspace-layout {
+    display: block;
+  }
+  body .workspace-frame > .workspace-layout > .care-sidebar {
+    position: fixed !important;
+    inset: var(--workspace-header-height, 0px) auto 0 0 !important;
+    width: 280px !important;
+    min-width: 280px;
+    max-width: 280px;
+    flex-basis: 280px;
+    transform: translateX(-105%);
+  }
+  body .workspace-frame > .workspace-layout > .care-sidebar.open {
+    transform: translateX(0);
+  }
+}
+@media print {
+  .workspace-layout {
+    display: block;
+  }
+  body .workspace-frame > .workspace-layout > .care-sidebar {
+    display: none !important;
+  }
+}

@@ -1,0 +1,36 @@
+/* Only native dialog mechanics; each screen retains its original CSS. */
+.react-dialog {
+  width: min(540px, calc(100vw - 32px));
+  max-height: 85vh;
+  overflow: auto;
+  padding: 26px;
+  border: 1px solid #e3ece8;
+  border-radius: 18px;
+  color: #1e3430;
+  background: white;
+  box-shadow: 0 24px 72px #152e3838;
+}
+.react-dialog::backdrop {
+  background: #13272188;
+  backdrop-filter: blur(4px);
+}
+.react-dialog .section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.react-dialog h2 {
+  font-size: 20px;
+}
+.react-dialog .field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.react-dialog .field input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cddbd4;
+  border-radius: 9px;
+}

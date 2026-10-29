@@ -1,0 +1,189 @@
+{
+  "cssSha256": "c146b01cebe85fc7477d4744c78878e8cae3431679da4a40038c215f65c0c682",
+  "structure": [
+    [
+      "div",
+      "app-shell"
+    ],
+    [
+      "aside",
+      "sidebar no-print"
+    ],
+    [
+      "div",
+      "brand"
+    ],
+    [
+      "div",
+      "brand-icon"
+    ],
+    [
+      "div",
+      ""
+    ],
+    [
+      "h1",
+      ""
+    ],
+    [
+      "span",
+      ""
+    ],
+    [
+      "nav",
+      "nav"
+    ],
+    [
+      "a",
+      ""
+    ],
+    [
+      "i",
+      "fas fa-gauge-high"
+    ],
+    [
+      "span",
+      ""
+    ],
+    [
+      "a",
+      ""
+    ],
+    [
+      "i",
+      "fas fa-users"
+    ],
+    [
+      "span",
+      ""
+    ],
+    [
+      "a",
+      ""
+    ],
+    [
+      "i",
+      "fas fa-clock"
+    ],
+    [
+      "span",
+      ""
+    ],
+    [
+      "a",
+      ""
+    ],
+    [
+      "i",
+      "fas fa-pen-to-square"
+    ],
+    [
+      "span",
+      ""
+    ],
+    [
+      "a",
+      "active"
+    ],
+    [
+      "i",
+      "fas fa-file-lines"
+    ],
+    [
+      "span",
+      ""
+    ],
+    [
+      "a",
+      ""
+    ],
+    [
+      "i",
+      "fas fa-chart-line"
+    ],
+    [
+      "span",
+      ""
+    ],
+    [
+      "a",
+      ""
+    ],
+    [
+      "i",
+      "fas fa-eye"
+    ],
+    [
+      "span",
+      ""
+    ],
+    [
+      "a",
+      ""
+    ],
+    [
+      "i",
+      "fas fa-arrow-right-from-bracket"
+    ],
+    [
+      "span",
+      ""
+    ],
+    [
+      "div",
+      "sidebar-card"
+    ],
+    [
+      "main",
+      "main-content"
+    ],
+    [
+      "header",
+      "topbar no-print"
+    ],
+    [
+      "button",
+      "menu-btn"
+    ],
+    [
+      "div",
+      ""
+    ],
+    [
+      "h2",
+      ""
+    ],
+    [
+      "i",
+      "fas fa-file-lines"
+    ],
+    [
+      "p",
+      ""
+    ],
+    [
+      "div",
+      "report-actions"
+    ],
+    [
+      "a",
+      "ghost-btn"
+    ],
+    [
+      "i",
+      "fas fa-arrow-left"
+    ],
+    [
+      "button",
+      "primary-btn"
+    ],
+    [
+      "i",
+      "fas fa-download"
+    ],
+    [
+      "section",
+      "panel report-sheet"
+    ]
+  ]
+}

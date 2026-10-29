@@ -1,0 +1,1282 @@
+/* Layout rules shared by every route. Keep page content inside its available width. */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+#root {
+  width: 100%;
+  min-width: 0;
+  min-height: 100dvh;
+}
+.workspace-frame,
+.workspace-layout,
+.workspace-page {
+  min-width: 0;
+  max-width: 100%;
+}
+.workspace-page > :is(.app-shell, .dashboard-shell) {
+  width: 100%;
+  min-width: 0;
+}
+.workspace-page
+  :is(
+    .main-content,
+    .surface,
+    .panel,
+    .patient-grid,
+    .patient-card,
+    .history-group,
+    .reports-list,
+    .report-item,
+    .report-info,
+    .report-details,
+    .timeline-body,
+    .kanban-col,
+    .task-card,
+    .family-card,
+    .report-section
+  ) {
+  min-width: 0;
+}
+.workspace-page
+  :is(
+    .two-cols,
+    .three-cols,
+    .info-grid,
+    .vitales-grid,
+    .report-sheet,
+    .dashboard-content
+  ) {
+  min-width: 0;
+}
+.workspace-page :is(.two-cols, .three-cols) > * {
+  min-width: 0;
+}
+.workspace-page :is(input, select, textarea) {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+.workspace-page
+  :is(p, h1, h2, h3, h4, strong, .value, .vital-value, .timeline-title) {
+  overflow-wrap: anywhere;
+}
+.workspace-page
+  :is(
+    button,
+    .primary-btn,
+    .secondary-btn,
+    .ghost-btn,
+    .btn-action,
+    .btn-ver,
+    .task-control
+  ) {
+  min-height: 44px;
+  max-width: 100%;
+}
+.workspace-page .report-actions {
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.workspace-page .report-actions > * {
+  min-width: 0;
+}
+.workspace-page .dashboard-content > *,
+.workspace-page .patient-info {
+  min-width: 0;
+}
+.workspace-page .patient-info :is(strong, small) {
+  max-width: 100%;
+}
+.workspace-page .dashboard-content {
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.8fr);
+}
+.workspace-page .patient-info small {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+/* A grid avoids flex-column wrapping the history summary outside the card. */
+.workspace-page .main-content .report-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  width: 100%;
+}
+.workspace-page .main-content .report-item .report-info {
+  grid-column: 1;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+.workspace-page .main-content .report-item .report-actions {
+  grid-column: 2;
+  width: auto;
+}
+.workspace-page .main-content .report-item .report-summary {
+  grid-column: 1/-1;
+  width: auto;
+  min-width: 0;
+  flex-basis: auto;
+  padding-left: 0;
+  margin: 0;
+}
+.workspace-page .main-content .report-item .report-summary p {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.workspace-page .main-content .filter-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+.workspace-page .main-content .filter-bar > * {
+  min-width: 0;
+}
+.workspace-page .main-content .filter-bar select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+.workspace-page .main-content .report-header {
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.workspace-page .main-content .report-line {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+.workspace-page .main-content .report-line p {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.workspace-page .main-content .family-select select {
+  width: 100%;
+  min-width: 0;
+}
+.workspace-page .main-content .reporte-preview > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+/* Modal sizing follows the visible viewport, including a short landscape screen. */
+.modal {
+  box-sizing: border-box;
+  padding: 12px;
+}
+.modal .modal-card {
+  position: relative;
+  box-sizing: border-box;
+  min-width: 0;
+  width: min(650px, 100%);
+  max-width: 650px;
+  max-height: calc(100dvh - 24px);
+  padding: clamp(18px, 3vw, 28px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.modal .modal-card > h3 {
+  padding-right: 36px;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+.modal .modal-card .close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0;
+}
+.modal .modal-card :is(.two-cols, .three-cols) {
+  min-width: 0;
+}
+.modal .modal-card :is(.two-cols, .three-cols) > * {
+  min-width: 0;
+}
+.modal .modal-card :is(input, select, textarea) {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  font-size: 16px;
+}
+.modal
+  .modal-card
+  :is(input:not([type="checkbox"]), select, button.primary-btn) {
+  min-height: 46px;
+}
+.modal .modal-card .checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  line-height: 1.5;
+}
+.modal .modal-card input[type="checkbox"] {
+  width: 18px !important;
+  height: 18px;
+  min-height: 18px;
+  flex: 0 0 18px;
+}
+.modal .modal-card .wellbeing-btn {
+  min-height: 48px;
+}
+#summaryModal .modal-card {
+  max-height: calc(100dvh - 24px);
+}
+#summaryModal .report-actions {
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 16px 0 0;
+}
+#summaryModal .report-actions button {
+  min-width: 0;
+  min-height: 46px;
+  margin: 0;
+  white-space: normal;
+}
+.react-dialog {
+  box-sizing: border-box;
+  width: min(540px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+}
+.react-dialog :is(input, select, textarea) {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  font-size: 16px;
+}
+.react-dialog .app-dialog-actions {
+  flex-wrap: wrap;
+}
+body:has(.login-container) {
+  min-height: 100dvh;
+  padding: clamp(12px, 3vw, 28px) !important;
+  overflow-y: auto !important;
+}
+body:has(.login-container) .login-container {
+  width: min(100%, 470px);
+  min-width: 0;
+}
+body:has(.login-container) .login-card {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(22px, 5vw, 38px) !important;
+}
+.auth-card .brand-text {
+  min-width: 0;
+}
+.auth-card .input-wrapper input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  font-size: 16px;
+}
+/* Independent family demo: only tables scroll horizontally, never the whole page. */
+.app-wrapper,
+.app-wrapper #dashboard,
+.app-wrapper .dashboard-body,
+.app-wrapper .main-content,
+.app-wrapper .section {
+  min-width: 0;
+  max-width: 100%;
+}
+.app-wrapper
+  .main-content
+  :is(.table-wrap, .chart-box, .report-document, .filter-bar) {
+  min-width: 0;
+  max-width: 100%;
+}
+.app-wrapper .table-wrap {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.app-wrapper .filter-bar {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.app-wrapper .filter-bar :is(input, select) {
+  min-width: 0;
+  max-width: 100%;
+  min-height: 44px;
+}
+.app-wrapper .topbar {
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.app-wrapper .section-header {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.app-wrapper .login-box {
+  box-sizing: border-box;
+  width: min(100%, 420px);
+  min-width: 0;
+}
+.app-wrapper #loginScreen {
+  padding: 20px;
+  min-height: 100dvh;
+}
+.app-wrapper .login-box input {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  font-size: 16px;
+}
+@media (max-width: 1200px) {
+  .workspace-page .dashboard-content {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .dashboard-content > * {
+    min-width: 0;
+  }
+}
+@media (max-width: 1024px) {
+  .workspace-layout {
+    display: block;
+  }
+  body .workspace-frame > .workspace-layout > .care-sidebar {
+    position: fixed !important;
+    inset: var(--workspace-header-height, 0px) auto 0 0 !important;
+    width: min(280px, calc(100vw - 24px)) !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 24px);
+    transform: translateX(-105%);
+    height: calc(100dvh - var(--workspace-header-height, 0px)) !important;
+  }
+  body .workspace-frame > .workspace-layout > .care-sidebar.open {
+    transform: translateX(0);
+  }
+  .care-nav-scrim {
+    display: block;
+    position: fixed;
+    z-index: 20;
+    inset: var(--workspace-header-height, 0px) 0 0;
+    background: #152c2447;
+    border: 0;
+  }
+  body:has(.care-sidebar.open) {
+    overflow: hidden !important;
+  }
+  .workspace-page .topbar .menu-btn {
+    display: inline-grid !important;
+    place-items: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+  .workspace-page :is(.app-shell, .dashboard-shell) .main-content {
+    width: 100%;
+    padding: 24px !important;
+  }
+  .workspace-page .main-content .form-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .main-content .preview-card {
+    position: static;
+    max-height: none;
+  }
+  .workspace-page .main-content .kanban {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .workspace-page .welcome-panel {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+  }
+  .workspace-page .welcome-visual {
+    min-width: 0;
+    overflow: hidden;
+  }
+}
+@media (max-width: 760px) {
+  .workspace-page .main-content .kanban {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .welcome-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .welcome-visual {
+    display: none;
+  }
+  .workspace-page .main-content .form .three-cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .main-content .patient-info {
+    min-width: 0;
+  }
+  .workspace-page .main-content .family-card .patient-header {
+    flex-wrap: wrap;
+  }
+  .workspace-page .main-content .family-card .info {
+    min-width: 0;
+  }
+  .workspace-page .main-content .family-card .info h3 {
+    overflow-wrap: anywhere;
+  }
+  .workspace-page .main-content .report-sheet {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .main-content .report-section-wide,
+  .workspace-page .main-content .report-header {
+    grid-column: 1/-1;
+  }
+  .workspace-page .main-content .timeline-item {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .workspace-page .main-content .timeline-body {
+    width: auto;
+    min-width: 0;
+    padding: 16px;
+  }
+  .workspace-page .main-content .timeline::before {
+    display: none;
+  }
+  .workspace-page .main-content .timeline-body::before {
+    display: none;
+  }
+  .workspace-page .main-content .report-line {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+  }
+  .workspace-page .main-content .report-line span {
+    font-size: 0.72rem;
+  }
+  .workspace-page .main-content .reporte-preview .family-report-link {
+    flex-basis: 100%;
+    width: 100%;
+  }
+  .app-wrapper .dashboard-body {
+    padding: 16px 14px calc(90px + env(safe-area-inset-bottom));
+  }
+  .app-wrapper .main-content {
+    padding: 0;
+  }
+  .app-wrapper .report-document {
+    padding: 20px;
+  }
+  .app-wrapper .bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .app-wrapper .bottom-nav .nav-btn {
+    min-width: 0;
+    min-height: 52px;
+    padding: 10px 5px;
+  }
+}
+@media (max-width: 600px) {
+  .workspace-page :is(.app-shell, .dashboard-shell) .main-content {
+    padding: 18px 14px !important;
+  }
+  .workspace-page .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .workspace-page
+    .topbar
+    > :is(.primary-btn, .ghost-btn, .report-actions, .topbar-actions) {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  .workspace-page .topbar > div:not(.topbar-actions, .report-actions) {
+    flex: 1;
+    min-width: 0;
+  }
+  .workspace-page .topbar :is(h1, h2) {
+    font-size: clamp(20px, 5.5vw, 26px);
+    line-height: 1.4;
+    letter-spacing: -0.4px;
+  }
+  .workspace-page .topbar p {
+    font-size: 0.76rem;
+    line-height: 1.7;
+  }
+  .workspace-page .topbar-actions {
+    justify-content: flex-end;
+    gap: 16px;
+  }
+  .workspace-page .topbar-actions .primary-btn {
+    width: auto;
+    min-height: 44px;
+    padding: 11px 14px;
+    overflow: visible;
+    font-size: 0.76rem;
+    gap: 8px;
+  }
+  .workspace-page .topbar-actions .primary-btn i {
+    font-size: 0.8rem;
+  }
+  .workspace-page .section-guide {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .context-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .main-content .form .two-cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .main-content :is(.panel, .family-card, .report-sheet) {
+    padding: 18px;
+  }
+  .workspace-page .main-content .patient-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .main-content .patient-card .card-header {
+    flex-wrap: wrap;
+    padding: 18px;
+    gap: 10px;
+  }
+  .workspace-page .main-content .patient-card .header-info {
+    min-width: 100px;
+  }
+  .workspace-page .main-content .patient-card .card-body {
+    padding: 18px;
+  }
+  .workspace-page .main-content .patient-card .card-footer {
+    padding: 16px 18px;
+  }
+  .workspace-page .patients-toolbar {
+    padding: 18px;
+  }
+  .workspace-page .patient-state-filter select {
+    min-width: 0;
+    width: 100%;
+  }
+  .workspace-page .patient-result-count {
+    white-space: normal;
+  }
+  .workspace-page .main-content .filter-bar {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 18px;
+  }
+  .workspace-page .main-content .filter-bar button {
+    width: 100%;
+  }
+  .workspace-page .main-content .report-item {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 16px;
+    gap: 16px;
+  }
+  .workspace-page
+    .main-content
+    .report-item
+    :is(.report-info, .report-actions, .report-summary) {
+    grid-column: 1;
+    width: 100%;
+    min-width: 0;
+  }
+  .workspace-page .main-content .report-item .report-actions .btn-ver {
+    width: 100%;
+    justify-content: center;
+  }
+  .workspace-page .main-content .report-item .report-summary {
+    grid-template-columns: minmax(0, 1fr);
+    padding-left: 0;
+  }
+  .workspace-page .main-content .history-group .panel-heading {
+    flex-wrap: wrap;
+  }
+  .workspace-page .main-content .report-info {
+    gap: 12px;
+  }
+  .workspace-page .main-content .report-icon {
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+  }
+  .workspace-page .main-content .report-details .meta {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .workspace-page .main-content .report-header {
+    align-items: flex-start;
+  }
+  .workspace-page .main-content .report-header h3 {
+    font-size: 1.3rem;
+  }
+  .workspace-page .main-content .report-section {
+    padding: 17px;
+  }
+  .workspace-page .main-content .report-actions > :is(a, button) {
+    flex: 1 1 130px;
+    justify-content: center;
+    white-space: normal;
+    text-align: center;
+  }
+  .workspace-page .patient-row {
+    gap: 11px;
+    padding: 15px 0;
+  }
+  .workspace-page .patient-info strong {
+    white-space: normal;
+    line-height: 1.5;
+  }
+  .workspace-page .patient-info small {
+    white-space: normal;
+    font-size: 0.72rem;
+    line-height: 1.6;
+  }
+  .workspace-page .section-heading {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .workspace-page .welcome-copy {
+    padding: 23px;
+  }
+  .workspace-page .welcome-copy h2 {
+    font-size: clamp(25px, 7.5vw, 34px);
+  }
+  .workspace-page .welcome-actions {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .workspace-page .dashboard-footer {
+    gap: 14px;
+    font-size: 0.68rem;
+  }
+  .workspace-frame .workspace-topbar {
+    gap: 12px;
+    padding: 14px 16px;
+  }
+  .workspace-frame .workspace-user {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .workspace-frame .workspace-user-details {
+    min-width: 0;
+    flex: 1;
+  }
+  .workspace-frame .workspace-user-details strong {
+    overflow-wrap: anywhere;
+  }
+  .workspace-session {
+    display: none;
+  }
+  .modal .modal-card .two-cols,
+  .modal .modal-card .three-cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .modal .modal-card .checkbox-grid,
+  .modal .modal-card .wellbeing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .modal .modal-card :is(.primary-btn, .ghost-btn) {
+    min-width: 0;
+    min-height: 46px;
+    white-space: normal;
+  }
+  #summaryModal .modal-card {
+    padding: 20px 16px;
+  }
+  #summaryModal .shift-summary-patient {
+    gap: 10px;
+    padding: 14px;
+  }
+  #summaryModal .shift-summary-status {
+    margin-left: 56px;
+  }
+  #summaryModal .shift-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #summaryModal .shift-summary-item {
+    padding: 12px;
+  }
+  #summaryModal .shift-summary-meta {
+    gap: 10px;
+  }
+  #summaryModal .shift-summary-meta strong {
+    font-size: 0.73rem;
+  }
+  .app-wrapper .login-box {
+    padding: 25px 20px;
+    border-radius: 22px;
+  }
+  .app-wrapper .topbar {
+    padding: 14px;
+  }
+  .app-wrapper .topbar .user-area {
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+  .app-wrapper .section-header h2 {
+    font-size: 1.15rem;
+    overflow-wrap: anywhere;
+  }
+  .app-wrapper .filter-bar :is(input, select) {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  .app-wrapper .report-actions {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .app-wrapper .report-actions > button {
+    min-height: 44px;
+    flex: 1 1 120px;
+  }
+}
+@media (max-width: 380px) {
+  .workspace-page .main-content .family-card .info-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .main-content .patient-card .card-footer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .main-content .patient-card .status-badge {
+    margin-left: 58px;
+  }
+  .workspace-page .context-stat {
+    gap: 12px;
+    padding: 16px;
+  }
+  .workspace-page .context-stat strong {
+    font-size: 1.2rem;
+  }
+  .workspace-page .context-stat small {
+    font-size: 0.68rem;
+  }
+  .workspace-page .context-stat > div {
+    gap: 6px 10px;
+  }
+  #summaryModal .shift-summary-patient {
+    align-items: flex-start;
+  }
+  #summaryModal .shift-summary-patient h4 {
+    font-size: 0.9rem;
+  }
+  .auth-card .brand {
+    gap: 12px;
+  }
+  .auth-card .brand-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+  }
+}
+@media (max-height: 600px) {
+  body:has(.login-container) {
+    place-items: start center;
+  }
+  .workspace-frame .workspace-topbar {
+    min-height: 76px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .modal .modal-card {
+    max-height: calc(100dvh - 16px);
+  }
+  .modal {
+    padding: 8px;
+  }
+}
+@media print {
+  .workspace-layout {
+    display: block;
+  }
+  .workspace-page .main-content {
+    padding: 0 !important;
+    width: 100%;
+    max-width: none;
+  }
+  .workspace-page .main-content .report-item {
+    break-inside: avoid;
+  }
+  .workspace-page .main-content .report-sheet {
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0;
+  }
+  .care-sidebar,
+  .care-nav-scrim,
+  .workspace-topbar {
+    display: none !important;
+  }
+}
+/* Touch targets and input sizing stay usable regardless of the original screen CSS. */
+.workspace-page .main-content .task-controls .task-control {
+  min-height: 44px;
+  padding: 10px 12px;
+}
+@media (max-width: 760px) {
+  .workspace-page .main-content .form :is(input, select, textarea) {
+    font-size: 16px;
+  }
+}
+@media print {
+  body:has(.care-sidebar.open) {
+    overflow: visible !important;
+  }
+}
+
+/* Keep the current shift inside the drawer, above navigation on small screens. */
+body .workspace-frame > .workspace-layout > .care-sidebar {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar #sidebarTurnoCard {
+  position: static !important;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  align-self: stretch;
+  text-align: left;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .shift-card-heading {
+  flex-wrap: wrap;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .shift-card-copy {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1024px) {
+  body .workspace-frame > .workspace-layout > .care-sidebar #sidebarTurnoCard {
+    order: -1;
+    margin: 0 0 20px !important;
+    gap: 12px;
+  }
+  body .workspace-frame > .workspace-layout > .care-sidebar .shift-card-live {
+    margin-left: 0;
+  }
+}
+
+/* Legacy report styles wrap the fixed-height sidebar into side-by-side columns. */
+body .workspace-frame > .workspace-layout > .care-sidebar {
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  overflow-x: hidden;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .nav {
+  flex-flow: column nowrap !important;
+  flex: 0 0 auto !important;
+  width: 100%;
+  min-width: 0;
+}
+body .workspace-frame > .workspace-layout > .care-sidebar .nav a {
+  min-width: 0;
+  white-space: normal;
+}
+@media (max-width: 760px) {
+  .workspace-frame .workspace-topbar {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .workspace-frame .workspace-user {
+    width: 100%;
+    box-sizing: border-box;
+    justify-self: stretch;
+  }
+}
+
+.pdf-masthead,
+.pdf-footer {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 16mm 16mm 18mm;
+  }
+  html,
+  body,
+  #root,
+  .workspace-frame,
+  .workspace-layout,
+  .workspace-page,
+  .workspace-page .app-shell,
+  .workspace-page .main-content {
+    display: block !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: white !important;
+    box-shadow: none !important;
+  }
+  body {
+    color: #253a34 !important;
+    font-size: 10pt !important;
+  }
+  .workspace-topbar,
+  .care-sidebar,
+  .care-nav-scrim,
+  .topbar,
+  .section-context,
+  .section-guide,
+  .modal,
+  .react-dialog {
+    display: none !important;
+  }
+  #reportSheet {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    font-size: 10pt;
+    line-height: 1.6;
+  }
+  #reportSheet * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  #reportSheet .pdf-masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 0 0 6mm;
+    margin: 0 0 7mm;
+    border-bottom: 2pt solid #216d5d;
+    break-inside: avoid;
+  }
+  .pdf-masthead > div {
+    display: grid;
+    gap: 2mm;
+  }
+  .pdf-masthead strong {
+    font-size: 22pt;
+    color: #216d5d;
+    letter-spacing: -0.6pt;
+  }
+  .pdf-masthead span {
+    font-size: 8pt;
+    color: #62766d;
+  }
+  .pdf-masthead p {
+    margin: 0;
+    text-align: right;
+    font-size: 8pt;
+    line-height: 1.8;
+    letter-spacing: 0.5pt;
+  }
+  #reportSheet .report-header {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 5mm;
+    padding: 0 0 6mm;
+    margin: 0 0 5mm;
+    border: 0;
+    border-bottom: 1pt solid #d7e3dc;
+    break-inside: avoid;
+  }
+  #reportSheet .report-header h3 {
+    font-size: 20pt !important;
+    margin: 2mm 0;
+    line-height: 1.3;
+  }
+  #reportSheet .report-header .badge {
+    padding: 0;
+    background: none !important;
+    color: #216d5d;
+    font-size: 9pt;
+  }
+  #reportSheet .report-header .muted {
+    margin: 1mm 0;
+    font-size: 9pt;
+    color: #52665d;
+  }
+  #reportSheet .report-status {
+    border: 1pt solid #b7cbbf;
+    border-radius: 4pt;
+    padding: 2mm 3mm;
+    font-size: 9pt;
+    background: white !important;
+    white-space: nowrap;
+  }
+  #reportSheet .report-section {
+    display: block;
+    padding: 0 0 5mm !important;
+    margin: 0 0 5mm !important;
+    border: 0 !important;
+    border-bottom: 0.5pt solid #dce5df !important;
+    border-radius: 0 !important;
+    background: white !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+  #reportSheet .report-section h4 {
+    font-size: 11pt;
+    color: #216d5d;
+    margin: 0 0 3mm;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  #reportSheet .report-section p {
+    margin: 1.5mm 0;
+    font-size: 10pt;
+    line-height: 1.65;
+    orphans: 3;
+    widows: 3;
+  }
+  #reportSheet .report-line {
+    display: grid !important;
+    grid-template-columns: 15mm minmax(0, 1fr) !important;
+    gap: 3mm;
+    padding: 2mm 0;
+    break-inside: avoid;
+  }
+  #reportSheet .report-line > span {
+    font-size: 9pt;
+    color: #62766d;
+    padding: 0;
+  }
+  #reportSheet .report-line p {
+    margin: 0;
+  }
+  #reportSheet .line-alert {
+    border-left: 2pt solid #ad7534;
+    padding-left: 3mm;
+  }
+  /* The chronological list repeats the category records; omit it from the PDF. */
+  #reportSheet .report-timeline-section {
+    display: none !important;
+  }
+  #reportSheet .pdf-footer {
+    display: grid;
+    gap: 1mm;
+    border-top: 1pt solid #216d5d;
+    padding-top: 4mm;
+    margin-top: 6mm;
+    break-inside: avoid;
+    font-size: 8pt;
+    color: #62766d;
+  }
+  .pdf-footer strong {
+    font-size: 8pt;
+    color: #216d5d;
+    font-weight: 600;
+  }
+}
+@media print {
+  #reportSheet {
+    background: #fff !important;
+    color: #253a34 !important;
+  }
+  #reportSheet .report-section h4 {
+    display: block !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    line-height: 1.4;
+  }
+  #reportSheet .report-line {
+    margin: 0;
+    background: transparent !important;
+  }
+}
+
+/* Explicit centering: original page resets remove the browser's dialog margins. */
+dialog.react-dialog[open] {
+  position: fixed;
+  inset: 0;
+  margin: auto !important;
+  width: min(540px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  height: fit-content;
+  box-sizing: border-box;
+  padding: clamp(20px, 4vw, 28px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+dialog.react-dialog .section-heading {
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+dialog.react-dialog .section-heading h2 {
+  margin: 0;
+  padding-top: 7px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+dialog.react-dialog .section-heading button {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+}
+dialog.react-dialog > p {
+  margin: 0;
+  line-height: 1.7;
+  color: #536b61;
+}
+dialog.react-dialog .app-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+dialog.react-dialog .app-dialog-button {
+  min-height: 44px;
+  padding: 10px 18px;
+}
+@media (max-width: 480px) {
+  dialog.react-dialog .app-dialog-actions > button {
+    flex: 1 1 100px;
+  }
+}
+@media print {
+  dialog.react-dialog[open] {
+    display: none !important;
+  }
+}
+
+body:has(.modal.active) {
+  overflow: hidden !important;
+}
+.badge-neutral,
+.status-neutral {
+  background: #edf1ef !important;
+  color: #536b61 !important;
+}
+@media print {
+  body:has(.modal.active) {
+    overflow: visible !important;
+  }
+}
+
+.workspace-page .main-content .history-empty .history-empty-actions {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 22px;
+}
+.workspace-page .main-content .history-empty-actions > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+  white-space: normal;
+  text-align: center;
+}
+.workspace-page .main-content .history-empty-actions .history-manual-link {
+  border: 1px solid #9dbbb0;
+  background: #f3f8f5;
+  color: #216d5d;
+  box-shadow: none;
+}
+.workspace-page
+  .main-content
+  .history-empty-actions
+  .history-manual-link:hover {
+  background: #e5f1ea;
+  border-color: #216d5d;
+}
+.workspace-page .main-content .history-empty-actions > a:focus-visible {
+  outline: 3px solid #73a893;
+  outline-offset: 3px;
+}
+@media (max-width: 600px) {
+  .workspace-page .main-content .history-empty .history-empty-actions {
+    flex-direction: column;
+  }
+  .workspace-page .main-content .history-empty-actions > a {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+}
+
+/* One readable explanation shared by shift, report, preview and family view. */
+.review-notice {
+  display: block;
+  min-width: 0;
+  padding: 18px;
+  margin: 16px 0;
+  border: 1px solid #ead9b5;
+  border-left: 4px solid #b58029;
+  border-radius: 12px;
+  background: #fffaf0;
+  color: #66512d;
+  text-align: left;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.review-notice > strong {
+  display: block;
+  color: #634a20;
+  font-size: 15px;
+}
+.review-notice-list {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0;
+}
+.review-notice-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  font-size: 14px;
+}
+.review-notice-item > span:only-child {
+  grid-column: 1 / -1;
+}
+.review-notice-item > b {
+  font-variant-numeric: tabular-nums;
+}
+.review-notice > small {
+  display: block;
+  font-size: 12px;
+  line-height: 1.65;
+  color: #76664a;
+}
+.workspace-page #alertBanner {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.workspace-page #alertBanner > i {
+  display: none;
+}
+.workspace-page #reportSheet > .review-notice {
+  grid-column: 1 / -1;
+}
+@media (max-width: 600px) {
+  .review-notice {
+    padding: 14px;
+  }
+  .review-notice-item {
+    gap: 8px;
+  }
+}
+@media print {
+  .review-notice {
+    break-inside: auto;
+    border-radius: 0;
+  }
+  .review-notice-item {
+    break-inside: avoid;
+  }
+}
