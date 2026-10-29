@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GeriReport | Pacientes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* Reset y base */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #f0f4fa;
+      min-height: 100vh;
+    }
+    
+    /* App Shell */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+      max-width: 1440px;
+      margin: 0 auto;
+      background: #ffffff;
+      box-shadow: 0 0 40px rgba(0,0,0,0.06);
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 260px;
+      background: #ffffff;
+      border-right: 1px solid #eef2f7;
+      padding: 1.8rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+    }
+    .sidebar .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .sidebar .brand .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #2a5cff, #4a7aff);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 8px 16px -6px rgba(42,92,255,0.3);
+      flex-shrink: 0;
+    }
+    .sidebar .brand h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0b1a33;
+      letter-spacing: -0.02em;
+    }
+    .sidebar .brand span {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #6b7a93;
+      display: block;
+      margin-top: -0.1rem;
+    }
+
+    /* Navegación */
+    .sidebar .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      flex: 1;
+    }
+    .sidebar .nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 0.85rem;
+      color: #4a5a72;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .sidebar .nav a i {
+      width: 1.6rem;
+      text-align: center;
+      font-size: 1rem;
+      color: #6b7a93;
+    }
+    .sidebar .nav a:hover {
+      background: #f0f4fa;
+      color: #0b1a33;
+    }
+    .sidebar .nav a.active {
+      background: #eef4ff;
+      color: #2a5cff;
+      font-weight: 600;
+      box-shadow: inset 0 0 0 2px rgba(42,92,255,0.12);
+    }
+    .sidebar .nav a.active i {
+      color: #2a5cff;
+    }
+
+    /* Sidebar Card */
+    .sidebar-card {
+      margin-top: 1.2rem;
+      padding: 1rem;
+      background: #f0f4fa;
+      border-radius: 1rem;
+      border-left: 4px solid #2a5cff;
+    }
+    .sidebar-card p {
+      font-size: 0.75rem;
+      color: #4a5a72;
+      margin-bottom: 0.2rem;
+    }
+    .sidebar-card strong {
+      font-size: 0.85rem;
+      color: #0b1a33;
+    }
+    .sidebar-card .badge-turno {
+      display: inline-block;
+      background: #2a5cff;
+      color: #fff;
+      font-size: 0.6rem;
+      padding: 0.1rem 0.6rem;
+      border-radius: 30px;
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+      flex: 1;
+      padding: 1.8rem 2.5rem;
+      background: #f8fafd;
+      overflow-y: auto;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .topbar .menu-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #0b1a33;
+    }
+    .topbar h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0b1a33;
+      letter-spacing: -0.02em;
+    }
+    .topbar p {
+      font-size: 0.85rem;
+      color: #6b7a93;
+    }
+    .topbar .primary-btn {
+      background: linear-gradient(135deg, #2a5cff, #4a7aff);
+      border: none;
+      border-radius: 50px;
+      padding: 0.6rem 1.5rem;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      font-family: 'Montserrat', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 16px -6px rgba(42,92,255,0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .topbar .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px -8px rgba(42,92,255,0.4);
+    }
+
+    /* ===== PATIENT GRID ===== */
+    .patient-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .patient-card {
+      background: #ffffff;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      border: 1px solid #eef2f7;
+      transition: all 0.25s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .patient-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 8px 24px -12px rgba(0,0,0,0.1);
+      transform: translateY(-4px);
+    }
+
+    /* Header del card */
+    .patient-card .card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .patient-card .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #eef4ff, #dbeafe);
+      color: #2a5cff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(42,92,255,0.12);
+    }
+    .patient-card .card-header .header-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .patient-card .card-header .header-info .name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0b1a33;
+      display: block;
+    }
+    .patient-card .card-header .header-info .age {
+      font-size: 0.8rem;
+      color: #6b7a93;
+    }
+    .patient-card .status-badge {
+      font-size: 0.6rem;
+      font-weight: 600;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .patient-card .status-badge.estable {
+      background: #e6ffed;
+      color: #1a7a3a;
+    }
+    .patient-card .status-badge.alerta {
+      background: #fef3c7;
+      color: #b7791f;
+    }
+    .patient-card .status-badge.critico {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .patient-card .status-badge.seguimiento {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    /* Cuerpo del card */
+    .patient-card .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      padding: 0.5rem 0;
+      border-top: 1px solid #f0f4fa;
+      border-bottom: 1px solid #f0f4fa;
+    }
+    .patient-card .card-body .detail {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      color: #4a5a72;
+    }
+    .patient-card .card-body .detail i {
+      color: #2a5cff;
+      width: 1.2rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .patient-card .card-body .detail .label {
+      color: #6b7a93;
+      font-weight: 500;
+      min-width: 70px;
+    }
+    .patient-card .card-body .detail .value {
+      color: #0b1a33;
+      font-weight: 600;
+    }
+
+    /* ===== BOTONES MEJORADOS ===== */
+    .patient-card .card-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      margin-top: 0.2rem;
+    }
+    .patient-card .card-footer .btn-action {
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      border: none;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      letter-spacing: 0.2px;
+    }
+
+    /* Botón Iniciar turno - Azul gradiente */
+    .patient-card .card-footer .btn-turno {
+      background: linear-gradient(135deg, #2a5cff, #4a7aff);
+      color: #ffffff;
+      box-shadow: 0 4px 14px -4px rgba(42,92,255,0.4);
+    }
+    .patient-card .card-footer .btn-turno i {
+      color: #ffffff;
+    }
+    .patient-card .card-footer .btn-turno:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px -6px rgba(42,92,255,0.5);
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+    }
+    .patient-card .card-footer .btn-turno:active {
+      transform: translateY(-1px);
+    }
+
+    /* Botón Ver historial - Outline gris */
+    .patient-card .card-footer .btn-historial {
+      background: #f8fafc;
+      color: #4a5a72;
+      border: 2px solid #e2e8f0;
+    }
+    .patient-card .card-footer .btn-historial i {
+      color: #6b7a93;
+    }
+    .patient-card .card-footer .btn-historial:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px -4px rgba(0,0,0,0.08);
+    }
+    .patient-card .card-footer .btn-historial:active {
+      transform: translateY(-1px);
+    }
+
+    /* ===== MODAL ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 1.5rem;
+    }
+    .modal.active {
+      display: flex;
+      animation: fadeIn 0.25s ease;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 2rem;
+      padding: 2rem 2.5rem;
+      max-width: 480px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 40px 80px -20px rgba(0,0,0,0.4);
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      0% { transform: translateY(30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-card .close-btn {
+      float: right;
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #94a3b8;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+    .modal-card .close-btn:hover {
+      color: #e53e3e;
+    }
+    .modal-card h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #0b1a33;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #eef4ff;
+      padding-bottom: 0.6rem;
+    }
+
+    .modal-card .form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .modal-card .form label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #1e2b45;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+    .modal-card .form input {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      background: #fafcff;
+      transition: all 0.2s;
+      outline: none;
+      color: #0b1a33;
+    }
+    .modal-card .form input:focus {
+      border-color: #2a5cff;
+      box-shadow: 0 0 0 4px rgba(42,92,255,0.1);
+    }
+
+    .modal-card .primary-btn.full {
+      width: 100%;
+      padding: 0.8rem;
+      background: linear-gradient(135deg, #2a5cff, #4a7aff);
+      border: none;
+      border-radius: 50px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      font-family: 'Montserrat', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 8px 20px -6px rgba(42,92,255,0.4);
+      margin-top: 0.5rem;
+    }
+    .modal-card .primary-btn.full:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -8px rgba(42,92,255,0.5);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 70px;
+        padding: 1.2rem 0.5rem;
+      }
+      .sidebar .brand h1,
+      .sidebar .brand span,
+      .sidebar .nav a span,
+      .sidebar-card {
+        display: none;
+      }
+      .sidebar .nav a {
+        justify-content: center;
+        padding: 0.6rem;
+      }
+      .sidebar .nav a i {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+      .sidebar .brand {
+        justify-content: center;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+      }
+      .sidebar .brand .brand-icon {
+        margin: 0;
+      }
+      .topbar .menu-btn {
+        display: block;
+      }
+      .patient-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .app-shell {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        padding: 0.6rem 1rem;
+        border-right: none;
+        border-bottom: 1px solid #eef2f7;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        position: relative;
+      }
+      .sidebar .brand {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+      .sidebar .brand h1,
+      .sidebar .brand span {
+        display: none;
+      }
+      .sidebar .nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.2rem;
+      }
+      .sidebar .nav a {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.7rem;
+      }
+      .sidebar .nav a span {
+        display: inline;
+      }
+      .sidebar .nav a i {
+        font-size: 0.9rem;
+      }
+      .sidebar .sidebar-card {
+        display: none;
+      }
+      .main-content {
+        padding: 1rem;
+      }
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .topbar .menu-btn {
+        display: none;
+      }
+      .patient-grid {
+        grid-template-columns: 1fr;
+      }
+      .modal-card {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .sidebar .brand h1,
+      .sidebar .brand span {
+        display: none;
+      }
+      .sidebar .nav a span {
+        display: none;
+      }
+      .main-content {
+        padding: 0.8rem;
+      }
+      .topbar h2 {
+        font-size: 1.1rem;
+      }
+      .topbar .primary-btn {
+        font-size: 0.8rem;
+        padding: 0.5rem 1rem;
+        width: 100%;
+        justify-content: center;
+      }
+      .patient-card {
+        padding: 1rem;
+      }
+      .patient-card .card-header .header-info .name {
+        font-size: 0.95rem;
+      }
+      .patient-card .card-body .detail {
+        font-size: 0.8rem;
+        flex-wrap: wrap;
+      }
+      .patient-card .card-body .detail .label {
+        min-width: 60px;
+      }
+      .patient-card .card-footer {
+        flex-direction: column;
+      }
+      .patient-card .card-footer .btn-action {
+        width: 100%;
+        justify-content: center;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon">GR</div>
+        <div><h1>GeriReport</h1><span>MVP clínico domiciliario</span></div>
+      </div>
+      <nav class="nav">
+        <a href="../index.html"><i class="fas fa-gauge-high"></i> <span>Dashboard</span></a>
+        <a class="active" href="pacientes.html"><i class="fas fa-users"></i> <span>Pacientes</span></a>
+        <a href="turno.html"><i class="fas fa-clock"></i> <span>Modo Turno</span></a>
+        <a href="nuevo-reporte.html"><i class="fas fa-pen-to-square"></i> <span>Nuevo reporte</span></a>
+        <a href="reportes.html"><i class="fas fa-file-lines"></i> <span>Reportes</span></a>
+        <a href="seguimiento.html"><i class="fas fa-chart-line"></i> <span>Seguimiento</span></a>
+        <a href="vista-familiar.html"><i class="fas fa-eye"></i> <span>Vista familiar</span></a>
+        <a href="login.html"><i class="fas fa-arrow-right-from-bracket"></i> <span>Cerrar sesión</span></a>
+      </nav>
+      <div class="sidebar-card" id="sidebarTurnoCard">
+        <p>Turno actual</p>
+        <strong>08:00 - 20:00</strong>
+        <br />
+        <span class="badge-turno">En curso</span>
+        <p style="margin-top:0.4rem; font-size:0.7rem;">Pacientes: 4 · Reportes: 3</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <div>
+          <h2><i class="fas fa-users" style="color:#2a5cff;"></i> Pacientes</h2>
+          <p>Registro básico de adultos mayores atendidos en domicilio.</p>
+        </div>
+        <button class="primary-btn" onclick="openPatientModal()"><i class="fas fa-plus"></i> Nuevo paciente</button>
+      </header>
+
+      <section class="patient-grid" id="patientGrid">
+        <!-- Card 1 -->
+        <div class="patient-card">
+          <div class="card-header">
+            <div class="avatar">ML</div>
+            <div class="header-info">
+              <span class="name">María López</span>
+              <span class="age">82 años</span>
+            </div>
+            <span class="status-badge estable">Estable</span>
+          </div>
+          <div class="card-body">
+            <div class="detail">
+              <i class="fas fa-stethoscope"></i>
+              <span class="label">Condición:</span>
+              <span class="value">Control de medicación y movilidad reducida</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-user"></i>
+              <span class="label">Familiar:</span>
+              <span class="value">Lucía López</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-clock"></i>
+              <span class="label">Estado:</span>
+              <span class="value">En seguimiento</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-action btn-turno"><i class="fas fa-play"></i> Iniciar turno</button>
+            <button class="btn-action btn-historial"><i class="fas fa-clock-rotate-left"></i> Ver historial</button>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="patient-card">
+          <div class="card-header">
+            <div class="avatar">JG</div>
+            <div class="header-info">
+              <span class="name">Jorge Gálvez</span>
+              <span class="age">77 años</span>
+            </div>
+            <span class="status-badge alerta">Alerta</span>
+          </div>
+          <div class="card-body">
+            <div class="detail">
+              <i class="fas fa-stethoscope"></i>
+              <span class="label">Condición:</span>
+              <span class="value">Hipertensión y control de presión arterial</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-user"></i>
+              <span class="label">Familiar:</span>
+              <span class="value">Carlos Gálvez</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-clock"></i>
+              <span class="label">Estado:</span>
+              <span class="value">En seguimiento</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-action btn-turno"><i class="fas fa-play"></i> Iniciar turno</button>
+            <button class="btn-action btn-historial"><i class="fas fa-clock-rotate-left"></i> Ver historial</button>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="patient-card">
+          <div class="card-header">
+            <div class="avatar">EC</div>
+            <div class="header-info">
+              <span class="name">Elena Campos</span>
+              <span class="age">89 años</span>
+            </div>
+            <span class="status-badge seguimiento">Seguimiento</span>
+          </div>
+          <div class="card-body">
+            <div class="detail">
+              <i class="fas fa-stethoscope"></i>
+              <span class="label">Condición:</span>
+              <span class="value">Seguimiento diario, hidratación y alimentación</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-user"></i>
+              <span class="label">Familiar:</span>
+              <span class="value">Rosa Campos</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-clock"></i>
+              <span class="label">Estado:</span>
+              <span class="value">En seguimiento</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-action btn-turno"><i class="fas fa-play"></i> Iniciar turno</button>
+            <button class="btn-action btn-historial"><i class="fas fa-clock-rotate-left"></i> Ver historial</button>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="patient-card">
+          <div class="card-header">
+            <div class="avatar">RP</div>
+            <div class="header-info">
+              <span class="name">Rosa Paredes</span>
+              <span class="age">76 años</span>
+            </div>
+            <span class="status-badge critico">Crítico</span>
+          </div>
+          <div class="card-body">
+            <div class="detail">
+              <i class="fas fa-stethoscope"></i>
+              <span class="label">Condición:</span>
+              <span class="value">EPOC, oxígeno domiciliario, control respiratorio</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-user"></i>
+              <span class="label">Familiar:</span>
+              <span class="value">Carlos Paredes</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-clock"></i>
+              <span class="label">Estado:</span>
+              <span class="value">Requiere atención prioritaria</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-action btn-turno"><i class="fas fa-play"></i> Iniciar turno</button>
+            <button class="btn-action btn-historial"><i class="fas fa-clock-rotate-left"></i> Ver historial</button>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="patient-card">
+          <div class="card-header">
+            <div class="avatar">AM</div>
+            <div class="header-info">
+              <span class="name">Alberto Morales</span>
+              <span class="age">81 años</span>
+            </div>
+            <span class="status-badge alerta">Alerta</span>
+          </div>
+          <div class="card-body">
+            <div class="detail">
+              <i class="fas fa-stethoscope"></i>
+              <span class="label">Condición:</span>
+              <span class="value">Insuficiencia cardíaca, control de líquidos</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-user"></i>
+              <span class="label">Familiar:</span>
+              <span class="value">Laura Morales</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-clock"></i>
+              <span class="label">Estado:</span>
+              <span class="value">En seguimiento</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-action btn-turno"><i class="fas fa-play"></i> Iniciar turno</button>
+            <button class="btn-action btn-historial"><i class="fas fa-clock-rotate-left"></i> Ver historial</button>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="patient-card">
+          <div class="card-header">
+            <div class="avatar">CV</div>
+            <div class="header-info">
+              <span class="name">Clara Vargas</span>
+              <span class="age">84 años</span>
+            </div>
+            <span class="status-badge estable">Estable</span>
+          </div>
+          <div class="card-body">
+            <div class="detail">
+              <i class="fas fa-stethoscope"></i>
+              <span class="label">Condición:</span>
+              <span class="value">Demencia senil, acompañamiento y estimulación</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-user"></i>
+              <span class="label">Familiar:</span>
+              <span class="value">Pedro Vargas</span>
+            </div>
+            <div class="detail">
+              <i class="fas fa-clock"></i>
+              <span class="label">Estado:</span>
+              <span class="value">En seguimiento</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-action btn-turno"><i class="fas fa-play"></i> Iniciar turno</button>
+            <button class="btn-action btn-historial"><i class="fas fa-clock-rotate-left"></i> Ver historial</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="patientModal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closePatientModal()">×</button>
+      <h3><i class="fas fa-user-plus" style="color:#2a5cff;"></i> Registrar paciente</h3>
+      <form class="form" id="patientForm">
+        <label>Nombre completo</label>
+        <input id="patientName" required placeholder="Ej. Rosa Martínez" />
+
+        <label>Edad</label>
+        <input id="patientAge" type="number" required placeholder="Ej. 84" />
+
+        <label>Condición principal</label>
+        <input id="patientCondition" required placeholder="Ej. Hipertensión, diabetes, movilidad reducida" />
+
+        <label>Familiar responsable</label>
+        <input id="patientFamily" required placeholder="Ej. Ana Martínez" />
+
+        <button class="primary-btn full" type="submit"><i class="fas fa-save"></i> Guardar paciente</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/reporte-utils.js"></script>
+  <script src="../assets/js/seed-data.js"></script>
+</body>
+</html>

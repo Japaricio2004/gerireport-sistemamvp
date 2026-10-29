@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GeriReport | MVP Sistema Geriátrico</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* Reset y base */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #f0f4fa;
+      min-height: 100vh;
+    }
+    
+    /* App Shell */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+      max-width: 1440px;
+      margin: 0 auto;
+      background: #ffffff;
+      box-shadow: 0 0 40px rgba(0,0,0,0.06);
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 260px;
+      background: #ffffff;
+      border-right: 1px solid #eef2f7;
+      padding: 1.8rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+    }
+    .sidebar .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .sidebar .brand .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #2a5cff, #4a7aff);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 8px 16px -6px rgba(42,92,255,0.3);
+      flex-shrink: 0;
+    }
+    .sidebar .brand h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0b1a33;
+      letter-spacing: -0.02em;
+    }
+    .sidebar .brand span {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #6b7a93;
+      display: block;
+      margin-top: -0.1rem;
+    }
+
+    /* Navegación */
+    .sidebar .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      flex: 1;
+    }
+    .sidebar .nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 0.85rem;
+      color: #4a5a72;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .sidebar .nav a i {
+      width: 1.6rem;
+      text-align: center;
+      font-size: 1rem;
+      color: #6b7a93;
+    }
+    .sidebar .nav a:hover {
+      background: #f0f4fa;
+      color: #0b1a33;
+    }
+    .sidebar .nav a.active {
+      background: #eef4ff;
+      color: #2a5cff;
+      font-weight: 600;
+      box-shadow: inset 0 0 0 2px rgba(42,92,255,0.12);
+    }
+    .sidebar .nav a.active i {
+      color: #2a5cff;
+    }
+
+    /* Sidebar Card (turno actual) */
+    .sidebar-card {
+      margin-top: 1.2rem;
+      padding: 1rem;
+      background: #f0f4fa;
+      border-radius: 1rem;
+      border-left: 4px solid #2a5cff;
+    }
+    .sidebar-card p {
+      font-size: 0.75rem;
+      color: #4a5a72;
+      margin-bottom: 0.2rem;
+    }
+    .sidebar-card strong {
+      font-size: 0.85rem;
+      color: #0b1a33;
+    }
+    .sidebar-card .badge-turno {
+      display: inline-block;
+      background: #2a5cff;
+      color: #fff;
+      font-size: 0.6rem;
+      padding: 0.1rem 0.6rem;
+      border-radius: 30px;
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+      flex: 1;
+      padding: 1.8rem 2.5rem;
+      background: #f8fafd;
+      overflow-y: auto;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .topbar .menu-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #0b1a33;
+    }
+    .topbar h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0b1a33;
+      letter-spacing: -0.02em;
+    }
+    .topbar p {
+      font-size: 0.85rem;
+      color: #6b7a93;
+    }
+    .topbar .primary-btn {
+      background: linear-gradient(135deg, #2a5cff, #4a7aff);
+      border: none;
+      border-radius: 50px;
+      padding: 0.6rem 1.5rem;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      font-family: 'Montserrat', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 16px -6px rgba(42,92,255,0.3);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .topbar .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px -8px rgba(42,92,255,0.4);
+    }
+
+    /* Hero Dashboard */
+    .hero-dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      background: #ffffff;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      border: 1px solid #eef2f7;
+      margin-bottom: 2rem;
+    }
+    .hero-copy .badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.15rem 0.7rem;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+    .hero-copy h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0b1a33;
+      margin-bottom: 0.8rem;
+      line-height: 1.3;
+    }
+    .hero-copy p {
+      font-size: 0.9rem;
+      color: #6b7a93;
+      line-height: 1.6;
+      margin-bottom: 1.2rem;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .hero-actions .primary-btn {
+      background: linear-gradient(135deg, #2a5cff, #4a7aff);
+      border: none;
+      border-radius: 50px;
+      padding: 0.6rem 1.5rem;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      font-family: 'Montserrat', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 16px -6px rgba(42,92,255,0.3);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hero-actions .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px -8px rgba(42,92,255,0.4);
+    }
+    .hero-actions .ghost-btn {
+      background: transparent;
+      border: 2px solid #e2e8f0;
+      border-radius: 50px;
+      padding: 0.6rem 1.5rem;
+      color: #1e2b45;
+      font-weight: 600;
+      font-size: 0.85rem;
+      font-family: 'Montserrat', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hero-actions .ghost-btn:hover {
+      background: #f0f4fa;
+      border-color: #bcc8db;
+    }
+
+    .hero-panel .mini-report {
+      background: #f8fafd;
+      border-radius: 1.2rem;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #eef2f7;
+    }
+    .mini-report .mini-report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .mini-report .mini-report-header strong {
+      font-weight: 700;
+      color: #0b1a33;
+    }
+    .mini-report .mini-report-header span {
+      font-size: 0.7rem;
+      color: #6b7a93;
+      background: #eef2f7;
+      padding: 0.1rem 0.6rem;
+      border-radius: 30px;
+    }
+    .mini-report p {
+      font-size: 0.85rem;
+      color: #4a5a72;
+      margin-bottom: 0.3rem;
+    }
+    .mini-report p b {
+      color: #0b1a33;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: #ffffff;
+      border-radius: 1.2rem;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #eef2f7;
+      transition: all 0.2s;
+    }
+    .stat-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 8px 20px -10px rgba(0,0,0,0.06);
+    }
+    .stat-card span {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #6b7a93;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .stat-card strong {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0b1a33;
+      display: block;
+      margin-top: 0.2rem;
+    }
+    .stat-card p {
+      font-size: 0.75rem;
+      color: #6b7a93;
+      margin-top: 0.3rem;
+    }
+    .stat-card.warning strong { color: #d97706; }
+    .stat-card.warning .icon { color: #d97706; }
+    .stat-card.success strong { color: #38a169; }
+    .stat-card.success .icon { color: #38a169; }
+
+    /* Content Grid */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .panel {
+      background: #ffffff;
+      border-radius: 1.2rem;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #eef2f7;
+    }
+    .panel .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .panel .panel-heading h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0b1a33;
+    }
+    .panel .panel-heading a {
+      font-size: 0.75rem;
+      color: #2a5cff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .panel .panel-heading a:hover {
+      text-decoration: underline;
+    }
+
+    /* Patient Row */
+    .patient-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #f0f4fa;
+    }
+    .patient-row:last-child { border-bottom: none; }
+    .patient-row .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #eef4ff;
+      color: #2a5cff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+    .patient-row div strong {
+      font-size: 0.85rem;
+      color: #0b1a33;
+      display: block;
+    }
+    .patient-row div span {
+      font-size: 0.7rem;
+      color: #6b7a93;
+    }
+    .patient-row small {
+      margin-left: auto;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #38a169;
+      background: #e6ffed;
+      padding: 0.1rem 0.6rem;
+      border-radius: 30px;
+    }
+    .patient-row .tag-alert {
+      color: #d97706;
+      background: #fef3c7;
+    }
+
+    /* Alert List */
+    .alert-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .alert-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.85rem;
+      color: #1e2b45;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #f0f4fa;
+    }
+    .alert-list li:last-child { border-bottom: none; }
+    .alert-list li span {
+      width: 8px;
+      height: 8px;
+      background: #e53e3e;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .alert-list li span.warning {
+      background: #d97706;
+    }
+    .alert-list li span.success {
+      background: #38a169;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 70px;
+        padding: 1.2rem 0.5rem;
+      }
+      .sidebar .brand h1,
+      .sidebar .brand span,
+      .sidebar .nav a span,
+      .sidebar-card {
+        display: none;
+      }
+      .sidebar .nav a {
+        justify-content: center;
+        padding: 0.6rem;
+      }
+      .sidebar .nav a i {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+      .sidebar .brand {
+        justify-content: center;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+      }
+      .sidebar .brand .brand-icon {
+        margin: 0;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .hero-dashboard {
+        grid-template-columns: 1fr;
+      }
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+      .topbar .menu-btn {
+        display: block;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .app-shell {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        padding: 0.6rem 1rem;
+        border-right: none;
+        border-bottom: 1px solid #eef2f7;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        position: relative;
+      }
+      .sidebar .brand {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+      .sidebar .brand h1,
+      .sidebar .brand span {
+        display: none;
+      }
+      .sidebar .nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.2rem;
+      }
+      .sidebar .nav a {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.7rem;
+      }
+      .sidebar .nav a span {
+        display: inline;
+      }
+      .sidebar .nav a i {
+        font-size: 0.9rem;
+      }
+      .sidebar .sidebar-card {
+        display: none;
+      }
+      .main-content {
+        padding: 1rem;
+      }
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .topbar .menu-btn {
+        display: none;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
+      }
+      .stat-card strong {
+        font-size: 1.5rem;
+      }
+      .hero-dashboard {
+        padding: 1.2rem;
+      }
+      .hero-copy h3 {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .sidebar .brand h1,
+      .sidebar .brand span {
+        display: none;
+      }
+      .sidebar .nav a span {
+        display: none;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-actions {
+        flex-direction: column;
+      }
+      .hero-actions .primary-btn,
+      .hero-actions .ghost-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .main-content {
+        padding: 0.8rem;
+      }
+      .patient-row {
+        flex-wrap: wrap;
+      }
+      .patient-row small {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon">GR</div>
+        <div>
+          <h1>GeriReport</h1>
+          <span>MVP clínico domiciliario</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="active" href="index.html"><i class="fas fa-gauge-high"></i> <span>Dashboard</span></a>
+        <a href="pages/pacientes.html"><i class="fas fa-users"></i> <span>Pacientes</span></a>
+        <a href="pages/turno.html"><i class="fas fa-clock"></i> <span>Modo Turno</span></a>
+        <a href="pages/nuevo-reporte.html"><i class="fas fa-pen-to-square"></i> <span>Nuevo reporte</span></a>
+        <a href="pages/reportes.html"><i class="fas fa-file-lines"></i> <span>Reportes</span></a>
+        <a href="pages/seguimiento.html"><i class="fas fa-chart-line"></i> <span>Seguimiento</span></a>
+        <a href="pages/vista-familiar.html"><i class="fas fa-eye"></i> <span>Vista familiar</span></a>
+        <a href="pages/login.html"><i class="fas fa-arrow-right-from-bracket"></i> <span>Cerrar sesión</span></a>
+      </nav>
+
+      <div class="sidebar-card" id="sidebarTurnoCard">
+        <p>Turno actual</p>
+        <strong>08:00 - 20:00</strong>
+        <br />
+        <span class="badge-turno">En curso</span>
+        <p style="margin-top:0.4rem; font-size:0.7rem;">Pacientes: 4 · Reportes: 3</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <div>
+          <h2>Panel principal</h2>
+          <p>Resumen rápido de pacientes, reportes y alertas del turno.</p>
+        </div>
+        <a class="primary-btn" href="pages/pacientes.html">+ Iniciar turno</a>
+      </header>
+
+      <section class="hero-dashboard">
+        <div class="hero-copy">
+          <span class="badge">MVP funcional</span>
+          <h3>Sistema digital para reportes geriátricos domiciliarios</h3>
+          <p>
+            Registra signos vitales, medicamentos, alimentación, incidentes y observaciones
+            del adulto mayor en una plataforma simple, ordenada y fácil de usar.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-btn" href="pages/pacientes.html">🕐 Iniciar un turno</a>
+            <a class="ghost-btn" href="pages/reportes.html">Ver historial</a>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <div class="mini-report">
+            <div class="mini-report-header">
+              <strong>Reporte rápido</strong>
+              <span>Hoy</span>
+            </div>
+            <p><b>Paciente:</b> María López</p>
+            <p><b>Presión:</b> 120/80 mmHg</p>
+            <p><b>Estado:</b> Estable</p>
+            <p><b>Observación:</b> Buen apetito y sin incidentes.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card">
+          <span>Pacientes activos</span>
+          <strong>08</strong>
+          <p>Adultos mayores en seguimiento domiciliario.</p>
+        </article>
+        <article class="stat-card">
+          <span>Reportes del día</span>
+          <strong>12</strong>
+          <p>Registros completados durante el turno.</p>
+        </article>
+        <article class="stat-card warning">
+          <span>Alertas pendientes</span>
+          <strong>03</strong>
+          <p>Medicamentos, signos o incidencias por revisar.</p>
+        </article>
+        <article class="stat-card success">
+          <span>Satisfacción familiar</span>
+          <strong>92%</strong>
+          <p>Familiares conformes con el reporte recibido.</p>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel">
+          <div class="panel-heading">
+            <h3>Pacientes recientes</h3>
+            <a href="pages/pacientes.html">Ver todos</a>
+          </div>
+          <div class="patient-row">
+            <div class="avatar">ML</div>
+            <div>
+              <strong>María López</strong>
+              <span>82 años · Riesgo moderado</span>
+            </div>
+            <small>Estable</small>
+          </div>
+          <div class="patient-row">
+            <div class="avatar">JG</div>
+            <div>
+              <strong>Jorge Gálvez</strong>
+              <span>77 años · Control de presión</span>
+            </div>
+            <small class="tag-alert">Revisar</small>
+          </div>
+          <div class="patient-row">
+            <div class="avatar">EC</div>
+            <div>
+              <strong>Elena Campos</strong>
+              <span>89 años · Seguimiento diario</span>
+            </div>
+            <small>Estable</small>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <h3>Alertas del turno</h3>
+            <a href="pages/seguimiento.html">Seguimiento</a>
+          </div>
+          <ul class="alert-list">
+            <li><span></span> Jorge Gálvez necesita control de presión a las 16:00.</li>
+            <li><span></span> Confirmar medicamento nocturno de María López.</li>
+            <li><span></span> Registrar hidratación de Elena Campos.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/pacientes.js"></script>
+  <script src="assets/js/seed-data.js"></script>
+</body>
+</html>

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GeriReport | Nuevo Reporte</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* Reset y base */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #f0f4fa;
+      min-height: 100vh;
+    }
+    
+    /* App Shell */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+      max-width: 1440px;
+      margin: 0 auto;
+      background: #ffffff;
+      box-shadow: 0 0 40px rgba(0,0,0,0.06);
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 260px;
+      background: #ffffff;
+      border-right: 1px solid #eef2f7;
+      padding: 1.8rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+    }
+    .sidebar .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .sidebar .brand .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #2a5cff, #4a7aff);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 8px 16px -6px rgba(42,92,255,0.3);
+      flex-shrink: 0;
+    }
+    .sidebar .brand h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0b1a33;
+      letter-spacing: -0.02em;
+    }
+    .sidebar .brand span {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #6b7a93;
+      display: block;
+      margin-top: -0.1rem;
+    }
+
+    /* Navegación */
+    .sidebar .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      flex: 1;
+    }
+    .sidebar .nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 0.85rem;
+      color: #4a5a72;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .sidebar .nav a i {
+      width: 1.6rem;
+      text-align: center;
+      font-size: 1rem;
+      color: #6b7a93;
+    }
+    .sidebar .nav a:hover {
+      background: #f0f4fa;
+      color: #0b1a33;
+    }
+    .sidebar .nav a.active {
+      background: #eef4ff;
+      color: #2a5cff;
+      font-weight: 600;
+      box-shadow: inset 0 0 0 2px rgba(42,92,255,0.12);
+    }
+    .sidebar .nav a.active i {
+      color: #2a5cff;
+    }
+
+    /* Sidebar Card (turno actual) */
+    .sidebar-card {
+      margin-top: 1.2rem;
+      padding: 1rem;
+      background: #f0f4fa;
+      border-radius: 1rem;
+      border-left: 4px solid #2a5cff;
+    }
+    .sidebar-card p {
+      font-size: 0.75rem;
+      color: #4a5a72;
+      margin-bottom: 0.2rem;
+    }
+    .sidebar-card strong {
+      font-size: 0.85rem;
+      color: #0b1a33;
+    }
+    .sidebar-card .badge-turno {
+      display: inline-block;
+      background: #2a5cff;
+      color: #fff;
+      font-size: 0.6rem;
+      padding: 0.1rem 0.6rem;
+      border-radius: 30px;
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+      flex: 1;
+      padding: 1.8rem 2.5rem;
+      background: #f8fafd;
+      overflow-y: auto;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .topbar .menu-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #0b1a33;
+    }
+    .topbar h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0b1a33;
+      letter-spacing: -0.02em;
+    }
+    .topbar p {
+      font-size: 0.85rem;
+      color: #6b7a93;
+    }
+
+    /* ===== FORM LAYOUT ===== */
+    .form-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .form h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0b1a33;
+      border-bottom: 2px solid #eef4ff;
+      padding-bottom: 0.4rem;
+      margin-bottom: 0.2rem;
+    }
+    .form label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #1e2b45;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    .form input,
+    .form select,
+    .form textarea {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      background: #fafcff;
+      transition: all 0.2s;
+      outline: none;
+      color: #0b1a33;
+    }
+    .form input:focus,
+    .form select:focus,
+    .form textarea:focus {
+      border-color: #2a5cff;
+      box-shadow: 0 0 0 4px rgba(42,92,255,0.1);
+    }
+    .form textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+    .three-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    /* Botón */
+    .primary-btn {
+      background: linear-gradient(135deg, #2a5cff, #4a7aff);
+      border: none;
+      border-radius: 50px;
+      padding: 0.9rem 2rem;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      font-family: 'Montserrat', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 8px 20px -6px rgba(42,92,255,0.4);
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    .primary-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -8px rgba(42,92,255,0.5);
+    }
+
+    /* Panel (contenedores) */
+    .panel {
+      background: #ffffff;
+      border-radius: 1.5rem;
+      padding: 1.5rem 1.8rem;
+      border: 1px solid #eef2f7;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    /* Preview Card */
+    .preview-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0b1a33;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #eef4ff;
+      padding-bottom: 0.4rem;
+    }
+    .generated-report {
+      background: #f8fafd;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      min-height: 200px;
+      font-size: 0.85rem;
+      color: #1e2b45;
+      border: 1px dashed #dce4f0;
+    }
+    .generated-report .muted {
+      color: #94a3b8;
+      text-align: center;
+      padding: 2rem 0;
+    }
+    .generated-report .field {
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed #eef2f7;
+      padding-bottom: 0.3rem;
+    }
+    .generated-report .field .label {
+      color: #6b7a93;
+      font-weight: 500;
+    }
+    .generated-report .field .value {
+      font-weight: 600;
+      color: #0b1a33;
+      text-align: right;
+    }
+    .generated-report .section-title {
+      font-weight: 700;
+      color: #2a5cff;
+      margin: 0.8rem 0 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 70px;
+        padding: 1.2rem 0.5rem;
+      }
+      .sidebar .brand h1,
+      .sidebar .brand span,
+      .sidebar .nav a span,
+      .sidebar-card {
+        display: none;
+      }
+      .sidebar .nav a {
+        justify-content: center;
+        padding: 0.6rem;
+      }
+      .sidebar .nav a i {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+      .sidebar .brand {
+        justify-content: center;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+      }
+      .sidebar .brand .brand-icon {
+        margin: 0;
+      }
+      .form-layout {
+        grid-template-columns: 1fr;
+      }
+      .topbar .menu-btn {
+        display: block;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .app-shell {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        padding: 0.6rem 1rem;
+        border-right: none;
+        border-bottom: 1px solid #eef2f7;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        position: relative;
+      }
+      .sidebar .brand {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+      .sidebar .brand h1,
+      .sidebar .brand span {
+        display: none;
+      }
+      .sidebar .nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.2rem;
+      }
+      .sidebar .nav a {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.7rem;
+      }
+      .sidebar .nav a span {
+        display: inline;
+      }
+      .sidebar .nav a i {
+        font-size: 0.9rem;
+      }
+      .sidebar .sidebar-card {
+        display: none;
+      }
+      .main-content {
+        padding: 1rem;
+      }
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .topbar .menu-btn {
+        display: none;
+      }
+      .two-cols,
+      .three-cols {
+        grid-template-columns: 1fr;
+      }
+      .form-layout {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+      }
+      .panel {
+        padding: 1rem 1.2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .sidebar .brand h1,
+      .sidebar .brand span {
+        display: none;
+      }
+      .sidebar .nav a span {
+        display: none;
+      }
+      .main-content {
+        padding: 0.8rem;
+      }
+      .topbar h2 {
+        font-size: 1.1rem;
+      }
+      .primary-btn {
+        font-size: 0.85rem;
+        padding: 0.8rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon">GR</div>
+        <div><h1>GeriReport</h1><span>MVP clínico domiciliario</span></div>
+      </div>
+      <nav class="nav">
+        <a href="../index.html"><i class="fas fa-gauge-high"></i> <span>Dashboard</span></a>
+        <a href="pacientes.html"><i class="fas fa-users"></i> <span>Pacientes</span></a>
+        <a href="turno.html"><i class="fas fa-clock"></i> <span>Modo Turno</span></a>
+        <a class="active" href="nuevo-reporte.html"><i class="fas fa-pen-to-square"></i> <span>Nuevo reporte</span></a>
+        <a href="reportes.html"><i class="fas fa-file-lines"></i> <span>Reportes</span></a>
+        <a href="seguimiento.html"><i class="fas fa-chart-line"></i> <span>Seguimiento</span></a>
+        <a href="vista-familiar.html"><i class="fas fa-eye"></i> <span>Vista familiar</span></a>
+        <a href="login.html"><i class="fas fa-arrow-right-from-bracket"></i> <span>Cerrar sesión</span></a>
+      </nav>
+      <div class="sidebar-card" id="sidebarTurnoCard">
+        <p>Turno actual</p>
+        <strong>08:00 - 20:00</strong>
+        <br />
+        <span class="badge-turno">En curso</span>
+        <p style="margin-top:0.4rem; font-size:0.7rem;">Pacientes: 4 · Reportes: 3</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <div>
+          <h2>Nuevo reporte geriátrico</h2>
+          <p>Completa la información principal del turno domiciliario.</p>
+        </div>
+      </header>
+
+      <section class="form-layout">
+        <form class="panel form report-form" id="reportForm">
+          <h3>Datos del paciente</h3>
+          <div class="two-cols">
+            <div>
+              <label>Paciente</label>
+              <select id="patient" required>
+                <option value="">Seleccionar paciente</option>
+              </select>
+            </div>
+            <div>
+              <label>Turno</label>
+              <select id="shift" required>
+                <option>Mañana</option>
+                <option>Tarde</option>
+                <option>Noche</option>
+                <option>Turno completo</option>
+              </select>
+            </div>
+          </div>
+
+          <h3>Signos vitales</h3>
+          <div class="three-cols">
+            <div>
+              <label>Presión arterial</label>
+              <input id="pressure" placeholder="120/80" required />
+            </div>
+            <div>
+              <label>Frecuencia cardiaca</label>
+              <input id="heart" placeholder="72 lpm" required />
+            </div>
+            <div>
+              <label>Temperatura</label>
+              <input id="temp" placeholder="36.5 °C" required />
+            </div>
+          </div>
+
+          <h3>Cuidados del turno</h3>
+          <div class="two-cols">
+            <div>
+              <label>Medicamentos administrados</label>
+              <textarea id="meds" rows="5" placeholder="Ej. Losartán 50mg - 8:00 a.m." required></textarea>
+            </div>
+            <div>
+              <label>Alimentación e hidratación</label>
+              <textarea id="food" rows="5" placeholder="Ej. Desayuno completo, 3 vasos de agua." required></textarea>
+            </div>
+          </div>
+
+          <label>Incidentes o alertas</label>
+          <textarea id="incidents" rows="4" placeholder="Ej. Sin incidentes / caída leve / mareo / dolor..."></textarea>
+
+          <label>Observaciones generales</label>
+          <textarea id="notes" rows="5" placeholder="Resumen del estado del paciente durante el turno." required></textarea>
+
+          <button class="primary-btn" type="submit">Guardar y generar reporte</button>
+        </form>
+
+        <aside class="panel preview-card">
+          <h3>Vista previa</h3>
+          <div id="livePreview" class="generated-report">
+            <p class="muted">Completa el formulario para visualizar el reporte.</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/pacientes.js"></script>
+  <script src="../assets/js/seed-data.js"></script>
+  <script src="../assets/js/reportes.js"></script>
+</body>
+</html>
