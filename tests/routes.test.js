@@ -42,6 +42,16 @@ test("all original routes render React screens including saved shift and report"
         search: path.includes("reporte-detalle") ? "?id=2" : "",
       };
       const html = renderToString(React.createElement(App));
+      if (path === "/pages/nuevo-reporte.html") {
+        assert.ok(
+          html.includes('for="heart"'),
+          "manual heart field has an associated label",
+        );
+        assert.match(
+          html,
+          /<input[^>]*id="heart"[^>]*type="number"|<input[^>]*type="number"[^>]*id="heart"/,
+        );
+      }
       if (!["/pages/login.html", "/LANDING.html"].includes(path)) {
         const sidebar = html.match(
           /<aside[^>]*care-sidebar[^>]*>[\s\S]*?<\/aside>/,
@@ -127,6 +137,18 @@ test("all original routes render React screens including saved shift and report"
     globalThis.location = { pathname: "/pages/turno.html", search: "" };
     assert.ok(
       renderToString(React.createElement(App)).includes("Registro persistido"),
+    );
+    globalThis.location = {pathname:'/pages/vista-familiar.html',search:'?paciente=no-existe'};
+    assert.ok(renderToString(React.createElement(App)).includes('El paciente del enlace no está disponible.'));
+    localStorage.setItem("gerireport_patients", "[]");
+    globalThis.location = {
+      pathname: "/pages/vista-familiar.html",
+      search: "",
+    };
+    assert.ok(
+      renderToString(React.createElement(App)).includes(
+        "No hay pacientes disponibles",
+      ),
     );
   } finally {
     await server.close();

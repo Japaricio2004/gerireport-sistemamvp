@@ -127,7 +127,7 @@ export default function OriginalTemplate({
             id={"patientForm"}
             {...bindings["patientForm"]}
           >
-            <label>{"Nombre completo"}</label>
+            <label htmlFor={"patientName"}>{"Nombre completo"}</label>
             <input
               id={"patientName"}
               required={true}
@@ -135,7 +135,7 @@ export default function OriginalTemplate({
               name={"patientName"}
               {...bindings["patientName"]}
             />
-            <label>{"Edad"}</label>
+            <label htmlFor={"patientAge"}>{"Edad"}</label>
             <input
               id={"patientAge"}
               type={"number"}
@@ -144,7 +144,7 @@ export default function OriginalTemplate({
               name={"patientAge"}
               {...bindings["patientAge"]}
             />
-            <label>{"Condición principal"}</label>
+            <label htmlFor={"patientCondition"}>{"Condición principal"}</label>
             <input
               id={"patientCondition"}
               required={true}
@@ -152,7 +152,7 @@ export default function OriginalTemplate({
               name={"patientCondition"}
               {...bindings["patientCondition"]}
             />
-            <label>{"Familiar responsable"}</label>
+            <label htmlFor={"patientFamily"}>{"Familiar responsable"}</label>
             <input
               id={"patientFamily"}
               required={true}

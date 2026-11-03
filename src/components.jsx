@@ -17,7 +17,15 @@ export function Modal({ title, children, onClose }) {
         onClose();
       }}
       onClick={(e) => {
-        if (e.target === ref.current) onClose();
+        if (e.target !== ref.current) return;
+        const rect = ref.current.getBoundingClientRect();
+        if (
+          e.clientX < rect.left ||
+          e.clientX > rect.right ||
+          e.clientY < rect.top ||
+          e.clientY > rect.bottom
+        )
+          onClose();
       }}
     >
       <div className="section-heading">

@@ -94,7 +94,60 @@ export const keys = {
 };
 export function read(key, fallback) {
   try {
-    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+    const value = JSON.parse(localStorage.getItem(key));
+    if (value == null) return fallback;
+    const validRecord = (record) =>
+      record && typeof record === "object" && typeof record.type === "string";
+    const cleanRecords = (records) =>
+      Array.isArray(records)
+        ? records
+            .filter(validRecord)
+            .map((record) => ({
+              ...record,
+              data:
+                record.data && typeof record.data === "object"
+                  ? record.data
+                  : {},
+            }))
+        : [];
+    if (Array.isArray(fallback)) {
+      if (!Array.isArray(value)) return fallback;
+      if (key === keys.patients)
+        return value.filter(
+          (patient) => typeof patient?.name === "string" && patient.name.trim(),
+        );
+      if (key === keys.reports)
+        return value
+          .filter(
+            (report) =>
+              report &&
+              typeof report.patient === "string" &&
+              report.patient.trim() &&
+              ["number", "string"].includes(typeof report.id),
+          )
+          .map((report) =>
+            report.type === "turno"
+              ? { ...report, records: cleanRecords(report.records) }
+              : report,
+          );
+      if (key === keys.tasks)
+        return value.filter(
+          (task) =>
+            task &&
+            typeof task.title === "string" &&
+            ["pending", "active", "done"].includes(task.status),
+        );
+    }
+    if (key === keys.turn) {
+      if (
+        typeof value?.patient !== "string" ||
+        !value.patient.trim() ||
+        !Array.isArray(value.records)
+      )
+        return fallback;
+      return { ...value, records: cleanRecords(value.records) };
+    }
+    return value;
   } catch {
     return fallback;
   }

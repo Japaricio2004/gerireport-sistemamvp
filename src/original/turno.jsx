@@ -248,7 +248,7 @@ export default function OriginalTemplate({
           >
             <div className={"two-cols"}>
               <div>
-                <label>{"Presión arterial"}</label>
+                <label htmlFor={"v_pressure"}>{"Presión arterial"}</label>
                 <input
                   id={"v_pressure"}
                   placeholder={"120/80"}
@@ -258,7 +258,7 @@ export default function OriginalTemplate({
                 />
               </div>
               <div>
-                <label>{"Frecuencia cardíaca (lpm)"}</label>
+                <label htmlFor={"v_heart"}>{"Frecuencia cardíaca (lpm)"}</label>
                 <input
                   id={"v_heart"}
                   type={"number"}
@@ -271,7 +271,7 @@ export default function OriginalTemplate({
             </div>
             <div className={"two-cols"}>
               <div>
-                <label>{"Temperatura (°C)"}</label>
+                <label htmlFor={"v_temp"}>{"Temperatura (°C)"}</label>
                 <input
                   id={"v_temp"}
                   type={"number"}
@@ -283,7 +283,7 @@ export default function OriginalTemplate({
                 />
               </div>
               <div>
-                <label>{"Saturación de oxígeno (%)"}</label>
+                <label htmlFor={"v_spo2"}>{"Saturación de oxígeno (%)"}</label>
                 <input
                   id={"v_spo2"}
                   type={"number"}
@@ -315,7 +315,7 @@ export default function OriginalTemplate({
             {" Registrar medicación"}
           </h3>
           <form className={"form"} id={"medsForm"} {...bindings["medsForm"]}>
-            <label>{"Medicamento"}</label>
+            <label htmlFor={"m_name"}>{"Medicamento"}</label>
             <input
               id={"m_name"}
               placeholder={"Ej. Paracetamol 500 mg"}
@@ -325,7 +325,7 @@ export default function OriginalTemplate({
             />
             <div className={"two-cols"}>
               <div>
-                <label>{"Dosis"}</label>
+                <label htmlFor={"m_dose"}>{"Dosis"}</label>
                 <input
                   id={"m_dose"}
                   placeholder={"Ej. 1 tableta"}
@@ -335,7 +335,7 @@ export default function OriginalTemplate({
                 />
               </div>
               <div>
-                <label>{"Hora"}</label>
+                <label htmlFor={"m_time"}>{"Hora"}</label>
                 <input
                   id={"m_time"}
                   type={"time"}
@@ -345,7 +345,7 @@ export default function OriginalTemplate({
                 />
               </div>
             </div>
-            <label>{"Estado"}</label>
+            <label htmlFor={"m_status"}>{"Estado"}</label>
             <select
               id={"m_status"}
               required={true}
@@ -376,7 +376,7 @@ export default function OriginalTemplate({
             {" Registrar alimentación"}
           </h3>
           <form className={"form"} id={"foodForm"} {...bindings["foodForm"]}>
-            <label>{"Comida"}</label>
+            <label htmlFor={"f_meal"}>{"Comida"}</label>
             <select
               id={"f_meal"}
               required={true}
@@ -388,7 +388,7 @@ export default function OriginalTemplate({
               <option>{"Cena"}</option>
               <option>{"Merienda"}</option>
             </select>
-            <label>{"Cantidad consumida"}</label>
+            <label htmlFor={"f_amount"}>{"Cantidad consumida"}</label>
             <select
               id={"f_amount"}
               required={true}
@@ -401,7 +401,7 @@ export default function OriginalTemplate({
               <option value={"25"}>{"Poco (25%)"}</option>
               <option value={"0"}>{"Rechazado (0%)"}</option>
             </select>
-            <label>{"Nota (opcional)"}</label>
+            <label htmlFor={"f_note"}>{"Nota (opcional)"}</label>
             <input
               id={"f_note"}
               placeholder={"Ej. Buen apetito"}
@@ -429,7 +429,7 @@ export default function OriginalTemplate({
             {" Registrar sueño"}
           </h3>
           <form className={"form"} id={"sleepForm"} {...bindings["sleepForm"]}>
-            <label>{"Horas de sueño"}</label>
+            <label htmlFor={"s_hours"}>{"Horas de sueño"}</label>
             <input
               id={"s_hours"}
               type={"number"}
@@ -439,7 +439,7 @@ export default function OriginalTemplate({
               name={"s_hours"}
               {...bindings["s_hours"]}
             />
-            <label>{"Calidad del descanso"}</label>
+            <label htmlFor={"s_quality"}>{"Calidad del descanso"}</label>
             <select
               id={"s_quality"}
               required={true}
@@ -617,7 +617,7 @@ export default function OriginalTemplate({
             id={"incidentForm"}
             {...bindings["incidentForm"]}
           >
-            <label>{"Tipo"}</label>
+            <label htmlFor={"i_type"}>{"Tipo"}</label>
             <select
               id={"i_type"}
               required={true}
@@ -630,7 +630,7 @@ export default function OriginalTemplate({
               <option>{"Rechazo de alimento"}</option>
               <option>{"Otro"}</option>
             </select>
-            <label>{"Descripción"}</label>
+            <label htmlFor={"i_description"}>{"Descripción"}</label>
             <textarea
               id={"i_description"}
               rows={"3"}
@@ -639,7 +639,7 @@ export default function OriginalTemplate({
               name={"i_description"}
               {...bindings["i_description"]}
             ></textarea>
-            <label>{"Hora"}</label>
+            <label htmlFor={"i_time"}>{"Hora"}</label>
             <input
               id={"i_time"}
               type={"time"}

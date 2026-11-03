@@ -165,3 +165,53 @@ test("manual review provides the same measurement reasons and avoids false incid
   assert.equal(summarizeReport(report).incidentCount, 0);
   assert.equal(summarizeReport(report).reviewCount, 1);
 });
+
+test("saved values with the wrong container type fall back safely", () => {
+  const before = localStorage.getItem(keys.patients);
+  try {
+    localStorage.setItem(
+      keys.patients,
+      JSON.stringify({ name: "invalid container" }),
+    );
+    assert.deepEqual(read(keys.patients, []), []);
+    localStorage.setItem(
+      keys.turn,
+      JSON.stringify({ patient: "Demo", records: "invalid" }),
+    );
+    assert.equal(read(keys.turn, null), null);
+  } finally {
+    localStorage.setItem(keys.patients, before);
+    localStorage.removeItem(keys.turn);
+  }
+});
+test("malformed saved entries are ignored while valid patient and report data remain available", () => {
+  const patientsBefore = localStorage.getItem(keys.patients),
+    reportsBefore = localStorage.getItem(keys.reports);
+  try {
+    localStorage.setItem(
+      keys.patients,
+      JSON.stringify([null, {}, "invalid", { name: "Paciente válido" }]),
+    );
+    assert.deepEqual(read(keys.patients, []), [{ name: "Paciente válido" }]);
+    localStorage.setItem(
+      keys.reports,
+      JSON.stringify([
+        null,
+        {},
+        {
+          id: 99,
+          type: "turno",
+          patient: "Demo",
+          records: [null, "invalid", { type: "sleep", detail: "7 horas" }],
+        },
+      ]),
+    );
+    const reports = read(keys.reports, []);
+    assert.equal(reports.length, 1);
+    assert.equal(reports[0].records.length, 1);
+    assert.doesNotThrow(() => summarizeReport(reports[0]));
+  } finally {
+    localStorage.setItem(keys.patients, patientsBefore);
+    localStorage.setItem(keys.reports, reportsBefore);
+  }
+});

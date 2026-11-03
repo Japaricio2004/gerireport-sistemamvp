@@ -746,6 +746,8 @@ export function Manual() {
           pattern: "[0-9]{2,3}/[0-9]{2,3}",
           title: "Ejemplo: 120/80.",
         },
+        heart: { type: "number", min: 1, step: 1, inputMode: "numeric" },
+        temp: { type: "number", min: 0.1, step: 0.1, inputMode: "decimal" },
         reportForm: {
           onChange: (e) =>
             setData({ ...data, [e.target.name]: e.target.value }),
@@ -915,7 +917,9 @@ export function History() {
                           <p>
                             <b>Incidentes:</b> {s.incidentCount}
                           </p>
-                          <p><b>Para revisar:</b> {s.reviewCount} registros</p>
+                          <p>
+                            <b>Para revisar:</b> {s.reviewCount} registros
+                          </p>
                           <p>
                             <b>Medicación:</b> {s.medication}
                           </p>
@@ -1199,10 +1203,9 @@ export function FollowUp() {
 export function Family() {
   const base = useOriginal();
   const { patients, reports } = useStore();
+  const requestedPatient = new URLSearchParams(location.search).get("paciente");
   const [name, setName] = useState(
-    new URLSearchParams(location.search).get("paciente") ||
-      patients[0]?.name ||
-      "",
+    requestedPatient ? patients.find(patient => patient.name === requestedPatient)?.name || '' : patients[0]?.name || '',
   );
   const patient = patients.find((p) => p.name === name);
   const report = reports
@@ -1222,10 +1225,10 @@ export function Family() {
       }}
       slots={{
         ...base.slots,
-        familyPatientSelect: patients.map((p) => (
+        familyPatientSelect: <><option value="" disabled>Seleccionar paciente</option>{patients.map((p) => (
           <option key={p.name}>{p.name}</option>
-        )),
-        familyCard: (
+        ))}</>,
+        familyCard: patient ? (
           <div className="family-card">
             <div className="patient-header">
               <div className="avatar">
@@ -1320,6 +1323,14 @@ export function Family() {
                 </div>
               </>
             )}
+          </div>
+        ) : (
+          <div className="section-empty">
+            <h3>{patients.length ? 'Selecciona un paciente' : 'No hay pacientes disponibles'}</h3>
+            <p>{patients.length ? 'El paciente del enlace no está disponible. Elige uno en el selector.' : 'Registra un paciente para consultar su resumen familiar.'}</p>
+            {!patients.length && <a className="primary-btn" href="/pages/pacientes.html">
+              Ir a pacientes
+            </a>}
           </div>
         ),
       }}

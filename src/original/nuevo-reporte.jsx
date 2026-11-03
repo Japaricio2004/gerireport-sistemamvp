@@ -96,7 +96,7 @@ export default function OriginalTemplate({
               <h3>{"Datos del paciente"}</h3>
               <div className={"two-cols"}>
                 <div>
-                  <label>{"Paciente"}</label>
+                  <label htmlFor={"patient"}>{"Paciente"}</label>
                   <select
                     id={"patient"}
                     required={true}
@@ -107,7 +107,7 @@ export default function OriginalTemplate({
                   </select>
                 </div>
                 <div>
-                  <label>{"Turno"}</label>
+                  <label htmlFor={"shift"}>{"Turno"}</label>
                   <select
                     id={"shift"}
                     required={true}
@@ -124,7 +124,7 @@ export default function OriginalTemplate({
               <h3>{"Signos vitales"}</h3>
               <div className={"three-cols"}>
                 <div>
-                  <label>{"Presión arterial"}</label>
+                  <label htmlFor={"pressure"}>{"Presión arterial"}</label>
                   <input
                     id={"pressure"}
                     placeholder={"120/80"}
@@ -134,7 +134,7 @@ export default function OriginalTemplate({
                   />
                 </div>
                 <div>
-                  <label>{"Frecuencia cardiaca"}</label>
+                  <label htmlFor={"heart"}>{"Frecuencia cardiaca"}</label>
                   <input
                     id={"heart"}
                     placeholder={"72 lpm"}
@@ -144,7 +144,7 @@ export default function OriginalTemplate({
                   />
                 </div>
                 <div>
-                  <label>{"Temperatura"}</label>
+                  <label htmlFor={"temp"}>{"Temperatura"}</label>
                   <input
                     id={"temp"}
                     placeholder={"36.5 °C"}
@@ -157,7 +157,7 @@ export default function OriginalTemplate({
               <h3>{"Cuidados del turno"}</h3>
               <div className={"two-cols"}>
                 <div>
-                  <label>{"Medicamentos administrados"}</label>
+                  <label htmlFor={"meds"}>{"Medicamentos administrados"}</label>
                   <textarea
                     id={"meds"}
                     rows={"5"}
@@ -168,7 +168,7 @@ export default function OriginalTemplate({
                   ></textarea>
                 </div>
                 <div>
-                  <label>{"Alimentación e hidratación"}</label>
+                  <label htmlFor={"food"}>{"Alimentación e hidratación"}</label>
                   <textarea
                     id={"food"}
                     rows={"5"}
@@ -179,7 +179,7 @@ export default function OriginalTemplate({
                   ></textarea>
                 </div>
               </div>
-              <label>{"Incidentes o alertas"}</label>
+              <label htmlFor={"incidents"}>{"Incidentes o alertas"}</label>
               <textarea
                 id={"incidents"}
                 rows={"4"}
@@ -189,7 +189,7 @@ export default function OriginalTemplate({
                 name={"incidents"}
                 {...bindings["incidents"]}
               ></textarea>
-              <label>{"Observaciones generales"}</label>
+              <label htmlFor={"notes"}>{"Observaciones generales"}</label>
               <textarea
                 id={"notes"}
                 rows={"5"}
