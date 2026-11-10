@@ -1,0 +1,18 @@
+.admin-page { display: grid; gap: 1.25rem; max-width: 1100px; margin: 0 auto; padding: 2rem; }
+.admin-page h1 { margin: 0; color: #22483b; }
+.admin-page h2 { margin-top: 0; }
+.admin-panel { background: #fff; border: 1px solid #dce8e1; border-radius: 18px; padding: 1.5rem; }
+.admin-users { display: grid; gap: .6rem; }
+.admin-user { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid #e5ece8; padding: .6rem 0; }
+.admin-user div { display: grid; gap: .15rem; min-width: 12rem; }
+.admin-user small { color: #52685c; }
+.admin-user label, .admin-form label, .admin-backup label { display: grid; gap: .35rem; font-weight: 650; }
+.admin-password { display: flex; flex-wrap: wrap; align-items: end; gap: .4rem; }
+.admin-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .8rem; align-items: end; }
+.admin-page :is(input, select, button) { min-height: 44px; font: inherit; }
+.admin-page :is(input, select) { max-width: 100%; border: 1px solid #9eafa5; border-radius: 8px; padding: .5rem; }
+.admin-backup { display: flex; flex-wrap: wrap; gap: 1rem; align-items: end; }
+.admin-audit { padding-left: 1.3rem; max-height: 18rem; overflow: auto; }
+.admin-audit li { padding: .35rem 0; }
+.admin-message { padding: .8rem; border-radius: 8px; background: #eff7f2; }
+@media (max-width: 600px) { .admin-page { padding: 1rem; } .admin-panel { padding: 1rem; } }

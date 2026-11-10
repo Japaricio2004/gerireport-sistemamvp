@@ -56,7 +56,7 @@ export default function AppHeader({ section = "Dashboard" }) {
         </span>
         <div className="workspace-user-details">
           <strong>{user.name}</strong>
-          <span>Técnico de cuidados</span>
+          <span>{user.role === "admin" ? "Administrador" : "Técnico de cuidados"}</span>
         </div>
         <span className="workspace-session">
           <span aria-hidden="true" />

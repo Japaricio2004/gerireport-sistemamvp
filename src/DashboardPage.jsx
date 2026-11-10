@@ -1,6 +1,6 @@
 import React from "react";
 import { useStore } from "./store";
-import { summarizeReport } from "./data";
+import { canAccessPatient, reportsForUser, formatDateOnly } from "./data";
 import "../assets/css/redesign.css";
 
 export default function DashboardPage() {
@@ -10,7 +10,15 @@ export default function DashboardPage() {
     turn: activeTurn,
     menuOpen,
     setMenuOpen,
+    user,
   } = useStore();
+  const assignedPatients = patients.filter((patient) => canAccessPatient(patient, user));
+  const assignedReports = reportsForUser(reports, patients, user);
+  const ownTurn = activeTurn?.technician === user.name ? activeTurn : null;
+  const activities = [
+    ...(ownTurn?.records || []).map((record) => ({ id: record.id, patient: ownTurn.patient, label: record.title, at: record.time, technician: record.responsible || ownTurn.technician })),
+    ...assignedReports.map((report) => ({ id: report.id, patient: report.patient, label: report.type === "turno" ? "Turno finalizado" : "Reporte manual", at: report.createdAt, technician: report.technician })),
+  ].sort((a, b) => Number(b.id) - Number(a.id));
   const today = new Intl.DateTimeFormat("es-PE", {
     weekday: "long",
     day: "numeric",
@@ -47,7 +55,7 @@ export default function DashboardPage() {
               <span>Actividad</span>
             </a>
             <a className="primary-btn" href="pages/pacientes.html">
-              <i className="fa-solid fa-plus" /> Iniciar turno
+              <i className="fa-solid fa-plus" /> {user.role === "admin" ? "Ver pacientes" : "Iniciar turno"}
             </a>
           </div>
         </header>
@@ -67,10 +75,10 @@ export default function DashboardPage() {
             <div className="welcome-actions">
               <a
                 className="primary-btn"
-                href={activeTurn ? "pages/turno.html" : "pages/pacientes.html"}
+                href={ownTurn ? "pages/turno.html" : "pages/pacientes.html"}
               >
                 <i className="fa-solid fa-arrow-right" />{" "}
-                {activeTurn ? "Continuar turno" : "Comenzar un turno"}
+                {user.role === "admin" ? "Gestionar pacientes" : ownTurn ? "Continuar turno" : "Comenzar un turno"}
               </a>
               <a className="text-link" href="pages/reportes.html">
                 Ver reportes{" "}
@@ -98,30 +106,24 @@ export default function DashboardPage() {
               <i className="fa-solid fa-user-group" />
             </span>
             <div className="metric-label">Pacientes registrados</div>
-            <strong>{patients.length}</strong>
-            <small>En seguimiento domiciliario</small>
+            <strong>{assignedPatients.length}</strong>
+            <small>{assignedPatients.filter((patient) => patient.active).length} activos</small>
           </article>
           <article className="metric-card">
             <span className="metric-icon blue">
               <i className="fa-solid fa-file-lines" />
             </span>
-            <div className="metric-label">Reportes guardados</div>
-            <strong>{reports.length}</strong>
-            <small>Historial disponible</small>
+            <div className="metric-label">Turnos en curso</div>
+            <strong>{ownTurn ? 1 : 0}</strong>
+            <small>{ownTurn ? ownTurn.patient : "Sin turno activo"}</small>
           </article>
           <article className="metric-card">
             <span className="metric-icon amber">
               <i className="fa-solid fa-triangle-exclamation" />
             </span>
-            <div className="metric-label">Reportes para revisar</div>
-            <strong>
-              {
-                reports.filter(
-                  (report) => summarizeReport(report).status === "Revisar",
-                ).length
-              }
-            </strong>
-            <small>Revisa el seguimiento del turno</small>
+            <div className="metric-label">Reportes de hoy</div>
+            <strong>{assignedReports.filter((report) => (report.date || report.createdAt || "").startsWith(formatDateOnly())).length}</strong>
+            <small>{assignedReports.length} en el historial</small>
           </article>
         </section>
 
@@ -137,7 +139,7 @@ export default function DashboardPage() {
               </a>
             </div>
             <div className="patient-list">
-              {patients.slice(0, 4).map((patient, index) => (
+              {assignedPatients.slice(0, 4).map((patient, index) => (
                 <a
                   className="patient-row"
                   href="pages/pacientes.html"
@@ -160,7 +162,7 @@ export default function DashboardPage() {
                   <i className="fa-solid fa-chevron-right row-chevron" />
                 </a>
               ))}
-              {patients.length === 0 && (
+              {assignedPatients.length === 0 && (
                 <p className="empty-state">
                   Aún no hay pacientes. Registra el primero para empezar.
                 </p>
@@ -178,13 +180,13 @@ export default function DashboardPage() {
                 <i className="fa-regular fa-calendar-check" />
               </span>
             </div>
-            {activeTurn ? (
+            {ownTurn ? (
               <div className="active-turn">
                 <span className="turn-state">
                   <span className="live-dot" /> EN CURSO
                 </span>
-                <h3>{activeTurn.patient}</h3>
-                <p>Iniciado a las {activeTurn.startLabel || "--:--"}</p>
+                <h3>{ownTurn.patient}</h3>
+                <p>Iniciado a las {ownTurn.startLabel || "--:--"}</p>
                 <a className="secondary-btn" href="pages/turno.html">
                   Abrir registro <i className="fa-solid fa-arrow-right" />
                 </a>
@@ -204,6 +206,11 @@ export default function DashboardPage() {
               </div>
             )}
           </article>
+        </section>
+        <section className="surface dashboard-activity" aria-label="Últimas actividades">
+          <div className="section-heading"><h2>Últimas actividades</h2><a className="text-link" href="pages/reportes.html">Ver historial</a></div>
+          {activities.slice(0, 3).map((activity) => <p key={activity.id}><strong>{activity.patient}</strong> · {activity.label} · {activity.at} · {activity.technician}</p>)}
+          {!activities.length && <p>Aún no hay actividades registradas.</p>}
         </section>
         <footer className="dashboard-footer">
           <span>

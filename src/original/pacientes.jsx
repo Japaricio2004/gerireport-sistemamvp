@@ -120,7 +120,7 @@ export default function OriginalTemplate({
           </button>
           <h3>
             <i className={"fas fa-user-plus"} style={{ color: "#216d5d" }}></i>
-            {" Registrar paciente"}
+            {slots.patientModalTitle || " Registrar paciente"}
           </h3>
           <form
             className={"form"}
@@ -160,9 +160,18 @@ export default function OriginalTemplate({
               name={"patientFamily"}
               {...bindings["patientFamily"]}
             />
+            <label htmlFor="patientTechnician">Técnico responsable</label>
+            <input id="patientTechnician" name="patientTechnician" list="technicians" required {...bindings.patientTechnician} />
+            <datalist id="technicians">{slots.technicianOptions}</datalist>
+            <label htmlFor="patientConsentBy">Persona que autoriza el tratamiento de datos</label>
+            <input id="patientConsentBy" name="patientConsentBy" required {...bindings.patientConsentBy} />
+            <label className="patient-consent-check">
+              <input type="checkbox" name="patientConsent" required {...bindings.patientConsent} />
+              Confirmo que el paciente o representante autorizó registrar sus datos de salud en esta demo local.
+            </label>
             <button className={"primary-btn full"} type={"submit"}>
               <i className={"fas fa-save"}></i>
-              {" Guardar paciente"}
+              {slots.patientSubmitLabel || " Guardar paciente"}
             </button>
           </form>
         </div>

@@ -15,6 +15,7 @@ export default function Sidebar({
   onClose,
   activePath = location.pathname,
 }) {
+  const { user } = useStore();
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
   useLayoutEffect(() => {
@@ -56,7 +57,7 @@ export default function Sidebar({
         aria-label="Menú de GeriReport"
       >
         <nav className="nav" aria-label="Navegación principal">
-          {links.map(([label, href, icon]) => {
+          {[...links.slice(0, -1), ...(user?.role === "admin" ? [["Usuarios y respaldo", "/pages/usuarios.html", "fa-user-shield"]] : []), links.at(-1)].filter(([, href]) => user?.role === "technician" || !["/pages/turno.html", "/pages/nuevo-reporte.html"].includes(href)).map(([label, href, icon]) => {
             const active =
               current === href ||
               (current === "/pages/reporte-detalle.html" &&
@@ -75,9 +76,9 @@ export default function Sidebar({
             );
           })}
         </nav>
-        <div className="sidebar-card" id="sidebarTurnoCard">
+        {user?.role === "technician" && <div className="sidebar-card" id="sidebarTurnoCard">
           <SidebarTurn />
-        </div>
+        </div>}
       </aside>
       {open && (
         <button
@@ -91,7 +92,8 @@ export default function Sidebar({
   );
 }
 function SidebarTurn() {
-  const { turn } = useStore();
+  const { turn: storedTurn, user } = useStore();
+  const turn = storedTurn?.technician === user?.name ? storedTurn : null;
   return (
     <>
       <div className="shift-card-heading">

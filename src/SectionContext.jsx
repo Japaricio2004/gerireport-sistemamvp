@@ -1,6 +1,6 @@
 import React from "react";
 import { useStore } from "./store";
-import { summarizeReport, reportReview } from "./data";
+import { summarizeReport, reportReview, canAccessPatient, reportsForUser } from "./data";
 function Guide({ steps }) {
   return (
     <ol className="section-guide" aria-label="Pasos del registro">
@@ -19,7 +19,11 @@ function Guide({ steps }) {
   );
 }
 export default function SectionContext() {
-  const { patients, reports, tasks, turn } = useStore();
+  const store = useStore();
+  const patients = store.patients.filter((patient) => canAccessPatient(patient, store.user));
+  const reports = reportsForUser(store.reports, store.patients, store.user);
+  const tasks = store.tasks.filter((task) => patients.some((patient) => patient.name === task.patient));
+  const turn = store.turn?.technician === store.user?.name && patients.some((patient) => patient.name === store.turn.patient) ? store.turn : null;
   const path = location.pathname;
   if (path.endsWith("nuevo-reporte.html"))
     return (

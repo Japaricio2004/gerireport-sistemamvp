@@ -43,6 +43,22 @@ export const defaultPatients = [
   },
 ];
 
+// Los registros iniciales son ficticios y pertenecen al técnico de la demo.
+for (const [index, patient] of defaultPatients.entries()) {
+  patient.code = `PAC-${String(index + 1).padStart(3, "0")}`;
+  patient.assignedTo = "Renzo C.";
+  patient.active = true;
+  patient.consent = { by: patient.family, at: "Demo: autorización ficticia" };
+}
+
+export const canAccessPatient = (patient, user) =>
+  Boolean(user?.role === "admin" || (typeof patient?.assignedTo === "string" && typeof user?.name === "string" &&
+    patient.assignedTo.trim().toLocaleLowerCase("es") === user.name.trim().toLocaleLowerCase("es")));
+export const reportsForUser = (reports, patients, user) => {
+  const names = new Set(patients.filter((patient) => canAccessPatient(patient, user)).map((patient) => patient.name));
+  return reports.filter((report) => names.has(report.patient));
+};
+
 export const demoTasks = [
   {
     id: 1,
@@ -91,7 +107,14 @@ export const keys = {
   reports: "gerireport_reports",
   turn: "gerireport_active_turno",
   tasks: "gerireport_tasks",
+  audit: "gerireport_audit",
 };
+export function logActivity(user, action, target) {
+  try {
+    const entries = read(keys.audit, []).filter((entry) => entry && typeof entry.action === "string");
+    localStorage.setItem(keys.audit, JSON.stringify([{ at: new Date().toISOString(), actor: user?.name || "Sistema", action, target: String(target || "") }, ...entries].slice(0, 200)));
+  } catch { /* La auditoría local no debe impedir guardar un registro. */ }
+}
 export function read(key, fallback) {
   try {
     const value = JSON.parse(localStorage.getItem(key));
@@ -501,6 +524,21 @@ export function initialize() {
 
   if (!localStorage.getItem(keys.patients))
     localStorage.setItem(keys.patients, JSON.stringify(defaultPatients));
+  else {
+    const saved = read(keys.patients, []);
+    const upgraded = saved.map((patient) => {
+      const sample = defaultPatients.find((item) => item.name === patient.name);
+      return {
+        ...patient,
+        code: patient.code || sample?.code || `PAC-${String(saved.indexOf(patient) + 1).padStart(3, "0")}`,
+        assignedTo: patient.assignedTo || "Renzo C.",
+        active: patient.active !== false,
+        consent: patient.consent || sample?.consent || null,
+      };
+    });
+    if (JSON.stringify(saved) !== JSON.stringify(upgraded))
+      localStorage.setItem(keys.patients, JSON.stringify(upgraded));
+  }
   if (!localStorage.getItem("gerireport_seeded_v2")) {
     const existing = read(keys.reports, []);
     const added = demoReports.filter(

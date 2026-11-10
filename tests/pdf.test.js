@@ -19,3 +19,12 @@ test('manual PDF contains patient, care sections and notes',()=>{
  const text=pdf.output();
  for(const marker of ['PACIENTE DEMO','REGISTRO MEDICACION','REGISTRO ALIMENTACION','OBSERVACION FINAL']) assert.ok(text.includes(marker));
 });
+
+test('shift PDF includes recorded respiration, hydration and responsible technician',()=>{
+ const pdf=buildReportPdf({...report,records:[
+  {type:'vitals',time:'08:10',detail:'FR: 18 rpm',responsible:'Renzo C.',data:{}},
+  {type:'food',time:'09:00',title:'Desayuno',detail:'Hidratación: 250 ml',responsible:'Renzo C.',data:{}},
+ ]});
+ const text=pdf.output();
+ for(const marker of ['FR: 18 rpm','Hidrataci','Renzo C.']) assert.ok(text.includes(marker));
+});

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useStore } from "./store";
-import { authenticateTechnician } from "./auth";
+import { authenticateUser } from "./auth";
 import css from "./original/login.css?raw";
 import theme from "../assets/css/redesign.css?raw";
 import polish from "./polish.css?raw";
@@ -15,7 +15,7 @@ export default function AuthPage() {
     setError("");
     setBusy(true);
     try {
-      const user = await authenticateTechnician(data.username, data.password);
+      const user = await authenticateUser(data.username, data.password);
       signIn(user, data.remember === "on");
     } catch (err) {
       setError(
@@ -82,14 +82,15 @@ export default function AuthPage() {
             )}
             <form className="form" onSubmit={submit} aria-busy={busy}>
               <div className="form-group">
-                <label htmlFor="username">Usuario</label>
+                <label htmlFor="username">Correo</label>
                 <div className="input-wrapper">
                   <i className="fas fa-user" aria-hidden="true" />
                   <input
                     id="username"
                     name="username"
+                    type="email"
                     autoComplete="username"
-                    placeholder="Ej. Ana Martínez"
+                    placeholder="renzo@gerireport.demo"
                     maxLength={100}
                     required
                     disabled={busy}
@@ -105,7 +106,7 @@ export default function AuthPage() {
                     name="password"
                     type="password"
                     autoComplete="off"
-                    placeholder="Cualquier contraseña"
+                    placeholder="Contraseña de la cuenta demo"
                     required
                     disabled={busy}
                   />
@@ -129,7 +130,7 @@ export default function AuthPage() {
             </form>
             <small className="auth-local-note">
               <i className="fas fa-circle-info" aria-hidden="true" />
-              Demo: escribe el nombre que quieres mostrar y cualquier contraseña.
+              Técnico: renzo@gerireport.demo / renzo123. Administrador: admin@gerireport.demo / admin123. Usa solo datos ficticios; las cuentas se guardan en este navegador.
             </small>
           </section>
         </div>

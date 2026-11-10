@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import DashboardPage from "./DashboardPage";
-import { initialize, keys, demoTasks } from "./data";
+import { initialize, keys, demoTasks, logActivity } from "./data";
 import { Store, go, useSaved } from "./store";
 import { Modal } from "./components";
 import {
@@ -17,7 +17,8 @@ import {
 import Landing from "./Landing";
 import AppHeader from "./AppHeader";
 import Sidebar from "./Sidebar";
-import { readSession, saveSession, clearSession } from "./auth";
+import AdminPage from "./AdminPage";
+import { readSession, saveSession, clearSession, readUsers, validUsers, USERS_KEY } from "./auth";
 import "./preserved.css";
 import "./polish.css";
 import "./sidebar.css";
@@ -34,6 +35,7 @@ const pages = {
   "/pages/seguimiento.html": [FollowUp, "Seguimiento"],
   "/pages/vista-familiar.html": [Family, "Vista familiar"],
   "/pages/login.html": [Login, "Acceso"],
+  "/pages/usuarios.html": [AdminPage, "Usuarios y respaldo"],
   "/LANDING.html": [Landing, "Portal familiar"],
 };
 export function App() {
@@ -41,15 +43,23 @@ export function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const signIn = (account, remember) => {
     saveSession(account, remember);
+    logActivity(account, "Inició sesión", account.role);
     setUser(account);
     go("/");
   };
   const signOut = () => {
+    logActivity(user, "Cerró sesión", user?.role);
     clearSession();
     setUser(null);
     go("/pages/login.html");
   };
   const [patients, setPatients] = useSaved(keys.patients, []);
+  const [users, setUserList] = useState(readUsers);
+  const setUsers = (next) => {
+    if (!validUsers(next)) throw new Error("La lista de usuarios no es válida.");
+    localStorage.setItem(USERS_KEY, JSON.stringify(next));
+    setUserList(next);
+  };
   const [reports, setReports] = useSaved(keys.reports, []);
   const [turn, setTurn] = useSaved(keys.turn, null);
   const [tasks, setTasks] = useSaved(keys.tasks, demoTasks);
@@ -101,10 +111,13 @@ export function App() {
   }, [title]);
   const publicPage = [
     "/pages/login.html",
-    "/pages/vista-familiar.html",
     "/LANDING.html",
   ].includes(url.split("?")[0]);
   const needsLogin = !publicPage && !user;
+  const roleBlocked = user && (
+    (url.startsWith("/pages/usuarios.html") && user.role !== "admin") ||
+    (["/pages/turno.html", "/pages/nuevo-reporte.html"].includes(url.split("?")[0]) && user.role !== "technician")
+  );
   useEffect(() => {
     if (needsLogin) {
       history.replaceState({}, "", "/pages/login.html");
@@ -123,6 +136,8 @@ export function App() {
         setMenuOpen,
         signIn,
         signOut,
+        users,
+        setUsers,
         patients,
         setPatients,
         reports,
@@ -159,7 +174,7 @@ export function App() {
               tabIndex="-1"
               aria-label="Contenido principal"
             >
-              <Page key={url} />
+              {roleBlocked ? <div className="surface"><h1>Acceso no disponible para este rol</h1><a href="/">Volver al inicio</a></div> : <Page key={url} />}
             </div>
           </div>
         </div>

@@ -294,6 +294,8 @@ export default function OriginalTemplate({
                 />
               </div>
             </div>
+            <label htmlFor="v_resp">Frecuencia respiratoria (respiraciones/min)</label>
+            <input id="v_resp" name="v_resp" type="number" min="1" step="1" required {...bindings.v_resp} />
             <button className={"primary-btn full"} type={"submit"}>
               <i className={"fas fa-save"}></i>
               {" Guardar registro"}
@@ -408,6 +410,8 @@ export default function OriginalTemplate({
               name={"f_note"}
               {...bindings["f_note"]}
             />
+            <label htmlFor="f_hydration">Hidratación administrada (ml)</label>
+            <input id="f_hydration" name="f_hydration" type="number" min="0" step="1" placeholder="Ej. 250" {...bindings.f_hydration} />
             <button className={"primary-btn full"} type={"submit"}>
               <i className={"fas fa-save"}></i>
               {" Guardar registro"}

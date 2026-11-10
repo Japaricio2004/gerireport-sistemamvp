@@ -7,6 +7,8 @@ import {
   summarizeReport,
   checkVitalAlerts,
   reportReview,
+  canAccessPatient,
+  reportsForUser,
 } from "../src/data.js";
 const values = new Map();
 globalThis.localStorage = {
@@ -213,5 +215,31 @@ test("malformed saved entries are ignored while valid patient and report data re
   } finally {
     localStorage.setItem(keys.patients, patientsBefore);
     localStorage.setItem(keys.reports, reportsBefore);
+  }
+});
+
+test("demo assignments scope patients and reports by technician", () => {
+  const patients = read(keys.patients, []);
+  const reports = read(keys.reports, []);
+  const renzo = { name: "Renzo C." };
+  const other = { name: "Otro técnico" };
+  assert.ok(canAccessPatient(patients[0], renzo));
+  assert.ok(!canAccessPatient(patients[0], other));
+  assert.ok(canAccessPatient(patients[0], { name: "Administrador demo", role: "admin" }));
+  assert.ok(reportsForUser(reports, patients, renzo).length > 0);
+  assert.equal(reportsForUser(reports, patients, other).length, 0);
+});
+
+test("legacy patients gain a demo assignment without inventing consent", () => {
+  const previous = localStorage.getItem(keys.patients);
+  try {
+    localStorage.setItem(keys.patients, JSON.stringify([{ name: "Paciente previo", family: "Representante" }]));
+    initialize();
+    const [patient] = read(keys.patients, []);
+    assert.equal(patient.assignedTo, "Renzo C.");
+    assert.ok(patient.code.startsWith("PAC-"));
+    assert.equal(patient.consent, null);
+  } finally {
+    localStorage.setItem(keys.patients, previous);
   }
 });

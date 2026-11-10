@@ -2,6 +2,16 @@
 html {
   -webkit-text-size-adjust: 100%;
 }
+
+.workspace-page .patient-card .card-footer small { grid-column: 1 / -1; color: #805a28; }
+.workspace-page .patient-card .btn-action:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+#patientModal .patient-consent-check { display: flex; align-items: flex-start; gap: .65rem; line-height: 1.45; }
+#patientModal .patient-consent-check input { width: 1.2rem; height: 1.2rem; min-height: 1.2rem; flex: none; margin-top: .2rem; }
+.workspace-page .history-extra-filters { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0; }
+.workspace-page .history-extra-filters label { display: grid; gap: .3rem; min-width: min(100%, 12rem); font-weight: 650; }
+.workspace-page .history-extra-filters :is(input, select) { width: 100%; min-height: 2.75rem; }
+.dashboard-activity { margin-top: 1.5rem; }
+.dashboard-activity p { padding: .65rem 0; border-top: 1px solid #e3ece7; }
 #root {
   width: 100%;
   min-width: 0;

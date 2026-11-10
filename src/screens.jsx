@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useStore, go } from "./store";
 import { Modal, Field } from "./components";
 import SectionContext from "./SectionContext";
+import { USERS_KEY, clearSession } from "./auth";
 import {
   keys,
   formatTime,
@@ -11,6 +12,9 @@ import {
   checkVitalAlerts,
   reportReview,
   recordReviewReasons,
+  canAccessPatient,
+  reportsForUser,
+  logActivity,
 } from "./data";
 import PatientsTemplate from "./original/pacientes";
 import ShiftTemplate from "./original/turno";
@@ -141,6 +145,7 @@ export function OriginalTimeline({ records = [] }) {
             )}
           </div>
           <p>{r.detail}</p>
+          {r.responsible && <small>Registrado por {r.responsible} · {r.createdAt ? new Date(r.createdAt).toLocaleDateString("es-PE") : ""}</small>}
         </div>
       </div>
     ))
@@ -223,6 +228,7 @@ function archiveTurn(store, turn, notes = "") {
     incidentCount: turn.records.filter((r) => r.type === "incident").length,
   };
   store.setReports([report, ...store.reports]);
+  logActivity(store.user, "Finalizó turno", report.patient);
   return report;
 }
 export function Patients() {
@@ -230,10 +236,17 @@ export function Patients() {
   const store = useStore();
   const { patients, setPatients, turn, setTurn, ask } = store;
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
   usePageModal(open ? "patientModal" : null, () => setOpen(false));
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   async function start(p) {
+    if (store.user.role !== "technician") return;
+    if (!p.active || !p.consent?.by) return;
+    if (turn && turn.technician !== store.user.name) {
+      await ask("Turno en uso", "Otro técnico tiene un turno abierto en este navegador. Cierra ese turno desde su sesión antes de continuar.", false);
+      return;
+    }
     if (turn?.patient === p.name) {
       go("/pages/turno.html");
       return;
@@ -255,11 +268,13 @@ export function Patients() {
       dateLabel: formatDateOnly(),
       records: [],
     });
+    logActivity(store.user, "Inició turno", p.name);
     go("/pages/turno.html");
   }
-  const visiblePatients = patients.filter(
+  const assignedPatients = patients.filter((p) => canAccessPatient(p, store.user));
+  const visiblePatients = assignedPatients.filter(
     (p) =>
-      searchable(p.name).includes(searchable(search)) &&
+      searchable(`${p.name} ${p.code || ""}`).includes(searchable(search)) &&
       (!status || (p.status || "Estable") === status),
   );
   const cards = visiblePatients.map((p, i) => (
@@ -282,7 +297,7 @@ export function Patients() {
         </div>
         <div className="header-info">
           <span className="name">{p.name}</span>
-          <span className="age">{p.age} años</span>
+          <span className="age">{p.code} · {p.age} años</span>
         </div>
         <span className={"status-badge " + statusClass(p.status)}>
           {p.status || "Estable"}
@@ -292,7 +307,9 @@ export function Patients() {
         {[
           ["fa-stethoscope", "Condición:", p.condition],
           ["fa-user", "Familiar:", p.family],
-          ["fa-clock", "Estado:", "En seguimiento"],
+          ["fa-user-nurse", "Técnico:", p.assignedTo],
+          ["fa-clock", "Estado:", p.active ? "Activo" : "Inactivo"],
+          ["fa-shield-heart", "Consentimiento:", p.consent?.by ? `Registrado por ${p.consent.by}` : "Pendiente"],
         ].map(([icon, label, value]) => (
           <div className="detail" key={label}>
             <i className={"fas " + icon} />
@@ -302,7 +319,7 @@ export function Patients() {
         ))}
       </div>
       <div className="card-footer">
-        <button className="btn-action btn-turno" onClick={() => start(p)}>
+        <button className="btn-action btn-turno" onClick={() => start(p)} disabled={store.user.role !== "technician" || !p.active || !p.consent?.by}>
           <i className="fas fa-play" />{" "}
           {turn?.patient === p.name ? "Continuar turno" : "Iniciar turno"}
         </button>
@@ -312,6 +329,11 @@ export function Patients() {
         >
           <i className="fas fa-clock-rotate-left" /> Ver historial
         </a>
+        <button className="btn-action btn-historial" onClick={() => { setEditing(p.name); setOpen(true); }}>Editar ficha</button>
+        <button className="btn-action btn-historial" onClick={() => { setPatients(patients.map((item) => item.name === p.name ? { ...item, active: !item.active } : item)); logActivity(store.user, p.active ? "Desactivó paciente" : "Activó paciente", p.code); }} disabled={turn?.patient === p.name}>
+          {p.active ? "Desactivar" : "Activar"}
+        </button>
+        {(!p.active || !p.consent?.by) && <small>{!p.active ? "Paciente inactivo" : "Registra el consentimiento para iniciar"}</small>}
       </div>
     </article>
   ));
@@ -319,6 +341,9 @@ export function Patients() {
     <PatientsTemplate
       slots={{
         ...base.slots,
+        patientModalTitle: editing ? " Editar paciente" : " Registrar paciente",
+        patientSubmitLabel: editing ? " Guardar cambios" : " Guardar paciente",
+        technicianOptions: store.users.filter((account) => account.role === "technician" && account.active).map((account) => <option key={account.id} value={account.name} />),
         pageIntro: (
           <>
             <div className="patients-toolbar">
@@ -330,7 +355,7 @@ export function Patients() {
                     type="search"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Escribe un nombre…"
+                    placeholder="Nombre o código…"
                   />
                 </div>
               </label>
@@ -349,7 +374,7 @@ export function Patients() {
                 </select>
               </label>
               <span className="patient-result-count" role="status">
-                {visiblePatients.length} de {patients.length} pacientes
+                {visiblePatients.length} de {assignedPatients.length} pacientes asignados
               </span>
             </div>
           </>
@@ -377,15 +402,22 @@ export function Patients() {
           className: "modal" + (open ? " active" : ""),
           role: "dialog",
           "aria-modal": true,
-          "aria-label": "Registrar paciente",
+          "aria-label": editing ? "Editar paciente" : "Registrar paciente",
         },
-        patientAge: { min: 0, max: 120 },
+        patientName: { defaultValue: editing || "", readOnly: Boolean(editing) },
+        patientAge: { min: 0, max: 120, defaultValue: patients.find((p) => p.name === editing)?.age || "" },
+        patientCondition: { defaultValue: patients.find((p) => p.name === editing)?.condition || "" },
+        patientFamily: { defaultValue: patients.find((p) => p.name === editing)?.family || "" },
+        patientTechnician: { defaultValue: patients.find((p) => p.name === editing)?.assignedTo || (store.user.role === "admin" ? store.users.find((account) => account.role === "technician" && account.active)?.name : store.user.name) || "", readOnly: store.user.role !== "admin" || turn?.patient === editing },
+        patientConsentBy: { defaultValue: patients.find((p) => p.name === editing)?.consent?.by || "" },
+        patientConsent: { defaultChecked: Boolean(patients.find((p) => p.name === editing)?.consent) },
         patientForm: {
+          key: editing || "new",
           onSubmit: (e) => {
             e.preventDefault();
             if (!validateText(e.currentTarget)) return;
             const d = formData(e);
-            if (
+            if (!editing &&
               patients.some(
                 (p) => searchable(p.name) === searchable(d.patientName.trim()),
               )
@@ -396,29 +428,47 @@ export function Patients() {
               field.reportValidity();
               return;
             }
-            setPatients([
-              ...patients,
-              {
-                name: d.patientName.trim(),
-                age: d.patientAge,
-                condition: d.patientCondition,
-                family: d.patientFamily,
-                status: "Estable",
-              },
-            ]);
+            if (!store.users.some((account) => account.role === "technician" && account.active && account.name === d.patientTechnician.trim())) {
+              const field = e.currentTarget.elements.patientTechnician;
+              field.setCustomValidity("Selecciona un técnico activo registrado.");
+              field.oninput = () => field.setCustomValidity("");
+              field.reportValidity();
+              return;
+            }
+            const previous = patients.find((p) => p.name === editing);
+            const next = {
+              ...previous,
+              name: d.patientName.trim(),
+              code: previous?.code || `PAC-${Date.now().toString(36).toUpperCase()}`,
+              age: d.patientAge,
+              condition: d.patientCondition.trim(),
+              family: d.patientFamily.trim(),
+              assignedTo: d.patientTechnician.trim(),
+              consent: previous?.consent?.by === d.patientConsentBy.trim() ? previous.consent : { by: d.patientConsentBy.trim(), at: new Date().toISOString() },
+              active: previous?.active !== false,
+              status: previous?.status || "Estable",
+            };
+            setPatients(editing ? patients.map((p) => p.name === editing ? next : p) : [...patients, next]);
+            logActivity(store.user, editing ? "Editó paciente" : "Registró paciente", next.code);
             e.currentTarget.reset();
             setOpen(false);
+            setEditing(null);
           },
         },
       }}
-      onAction={(action) => setOpen(action === "openPatientModal()")}
+      onAction={(action) => {
+        if (action === "openPatientModal()") { setEditing(null); setOpen(true); }
+        else { setOpen(false); setEditing(null); }
+      }}
     />
   );
 }
 export function Shift() {
   const base = useOriginal();
   const store = useStore();
-  const { turn, setTurn } = store;
+  const { setTurn } = store;
+  const turn = store.turn?.technician === store.user.name && store.patients.some((p) => p.name === store.turn.patient && canAccessPatient(p, store.user)) ? store.turn : null;
+  const closing = useRef(false);
   const [modal, setModal] = useState(null);
   usePageModal(modal, () => setModal(null));
   const [notes, setNotes] = useState("");
@@ -435,6 +485,8 @@ export function Shift() {
         {
           id: Date.now(),
           time: data.time || formatTime(),
+          createdAt: new Date().toISOString(),
+          responsible: store.user.name,
           type,
           icon,
           title: title || label,
@@ -444,6 +496,7 @@ export function Shift() {
         },
       ],
     });
+    logActivity(store.user, "Registró atención", `${turn.patient}: ${label}`);
     setModal(null);
     setError("");
   }
@@ -456,7 +509,7 @@ export function Shift() {
         add(
           type,
           d,
-          `Presión: ${d.pressure} · FC: ${d.heart} lpm · Temp: ${d.temp} °C · SpO₂: ${d.spo2}%`,
+          `Presión: ${d.pressure} · FC: ${d.heart} lpm · FR: ${d.resp} rpm · Temp: ${d.temp} °C · SpO₂: ${d.spo2}%`,
           checkVitalAlerts(d).alert,
         );
         break;
@@ -472,7 +525,7 @@ export function Shift() {
         add(
           type,
           d,
-          `Consumo: ${d.amount}%${d.note ? " · " + d.note : ""}`,
+          `Consumo: ${d.amount}%${d.hydration !== "" ? ` · Hidratación: ${d.hydration} ml` : ""}${d.note ? " · " + d.note : ""}`,
           Number(d.amount) === 0,
           d.meal,
         );
@@ -499,6 +552,7 @@ export function Shift() {
   const names = {
     v_pressure: "pressure",
     v_heart: "heart",
+    v_resp: "resp",
     v_temp: "temp",
     v_spo2: "spo2",
     m_name: "name",
@@ -508,6 +562,7 @@ export function Shift() {
     f_meal: "meal",
     f_amount: "amount",
     f_note: "note",
+    f_hydration: "hydration",
     s_hours: "hours",
     s_quality: "quality",
     i_type: "incidentType",
@@ -552,6 +607,7 @@ export function Shift() {
           }
         : {}),
       ...(id === "v_heart" ? { min: 1 } : {}),
+      ...(id === "v_resp" ? { min: 1 } : {}),
       ...(id === "v_temp" ? { min: 0.1 } : {}),
     };
   for (const [id, type] of Object.entries(modalTypes)) {
@@ -591,6 +647,8 @@ export function Shift() {
       add("wellbeing", { state }, state);
     } else if (source === "recordWellbeingOther()") setCustom(true);
     else if (source === "generateReport()") {
+      if (!turn || closing.current) return;
+      closing.current = true;
       const r = archiveTurn(store, turn, notes);
       setTurn(null);
       go("/pages/reporte-detalle.html?id=" + r.id);
@@ -752,6 +810,7 @@ export function Manual() {
   const base = useOriginal();
   const { patients, reports, setReports, user } = useStore();
   const [data, setData] = useState({});
+  const assignedPatients = patients.filter((p) => canAccessPatient(p, user) && p.active && p.consent?.by);
   return (
     <ManualTemplate
       bindings={{
@@ -768,6 +827,7 @@ export function Manual() {
           onSubmit: (e) => {
             e.preventDefault();
             if (!validateText(e.currentTarget)) return;
+            if (!assignedPatients.some((p) => p.name === e.currentTarget.elements.patient.value)) return;
             const r = {
               ...formData(e),
               id: Date.now(),
@@ -776,6 +836,7 @@ export function Manual() {
               createdAt: formatDate(),
             };
             setReports([r, ...reports]);
+            logActivity(user, "Creó reporte manual", r.patient);
             go("/pages/reporte-detalle.html?id=" + r.id);
           },
         },
@@ -803,7 +864,7 @@ export function Manual() {
         patient: (
           <>
             <option value="">Seleccionar paciente</option>
-            {patients.map((p) => (
+            {assignedPatients.map((p) => (
               <option key={p.name}>{p.name}</option>
             ))}
           </>
@@ -814,12 +875,28 @@ export function Manual() {
 }
 export function History() {
   const base = useOriginal();
-  const { patients, reports, ask } = useStore();
+  const { patients, reports, ask, user } = useStore();
+  const assignedPatients = patients.filter((p) => canAccessPatient(p, user));
   const [filter, setFilter] = useState(
     new URLSearchParams(location.search).get("paciente") || "",
   );
-  const filtered = reports.filter((r) => !filter || r.patient === filter);
+  const [query, setQuery] = useState("");
+  const [date, setDate] = useState("");
+  const [shift, setShift] = useState("");
+  const filtered = reportsForUser(reports, patients, user).filter((r) => {
+    const patient = assignedPatients.find((p) => p.name === r.patient);
+    const dateLabel = (r.date || r.createdAt || "").split(" ")[0].replace(/,$/, "");
+    const [day, month, year] = dateLabel.split("/");
+    return (!filter || r.patient === filter) &&
+      (!query || searchable(`${r.patient} ${patient?.code || ""}`).includes(searchable(query))) &&
+      (!date || `${year}-${month?.padStart(2, "0")}-${day?.padStart(2, "0")}` === date) &&
+      (!shift || r.shift === shift);
+  });
   async function reset() {
+    if (user.role !== "admin") {
+      await ask("Acceso de administrador", "Solo el administrador puede restablecer los datos de la demo.", false);
+      return;
+    }
     if (
       await ask(
         "Restablecer prototipo",
@@ -830,8 +907,10 @@ export function History() {
         ...Object.values(keys),
         "gerireport_seeded_v1",
         "gerireport_seeded_v2",
+        USERS_KEY,
       ].forEach((k) => localStorage.removeItem(k));
-      location.assign("/");
+      clearSession();
+      location.assign("/pages/login.html");
     }
   }
   return (
@@ -845,10 +924,15 @@ export function History() {
       }}
       slots={{
         ...base.slots,
+        pageIntro: <div className="history-extra-filters">
+          <label>Nombre o código<input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar paciente" /></label>
+          <label>Fecha<input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>
+          <label>Turno<select value={shift} onChange={(e) => setShift(e.target.value)}><option value="">Todos</option>{[...new Set(reportsForUser(reports, patients, user).map((r) => r.shift).filter(Boolean))].map((value) => <option key={value}>{value}</option>)}</select></label>
+        </div>,
         patientFilter: (
           <>
             <option value="">Todos los pacientes</option>
-            {patients.map((p) => (
+            {assignedPatients.map((p) => (
               <option key={p.name}>{p.name}</option>
             ))}
           </>
@@ -909,6 +993,7 @@ export function History() {
                           <div className="report-details">
                             <div className="patient-name">{s.date}</div>
                             <div className="meta">
+                              <span>Técnico: {r.technician || "Sin registrar"}</span>
                               <span>
                                 <i className="fas fa-calendar-day" />{" "}
                                 {s.schedule}
@@ -1040,6 +1125,7 @@ export function ReportContent({ report }) {
                     <p>
                       {type === "food" ? r.title + " · " : ""}
                       {r.detail}
+                      {r.responsible && <small> · {r.responsible}</small>}
                     </p>
                   </div>
                 ))}
@@ -1094,8 +1180,8 @@ export function ReportContent({ report }) {
 }
 export function Detail() {
   const base = useOriginal();
-  const { reports } = useStore();
-  const report = reports.find(
+  const { reports, patients, user } = useStore();
+  const report = reportsForUser(reports, patients, user).find(
     (r) => String(r.id) === new URLSearchParams(location.search).get("id"),
   );
   const [downloading, setDownloading] = useState(false);
@@ -1148,10 +1234,15 @@ export function Detail() {
 }
 export function FollowUp() {
   const base = useOriginal();
-  const { tasks, setTasks } = useStore();
+  const { tasks: allTasks, setTasks, patients, user } = useStore();
+  const tasks = allTasks.filter((task) => patients.some((patient) => patient.name === task.patient && canAccessPatient(patient, user)));
   const statuses = ["pending", "active", "done"];
   const labels = ["Pendiente", "En proceso", "Completado"];
   const icons = ["fa-hourglass-start", "fa-spinner", "fa-circle-check"];
+  const moveTask = (task, status) => {
+    setTasks(allTasks.map((entry) => entry.id === task.id ? { ...entry, status } : entry));
+    logActivity(user, "Actualizó tarea", task.title);
+  };
   return (
     <TasksTemplate
       {...base}
@@ -1191,15 +1282,7 @@ export function FollowUp() {
                     {i > 0 && (
                       <button
                         className="task-control"
-                        onClick={() =>
-                          setTasks(
-                            tasks.map((x) =>
-                              x.id === t.id
-                                ? { ...x, status: statuses[i - 1] }
-                                : x,
-                            ),
-                          )
-                        }
+                        onClick={() => moveTask(t, statuses[i - 1])}
                       >
                         ← {labels[i - 1]}
                       </button>
@@ -1207,15 +1290,7 @@ export function FollowUp() {
                     {i < 2 && (
                       <button
                         className="task-control"
-                        onClick={() =>
-                          setTasks(
-                            tasks.map((x) =>
-                              x.id === t.id
-                                ? { ...x, status: statuses[i + 1] }
-                                : x,
-                            ),
-                          )
-                        }
+                        onClick={() => moveTask(t, statuses[i + 1])}
                       >
                         Pasar a {labels[i + 1]} →
                       </button>
@@ -1231,13 +1306,14 @@ export function FollowUp() {
 }
 export function Family() {
   const base = useOriginal();
-  const { patients, reports } = useStore();
+  const { patients, reports, user } = useStore();
+  const assignedPatients = patients.filter((p) => canAccessPatient(p, user));
   const requestedPatient = new URLSearchParams(location.search).get("paciente");
   const [name, setName] = useState(
-    requestedPatient ? patients.find(patient => patient.name === requestedPatient)?.name || '' : patients[0]?.name || '',
+    requestedPatient ? assignedPatients.find(patient => patient.name === requestedPatient)?.name || '' : assignedPatients[0]?.name || '',
   );
-  const patient = patients.find((p) => p.name === name);
-  const report = reports
+  const patient = assignedPatients.find((p) => p.name === name);
+  const report = reportsForUser(reports, patients, user)
     .filter((r) => r.patient === name)
     .sort((a, b) => b.id - a.id)[0];
   const s = report ? summarizeReport(report) : null;
@@ -1258,7 +1334,7 @@ export function Family() {
       }}
       slots={{
         ...base.slots,
-        familyPatientSelect: <><option value="" disabled>Seleccionar paciente</option>{patients.map((p) => (
+        familyPatientSelect: <><option value="" disabled>Seleccionar paciente</option>{assignedPatients.map((p) => (
           <option key={p.name}>{p.name}</option>
         ))}</>,
         familyCard: patient ? (
@@ -1359,9 +1435,9 @@ export function Family() {
           </div>
         ) : (
           <div className="section-empty">
-            <h3>{patients.length ? 'Selecciona un paciente' : 'No hay pacientes disponibles'}</h3>
-            <p>{patients.length ? 'El paciente del enlace no está disponible. Elige uno en el selector.' : 'Registra un paciente para consultar su resumen familiar.'}</p>
-            {!patients.length && <a className="primary-btn" href="/pages/pacientes.html">
+            <h3>{assignedPatients.length ? 'Selecciona un paciente' : 'No hay pacientes disponibles'}</h3>
+            <p>{assignedPatients.length ? 'El paciente del enlace no está disponible. Elige uno en el selector.' : 'Registra un paciente para consultar su resumen familiar.'}</p>
+            {!assignedPatients.length && <a className="primary-btn" href="/pages/pacientes.html">
               Ir a pacientes
             </a>}
           </div>

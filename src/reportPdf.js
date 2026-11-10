@@ -131,7 +131,7 @@ export function buildReportPdf(report, fonts = null) {
           title,
           records.map(
             (record) =>
-              `${record.time}  -  ${type === "food" ? record.title + ": " : ""}${record.detail}${recordReviewReasons(record).length ? " [Revisar]" : ""}`,
+              `${record.createdAt ? new Date(record.createdAt).toLocaleDateString("es-PE") + " " : ""}${record.time}  -  ${type === "food" ? record.title + ": " : ""}${record.detail}${record.responsible ? " - " + record.responsible : ""}${recordReviewReasons(record).length ? " [Revisar]" : ""}`,
           ),
         );
     }

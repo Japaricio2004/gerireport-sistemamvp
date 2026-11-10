@@ -11,6 +11,7 @@ const entries = [
   "pages/reporte-detalle.html",
   "pages/seguimiento.html",
   "pages/vista-familiar.html",
+  "pages/usuarios.html",
 ];
 export default defineConfig({
   build: {

@@ -13,9 +13,11 @@ test("all original routes render React screens including saved shift and report"
   localStorage.setItem(
     "gerireport_session",
     JSON.stringify({
-      id: "test-technician",
-      name: "Ana Martínez",
-      email: "ana@example.test",
+      id: "renzo@gerireport.demo",
+      name: "Renzo C.",
+      email: "renzo@gerireport.demo",
+      role: "technician",
+      expiresAt: Date.now() + 8 * 60 * 60 * 1000,
     }),
   );
   const server = await createServer({
@@ -27,7 +29,7 @@ test("all original routes render React screens including saved shift and report"
     let referenceSidebar;
     for (const [path, expected] of [
       ["/", "Inicio"],
-      ["/pages/login.html", "Usuario"],
+      ["/pages/login.html", "Correo"],
       ["/pages/pacientes.html", "Nuevo paciente"],
       ["/pages/turno.html", "Sin turno activo"],
       ["/pages/nuevo-reporte.html", "Vista previa"],
@@ -116,7 +118,7 @@ test("all original routes render React screens including saved shift and report"
         ].includes(path)
       ) {
         assert.ok(
-          html.includes("Ana Martínez"),
+          html.includes("Renzo C."),
           "signed-in technician is visible",
         );
         assert.ok(
@@ -132,13 +134,18 @@ test("all original routes render React screens including saved shift and report"
         path,
       );
     }
+    globalThis.location = { pathname: "/pages/usuarios.html", search: "" };
+    assert.ok(renderToString(React.createElement(App)).includes("Acceso no disponible para este rol"));
+    localStorage.setItem("gerireport_session", JSON.stringify({ id: "admin@gerireport.demo", name: "Administrador demo", role: "admin", expiresAt: Date.now() + 8 * 60 * 60 * 1000 }));
+    assert.ok(renderToString(React.createElement(App)).includes("Descargar respaldo"));
+    localStorage.setItem("gerireport_session", JSON.stringify({ id: "renzo@gerireport.demo", name: "Renzo C.", role: "technician", expiresAt: Date.now() + 8 * 60 * 60 * 1000 }));
     localStorage.setItem(
       "gerireport_active_turno",
       JSON.stringify({
-        patient: "Paciente de prueba",
+        patient: "María López",
         dateLabel: "28/10/2026",
         startLabel: "08:00",
-        technician: "Demo",
+        technician: "Renzo C.",
         records: [
           {
             id: 1,

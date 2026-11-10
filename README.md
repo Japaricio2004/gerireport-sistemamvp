@@ -2,7 +2,7 @@
 
 Aplicación React 19 para registrar y consultar cuidados domiciliarios. Todas las pantallas comparten navegación, componentes y estado React; Vite genera las entradas de producción para conservar las URL originales.
 
-Demo funcional con datos ficticios y acceso simulado, sin registro de cuentas ni backend. La sesión y los datos se guardan en el navegador y no se sincronizan entre dispositivos.
+Demo funcional con datos ficticios, cuentas y roles locales simulados, sin backend. La sesión y los datos se guardan en el navegador y no se sincronizan entre dispositivos.
 
 ## Desarrollo
 
@@ -23,17 +23,18 @@ Publica el contenido de `dist/`. Todas las rutas siguientes tienen su propio HTM
 ## Pantallas
 
 - `/`: panel y métricas.
-- `/pages/login.html`: inicio de sesión demo con un nombre de usuario y cualquier contraseña.
-- `/pages/pacientes.html`: búsqueda por nombre, filtro por estado, registro de pacientes e inicio de turno.
+- `/pages/login.html`: acceso con las cuentas ficticias indicadas abajo.
+- `/pages/pacientes.html`: búsqueda por nombre o código, ficha editable, asignación a técnico, consentimiento, activación y comienzo de turno.
 - `/pages/turno.html`: siete tipos de registro, alertas, resumen y generación de reporte.
 - `/pages/nuevo-reporte.html`: reporte manual con vista previa.
-- `/pages/reportes.html`: historial por paciente, filtros y restablecimiento de demo.
+- `/pages/reportes.html`: historial por paciente, nombre o código, fecha y turno; restablecimiento de demo.
 - `/pages/reporte-detalle.html?id=...`: detalle e impresión / PDF.
 - `/pages/seguimiento.html`: tareas con cambio de estado.
-- `/pages/vista-familiar.html`: resumen del último turno para familiares.
+- `/pages/vista-familiar.html`: vista ilustrativa del último turno, accesible desde la sesión del técnico; el acceso familiar autorizado queda para fase 2.
+- `/pages/usuarios.html`: administración local de cuentas y roles, actividad reciente y respaldo JSON; solo para el rol administrador.
 - `/LANDING.html`: portal familiar independiente con su acceso, gráfico, historial y reportes ficticios originales.
 
-Los filtros de historial y vista familiar aceptan `?paciente=Nombre`. Las URL existentes y las claves de almacenamiento se conservan. Cambiar de paciente durante un turno requiere confirmación y guarda el turno anterior como reporte.
+Los filtros de historial y vista familiar aceptan `?paciente=Nombre`. Las URL existentes y las claves de almacenamiento se conservan. Cambiar de paciente durante un turno requiere confirmación y guarda el turno anterior como reporte. Los registros guardan hora, fecha y técnico; el PDF agrupa las atenciones del turno.
 
 ## Estructura
 
@@ -47,6 +48,7 @@ Los filtros de historial y vista familiar aceptan `?paciente=Nombre`. Las URL ex
 - `src/Landing.jsx`: interacciones del portal familiar.
 - `src/original/`: estructura JSX y CSS originales de cada pantalla.
 - `src/data.js`: datos ficticios, inicialización, resúmenes y reglas de alertas demo.
+- `src/auth.js`, `src/AdminPage.jsx` y `src/backup.js`: cuentas locales, administración y exportación/recuperación de la demo.
 - `src/preserved.css`: ajustes mínimos para diálogos nativos.
 - `src/polish.css`: presentación de las secciones, tarjetas, formularios y adaptación móvil.
 - `src/SectionContext.jsx`: resúmenes con datos actuales y guía de registro.
@@ -68,9 +70,11 @@ La migración mantiene la estructura, clases, estilos, tarjetas, barras laterale
 
 ## Inicio de sesión demo
 
-Escribe el nombre de usuario que quieres mostrar y cualquier contraseña no vacía. No necesitas crear una cuenta. Al ingresar, el nombre aparece en el encabezado superior y firma los nuevos turnos y reportes. **Cerrar sesión** permite salir y entrar con otro usuario.
+Accesos iniciales ficticios: **renzo@gerireport.demo / renzo123** (técnico) y **admin@gerireport.demo / admin123** (administrador). El administrador puede crear cuentas, cambiar roles, desactivar usuarios y restablecer contraseñas. Solo se muestran al técnico los pacientes asignados a su nombre y sus reportes; el administrador ve todos y puede reasignarlos. Los pacientes previos sin asignación se migran a Renzo C.; si no tenían consentimiento registrado, deben completarlo antes de iniciar un turno.
 
-La contraseña no se guarda ni se valida contra cuentas. **Mantener mi sesión iniciada** conserva el usuario entre aperturas; sin marcarlo, la sesión se limita a la pestaña.
+Las contraseñas de cuentas nuevas se guardan como derivaciones PBKDF2 con sal local, nunca en texto plano en el almacenamiento. **Mantener mi sesión iniciada** conserva el usuario entre aperturas; sin marcarlo, la sesión se limita a la pestaña. Ambas sesiones caducan tras ocho horas.
+
+**Límite del MVP:** los roles, la auditoría y el consentimiento son simulaciones editables desde el mismo navegador. El respaldo JSON requiere descarga manual y contiene datos ficticios y hashes de cuentas; no es una copia automática ni cifrada. No hay autenticación ni permisos seguros del lado del servidor, HTTPS garantizado por la app ni protección del PDF descargado. Usa únicamente datos ficticios. Antes de tratar datos reales de salud se requiere backend seguro, control de acceso del servidor, política y proceso legal de consentimiento, respaldos automáticos y despliegue HTTPS. El portal familiar independiente también usa contenido ficticio.
 
 Las secciones incluyen indicadores basados en los datos guardados, filtros en pacientes y progreso de tareas. El formulario manual conserva una vista previa lateral que se adapta al ancho de la pantalla.
 
