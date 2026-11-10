@@ -502,7 +502,11 @@ body:has(.login-container) .login-card {
   }
   .workspace-page .topbar p {
     font-size: 0.76rem;
-    line-height: 1.7;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
   }
   .workspace-page .topbar-actions {
     justify-content: flex-end;
@@ -1278,5 +1282,1084 @@ body:has(.modal.active) {
   }
   .review-notice-item {
     break-inside: avoid;
+  }
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 1000;
+  top: 10px;
+  left: 10px;
+  padding: 12px 16px;
+  transform: translateY(-160%);
+  border-radius: 8px;
+  background: #fff;
+  color: #173c30;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 2px 12px #102a201f;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+#workspace-main {
+  scroll-margin-top: calc(var(--workspace-header-height, 0px) + 12px);
+}
+#workspace-main:focus {
+  outline: none;
+}
+#root :is(.workspace-page .main-content, .dashboard-shell .main-content) {
+  color: #243a31;
+  line-height: 1.6;
+}
+#root .workspace-page .main-content > .topbar h2,
+#root .dashboard-shell .page-heading h1 {
+  color: #183c31;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+#root .workspace-page .main-content > .topbar p {
+  color: #52675d;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+#root .workspace-page .main-content :is(.primary-btn, .secondary-btn, .ghost-btn, .btn-action, .btn-ver, .task-control),
+#root .dashboard-shell :is(.primary-btn, .secondary-btn, .quiet-link, .text-link) {
+  min-height: 48px;
+  font-size: 0.85rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+#root .workspace-page .main-content :is(input, select, textarea),
+#root .family-select select {
+  min-height: 48px;
+  border-color: #9eafa5 !important;
+  color: #243a31 !important;
+  font-size: 1rem !important;
+  line-height: 1.5;
+}
+#root .workspace-page .main-content :is(input, select, textarea)::placeholder {
+  color: #586e63 !important;
+  opacity: 1;
+}
+#root .workspace-page .main-content .form label,
+#root .workspace-page .main-content .patients-toolbar label,
+#root .workspace-page .main-content .family-select label {
+  color: #344f43;
+  font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+#root .workspace-page .main-content :is(.context-caption, .context-label, .context-stat small, .section-guide small, .patient-result-count) {
+  color: #4b6256;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+#root .workspace-page .main-content .context-caption {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+#root .workspace-page .main-content .context-stat strong {
+  color: #183c31;
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+#root .workspace-page .main-content .section-guide :is(strong, small) {
+  font-size: 0.85rem;
+}
+#root .workspace-page .main-content .section-guide small {
+  color: #4b6256;
+}
+#root .workspace-page .main-content .patient-card :is(.name, .value) {
+  color: #243a31;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+#root .workspace-page .main-content .patient-card :is(.age, .detail .label) {
+  color: #4b6256;
+  font-size: 0.82rem;
+}
+#root .workspace-page .main-content .patient-card .status-badge,
+#root .dashboard-shell .patient-status,
+#root .workspace-page .main-content .badge-status {
+  min-height: 32px;
+  padding: 5px 10px;
+  color: #234b39;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+#root .workspace-page .main-content .turno-header p,
+#root .workspace-page .main-content .timeline-body p,
+#root .workspace-page .main-content .report-line,
+#root .workspace-page .main-content .report-header p,
+#root .workspace-page .main-content .task-card p,
+#root .workspace-page .main-content .reporte-preview,
+#root .workspace-page .main-content .family-card .vital-value,
+#root .workspace-page .main-content .section-empty p {
+  color: #40594d;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+#root .workspace-page .main-content .turno-action-btn {
+  min-height: 112px;
+  color: #234b39;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+#root .workspace-page .main-content .task-priority {
+  color: #365b48;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+#root .workspace-page .main-content .priority-high {
+  background: #fff2dc;
+  color: #704600;
+}
+#root .workspace-page .main-content .task-control {
+  padding-inline: 14px;
+}
+#root .workspace-page .main-content .review-notice {
+  border-left-width: 5px;
+  color: #503c18;
+}
+#root .workspace-page .main-content .review-notice > strong {
+  color: #503c18;
+  font-size: 1rem;
+}
+#root .workspace-page .main-content .review-notice-item {
+  color: #503c18;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+#root .workspace-page .main-content .review-notice > small {
+  color: #594a2e;
+  font-size: 0.78rem;
+}
+#root .workspace-page .main-content .report-status {
+  min-height: 76px;
+}
+#root .workspace-page .main-content .report-status-label {
+  font-size: 0.75rem;
+}
+#root .workspace-page .main-content .report-status > strong {
+  font-size: 1rem;
+}
+#root .workspace-page .main-content .family-card .info-grid .label,
+#root .workspace-page .main-content .family-card .vital-label,
+#root .workspace-page .main-content .shift-summary-meta span,
+#root .workspace-page .main-content .shift-summary-item > span:not(.shift-summary-icon) {
+  color: #4b6256;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+#root .workspace-page .main-content .shift-summary-meta strong {
+  color: #234b39;
+  font-size: 0.9rem;
+}
+#root .workspace-page .main-content :is(.patient-search input, .patients-toolbar select, .filter-bar select) {
+  min-height: 50px;
+}
+#root .dashboard-shell :is(.welcome-copy p, .metric-label, .metric-card small, .patient-info small, .shift-surface p) {
+  color: #40594d;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+#root .dashboard-shell .metric-label {
+  font-weight: 650;
+}
+#root .dashboard-shell .metric-card strong {
+  color: #183c31;
+}
+#root .dashboard-shell .patient-info strong {
+  color: #243a31;
+  font-size: 0.95rem;
+}
+#root .workspace-frame .workspace-wordmark > span {
+  color: #e0eee4;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+#root .workspace-frame .workspace-location > span,
+#root .workspace-frame .workspace-user-details > span,
+#root .workspace-frame .workspace-session {
+  color: #d3e6d9;
+  font-size: 0.75rem;
+}
+#root .workspace-frame .workspace-location strong,
+#root .workspace-frame .workspace-user-details strong {
+  color: #fff;
+  font-size: 0.9rem;
+}
+#root .care-sidebar .nav a {
+  min-height: 50px;
+  color: #3f5b4e !important;
+  font-size: 0.9rem !important;
+}
+#root .care-sidebar .nav a.active {
+  color: #174e38 !important;
+  font-weight: 700 !important;
+}
+#root .care-sidebar .shift-card-caption,
+#root .care-sidebar .shift-card-description {
+  color: #40594d;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+#root .care-sidebar .shift-card-title {
+  color: #183c31;
+  font-size: 0.95rem;
+}
+#root .care-sidebar .shift-card-action {
+  min-height: 48px;
+  color: #174e38;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+#root .app-wrapper {
+  color: #243a31;
+  line-height: 1.6;
+}
+#root .app-wrapper :is(.form-group label, .section-header h2, .nav-item) {
+  color: #243a31;
+  font-size: 0.9rem;
+}
+#root .app-wrapper :is(.btn-primary, .btn-logout) {
+  font-size: 0.9rem;
+}
+#root .app-wrapper .form-group input {
+  min-height: 50px;
+  border-color: #9eafa5;
+  color: #243a31;
+  font-size: 1rem;
+}
+#root .app-wrapper .form-group input::placeholder {
+  color: #586e63;
+  opacity: 1;
+}
+#root .app-wrapper .login-footer,
+#root .app-wrapper :is(.sub, .sub-text, .role, .report-date, .alert-meta) {
+  color: #4b6256;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+#root .app-wrapper .nav-item {
+  min-height: 48px;
+  font-weight: 650;
+}
+#root .app-wrapper .btn-primary,
+#root .app-wrapper .btn-logout {
+  min-height: 48px;
+  font-weight: 700;
+}
+#root .app-wrapper :focus-visible {
+  outline: 3px solid #0b7651 !important;
+  outline-offset: 3px;
+}
+#root :is(.workspace-page, .dashboard-shell) :focus-visible,
+#root .care-sidebar :focus-visible {
+  outline: 3px solid #0b7651 !important;
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  body .workspace-frame > .workspace-layout > .care-sidebar:not(.open) {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  body .workspace-frame > .workspace-layout > .care-sidebar.open {
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .workspace-page .main-content,
+  .dashboard-shell .main-content {
+    padding: 18px 16px !important;
+  }
+  .workspace-page .main-content > .topbar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+  }
+  .workspace-page .main-content > .topbar > div {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+  }
+  .workspace-page .app-shell .main-content > .topbar > .report-actions {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+    gap: 8px;
+  }
+  .workspace-page
+    .app-shell
+    .main-content
+    > .topbar
+    > .report-actions
+    > :is(a, button) {
+    flex: 1 1 140px;
+    width: auto;
+    min-height: 48px;
+    padding: 10px 12px;
+  }
+  .workspace-page .main-content > .topbar > :is(a.primary-btn, button.primary-btn) {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+  .workspace-page .main-content > .topbar h2,
+  .dashboard-shell .page-heading h1 {
+    font-size: 1.25rem;
+  }
+  .workspace-page .main-content > .topbar .menu-btn,
+  .dashboard-shell .menu-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: auto;
+    min-width: 92px;
+    min-height: 48px;
+    padding: 8px 12px;
+    border-color: #9eafa5;
+    color: #173c30;
+    font-size: 0;
+  }
+  .workspace-page .main-content > .topbar .menu-btn > i,
+  .dashboard-shell .menu-btn > i {
+    display: none;
+  }
+  .workspace-page .main-content > .topbar .menu-btn::before,
+  .dashboard-shell .menu-btn::before {
+    content: "☰";
+    font-size: 1.2rem;
+  }
+  .workspace-page .main-content > .topbar .menu-btn::after,
+  .dashboard-shell .menu-btn::after {
+    content: "Menú";
+    font-size: 0.85rem;
+    font-weight: 650;
+  }
+  .workspace-page .main-content > .topbar .primary-btn {
+    flex: 0 1 auto;
+    width: auto;
+    min-height: 48px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    white-space: normal;
+  }
+  .dashboard-shell .topbar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "menu heading"
+      "actions actions";
+    align-items: center;
+    gap: 12px;
+  }
+  .dashboard-shell .menu-btn {
+    grid-area: menu;
+  }
+  .dashboard-shell .page-heading {
+    grid-area: heading;
+    min-width: 0;
+  }
+  .workspace-page .dashboard-shell .main-content > .topbar > .topbar-actions {
+    grid-area: actions;
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+    margin-left: 0;
+  }
+  .dashboard-shell .quiet-link span {
+    display: inline;
+  }
+  .dashboard-shell .topbar-actions .primary-btn {
+    width: auto;
+    min-width: 0;
+    min-height: 48px;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    gap: 7px;
+  }
+  .dashboard-shell .topbar-actions .primary-btn i {
+    font-size: 0.9rem;
+  }
+  .dashboard-shell .metrics-grid,
+  .workspace-page .context-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .dashboard-shell .metric-card,
+  .workspace-page .context-stat {
+    min-width: 0;
+    min-height: 0;
+    padding: 14px;
+  }
+  .dashboard-shell .metric-card:last-child,
+  .workspace-page .context-stat:last-child {
+    grid-column: 1 / -1;
+  }
+  .dashboard-shell .metrics-grid .metric-card {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+  .dashboard-shell .patient-status {
+    display: inline-flex !important;
+    flex: 0 0 auto;
+    font-size: 0.72rem;
+  }
+  .dashboard-shell .row-chevron {
+    display: none;
+  }
+  .workspace-page .main-content .patients-toolbar {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px;
+    margin-bottom: 18px;
+  }
+  .workspace-page .main-content .patients-toolbar .patient-search {
+    grid-column: 1 / -1;
+  }
+  .workspace-page .main-content .patient-result-count {
+    grid-column: 1 / -1;
+    padding: 0;
+    white-space: normal;
+  }
+  .workspace-page .main-content .patient-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .workspace-page .main-content .patient-card .card-footer {
+    gap: 10px;
+    padding: 14px 16px;
+  }
+  .workspace-page .main-content .patient-card .btn-action {
+    min-height: 48px;
+    font-size: 0.8rem;
+  }
+  .workspace-page .main-content .turno-actions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .workspace-page .main-content .turno-action-btn {
+    min-height: 104px;
+    padding: 14px 10px;
+  }
+  .workspace-page .main-content .kanban {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .workspace-page .main-content .form-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .workspace-page .main-content .preview-card {
+    position: static;
+    max-height: none;
+  }
+  .workspace-page .main-content .report-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .workspace-page .main-content .report-item .report-actions,
+  .workspace-page .main-content .report-item .report-summary {
+    grid-column: 1;
+  }
+  .workspace-page .main-content .report-item .report-actions {
+    width: 100%;
+  }
+  .workspace-page .main-content .report-item .report-actions > * {
+    width: 100%;
+  }
+  .workspace-page .main-content .report-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .workspace-page .main-content .family-select {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+  }
+  .workspace-page .main-content .family-select select {
+    max-width: none;
+  }
+  .workspace-page .main-content .report-sheet,
+  .workspace-page .main-content .family-card {
+    padding: 20px 16px;
+  }
+  .workspace-frame .workspace-wordmark > span {
+    font-size: 0.68rem;
+  }
+}
+@media (max-width: 420px) {
+  .dashboard-shell .metrics-grid,
+  .workspace-page .context-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dashboard-shell .metric-card:last-child,
+  .workspace-page .context-stat:last-child {
+    grid-column: auto;
+  }
+  .workspace-page .main-content .report-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace-page .main-content .patient-card .status-badge {
+    margin-left: 58px;
+  }
+  .dashboard-shell .topbar-actions .primary-btn {
+    padding-inline: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .care-sidebar {
+    transition: none !important;
+  }
+}
+
+/* Let care summaries respond to their actual container, not only the viewport. */
+.workspace-page .context-grid {
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 220px), 1fr)
+  );
+}
+.workspace-page .context-stat strong {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+/* A full web sign-in on desktop that becomes one compact column on mobile. */
+body:has(.login-container) {
+  box-sizing: border-box;
+  height: 100dvh;
+  place-content: center;
+  padding: 0 !important;
+}
+body:has(.login-container) .login-container {
+  width: min(calc(100% - 40px), 1080px);
+  max-width: 1080px;
+  margin: 0 auto;
+}
+.auth-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(410px, 0.95fr);
+  min-height: min(640px, calc(100dvh - 80px));
+  overflow: hidden;
+  border: 1px solid #d6e3dc;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 28px 80px rgba(31, 78, 61, 0.15);
+}
+.auth-overview {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  padding: clamp(38px, 5vw, 60px);
+  background: linear-gradient(145deg, #174f3e, #216d5d);
+  color: #fff;
+}
+.auth-overview .brand {
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+}
+body:has(.login-container) .auth-overview .brand-icon {
+  flex: 0 0 54px;
+  width: 54px;
+  height: 54px;
+  background: #fff !important;
+  color: #216d5d;
+}
+.auth-overview .brand-text {
+  min-width: 0;
+}
+body:has(.login-container) .auth-overview .brand-text h1 {
+  color: #fff !important;
+  font-size: 1.65rem;
+}
+.auth-overview .brand-text span {
+  display: block;
+  max-width: 310px;
+  color: #e5f2ec;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.auth-kicker {
+  display: block;
+  margin-bottom: 12px;
+  color: #287464;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.auth-overview .auth-kicker {
+  color: #bee0d1;
+}
+.auth-overview-copy {
+  max-width: 430px;
+  margin-block: 40px;
+}
+.auth-overview-copy h2 {
+  margin: 0 0 18px;
+  color: #fff;
+  font-size: clamp(2rem, 3.4vw, 2.85rem);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+}
+.auth-overview-copy p {
+  margin: 0;
+  color: #dcece5;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+.auth-benefits {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.auth-benefits li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #eef8f3;
+  font-size: 0.88rem;
+  font-weight: 550;
+  line-height: 1.45;
+}
+.auth-benefits i {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 0.72rem;
+}
+body:has(.login-container) .auth-layout .auth-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(38px, 5vw, 60px) !important;
+  border: 0;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+body:has(.login-container) .auth-layout .auth-card:hover {
+  transform: none;
+  box-shadow: none !important;
+}
+
+@media (min-width: 781px) and (min-height: 721px) {
+  body:has(.login-container) .login-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@media (max-width: 780px) {
+  body:has(.login-container) {
+    place-items: start center;
+    place-content: start center;
+    padding: 12px !important;
+  }
+  .auth-layout {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    border-radius: 20px;
+  }
+  body:has(.login-container) .login-container {
+    width: 100%;
+    margin: 0 auto;
+  }
+  .auth-overview {
+    gap: 22px;
+    padding: 26px 24px;
+  }
+  .auth-overview-copy {
+    margin: 0;
+  }
+  .auth-overview-copy h2 {
+    margin-bottom: 10px;
+    font-size: 1.55rem;
+    letter-spacing: -0.025em;
+  }
+  .auth-overview-copy p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .auth-benefits {
+    display: none;
+  }
+  body:has(.login-container) .auth-layout .auth-card {
+    padding: 30px 24px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .auth-overview-copy {
+    display: none;
+  }
+  body:has(.login-container) .auth-overview .brand-icon {
+    flex-basis: 46px;
+    width: 46px;
+    height: 46px;
+  }
+  body:has(.login-container) .auth-overview .brand-text h1 {
+    font-size: 1.35rem;
+  }
+  .auth-overview .brand-text span {
+    font-size: 0.8rem;
+  }
+  .auth-overview-copy h2 {
+    font-size: 1.35rem;
+  }
+  body:has(.login-container) .auth-layout .auth-card {
+    padding: 26px 20px !important;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 781px) {
+  body:has(.login-container) {
+    place-content: start center;
+  }
+}
+
+/* High-contrast care palette: colored secondary text and clearly visible edges. */
+@media screen {
+  :root {
+    --ink: #12382f;
+    --muted-ink: #20594b;
+    --line: #4f806f;
+    --care-border: #4f806f;
+  }
+
+  #root :is(.workspace-page .main-content, .dashboard-shell .main-content, .app-wrapper) {
+    color: #12382f;
+  }
+
+  #root
+    .workspace-page
+    .main-content
+    :is(
+      .topbar p,
+      .context-caption,
+      .context-label,
+      .context-stat small,
+      .section-guide small,
+      .patient-result-count,
+      .patient-card .age,
+      .patient-card .detail .label,
+      .patient-card .detail .value,
+      .turno-header p,
+      .timeline-body p,
+      .report-line,
+      .report-header p,
+      .report-summary p,
+      .report-summary b,
+      .task-card p,
+      .reporte-preview,
+      .section-empty p,
+      .family-card .info-grid .label,
+      .family-card .vital-label,
+      .shift-summary-meta span,
+      .shift-summary-item > span:not(.shift-summary-icon)
+    ) {
+    color: #20594b !important;
+  }
+
+  #root
+    .dashboard-shell
+    :is(
+      .welcome-copy p,
+      .metric-label,
+      .metric-card small,
+      .patient-info small,
+      .shift-surface p
+    ),
+  #root .care-sidebar :is(.nav a, .shift-card-caption, .shift-card-description),
+  #root
+    .app-wrapper
+    :is(.login-footer, .sub, .sub-text, .role, .report-date, .alert-meta) {
+    color: #20594b !important;
+  }
+
+  #root .workspace-page .main-content :is(input, select, textarea),
+  #root .family-select select,
+  #root .app-wrapper .form-group input,
+  .auth-card .input-wrapper input {
+    border-color: #4f806f !important;
+    background: #f8fcfa !important;
+    color: #12382f !important;
+  }
+
+  #root .workspace-page .main-content :is(input, textarea)::placeholder,
+  #root .app-wrapper .form-group input::placeholder,
+  .auth-card .input-wrapper input::placeholder {
+    color: #2c5b6e !important;
+    opacity: 1;
+  }
+
+  #root
+    .workspace-page
+    .main-content
+    :is(
+      .panel,
+      .patient-card,
+      .family-card,
+      .kanban-col,
+      .task-card,
+      .report-sheet,
+      .report-section,
+      .report-item,
+      .context-stat,
+      .section-guide,
+      .patients-toolbar
+    ),
+  #root .dashboard-shell :is(.surface, .metric-card),
+  #root .app-wrapper :is(.section, .card, .alert-card) {
+    border-color: #4f806f !important;
+  }
+
+  #root
+    .workspace-page
+    .main-content
+    :is(
+      .card-footer,
+      .topbar,
+      .report-header,
+      .timeline-item,
+      .report-item,
+      .filter-bar
+    ) {
+    border-color: #4f806f !important;
+  }
+
+  #root
+    :is(.workspace-page .main-content, .dashboard-shell)
+    :is(.secondary-btn, .ghost-btn, .quiet-link, .btn-historial) {
+    border-color: #5f8978 !important;
+    color: #1e5949 !important;
+  }
+
+  /* Filled actions always use light text, including their hover states. */
+  #root
+    :is(.workspace-page .main-content, .dashboard-shell)
+    :is(.primary-btn, .btn-primary, .btn-turno),
+  #root
+    .workspace-page
+    .main-content
+    .family-card
+    .family-report-link {
+    color: #fff !important;
+  }
+
+  #root
+    .workspace-page
+    .main-content
+    .report-item
+    .report-actions
+    .btn-ver {
+    border: 1px solid #5f8978 !important;
+    background: #e1f1e9 !important;
+    color: #174f40 !important;
+  }
+  #root
+    .workspace-page
+    .main-content
+    .report-item
+    .report-actions
+    .btn-ver:hover {
+    border-color: #195b4d !important;
+    background: #195b4d !important;
+    color: #fff !important;
+  }
+
+  #root .workspace-page .main-content .context-progress {
+    color: #28594d !important;
+    font-weight: 600;
+  }
+  #root .workspace-page .main-content .context-progress strong {
+    color: #174f40 !important;
+  }
+
+  #root .workspace-page .main-content .task-card.done {
+    border-color: #4f806f !important;
+    background: #f1f8f4;
+    opacity: 1;
+  }
+  #root .workspace-page .main-content .task-card.done strong {
+    color: #244f43 !important;
+    text-decoration-color: #a14f32;
+    text-decoration-thickness: 2px;
+  }
+  #root .workspace-page .main-content .task-card.done .task-priority {
+    background: #dff0e7;
+    color: #1f5b46 !important;
+  }
+
+  body:has(.login-container) .auth-layout {
+    border-color: #5f8978;
+  }
+  .auth-card > p:not(.auth-error),
+  .auth-card .auth-remember,
+  .auth-card .auth-local-note {
+    color: #20594b;
+  }
+  .auth-card .form-group label {
+    color: #17483b;
+  }
+
+  /* Adult-friendly legibility: no tiny, pale supporting copy. */
+  #root
+    .workspace-page
+    .main-content
+    :is(
+      .context-label,
+      .context-stat small,
+      .section-guide small,
+      .patient-result-count,
+      .patient-card .age,
+      .patient-card .detail .label,
+      .patient-card .detail .value,
+      .family-card .info-grid .label,
+      .family-card .vital-label,
+      .shift-summary-meta span,
+      .shift-summary-item > span:not(.shift-summary-icon)
+    ) {
+    font-size: 0.86rem !important;
+    font-weight: 600;
+    line-height: 1.55;
+  }
+
+  #root
+    .workspace-page
+    .main-content
+    :is(
+      .turno-header p,
+      .timeline-body p,
+      .report-line,
+      .report-header p,
+      .report-summary p,
+      .task-card p,
+      .reporte-preview,
+      .section-empty p
+    ) {
+    font-size: 0.9rem !important;
+    font-weight: 500;
+    line-height: 1.65;
+  }
+
+  #root .workspace-page .main-content .report-summary b {
+    color: #285f7c !important;
+    font-size: 0.8rem !important;
+    font-weight: 700;
+  }
+
+  #root
+    .workspace-page
+    .main-content
+    :is(.task-priority, .status-badge, .badge-status, .report-status-label) {
+    font-size: 0.8rem !important;
+    font-weight: 700;
+  }
+
+  #root .workspace-page .main-content .task-control {
+    border-color: #5e8c7c;
+    background: #edf6f2;
+    color: #174f40;
+    font-size: 0.84rem;
+    font-weight: 700;
+  }
+  #root .workspace-page .main-content .task-control:hover {
+    border-color: #174f40;
+    background: #174f40;
+    color: #fff;
+  }
+
+  #root
+    .dashboard-shell
+    :is(.welcome-copy p, .metric-label, .metric-card small, .patient-info small, .shift-surface p),
+  #root .care-sidebar :is(.shift-card-caption, .shift-card-description) {
+    font-size: 0.86rem !important;
+    font-weight: 500;
+  }
+
+  #root .workspace-page .main-content .context-stat.context-blue {
+    border-color: #4c7c99 !important;
+    background: #f4f9fc;
+  }
+  #root .workspace-page .main-content .context-blue .context-label {
+    color: #285f7c !important;
+  }
+  #root .workspace-page .main-content .context-stat.context-amber {
+    border-color: #9a680f !important;
+    background: #fff8eb;
+  }
+  #root .workspace-page .main-content .context-amber .context-label {
+    color: #775000 !important;
+  }
+  #root .workspace-page .main-content .context-stat.context-mint {
+    border-color: #3f806a !important;
+    background: #f1f8f4;
+  }
+  #root .workspace-page .main-content .context-mint .context-label {
+    color: #1d624e !important;
+  }
+
+  #root .workspace-page .main-content .section-guide li:nth-child(1) {
+    border-left: 4px solid #4c7c99;
+  }
+  #root .workspace-page .main-content .section-guide li:nth-child(2) {
+    border-left: 4px solid #9a680f;
+  }
+  #root .workspace-page .main-content .section-guide li:nth-child(3) {
+    border-left: 4px solid #3f806a;
+  }
+  #root .workspace-page .main-content .section-guide .guide-number {
+    color: #174f40;
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
+  #root .workspace-page .main-content .kanban-col:nth-child(1) {
+    border-top: 4px solid #9a680f !important;
+  }
+  #root .workspace-page .main-content .kanban-col:nth-child(2) {
+    border-top: 4px solid #4c7c99 !important;
+  }
+  #root .workspace-page .main-content .kanban-col:nth-child(3) {
+    border-top: 4px solid #3f806a !important;
+  }
+
+  .auth-card > p:not(.auth-error) {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.65;
+  }
+  .auth-card :is(.auth-remember, .auth-local-note) {
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.55;
   }
 }

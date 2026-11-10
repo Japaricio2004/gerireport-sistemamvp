@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useLayoutEffect, useRef } from "react";
 import { useStore } from "./store";
 const links = [
-  ["Dashboard", "/index.html", "fa-gauge-high"],
+  ["Inicio", "/index.html", "fa-gauge-high"],
   ["Pacientes", "/pages/pacientes.html", "fa-users"],
   ["Modo Turno", "/pages/turno.html", "fa-clock"],
   ["Nuevo reporte", "/pages/nuevo-reporte.html", "fa-pen-to-square"],
@@ -15,10 +15,43 @@ export default function Sidebar({
   onClose,
   activePath = location.pathname,
 }) {
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  useLayoutEffect(() => {
+    const sidebar = document.getElementById("care-navigation");
+    if (!sidebar) return;
+    const media = window.matchMedia("(max-width: 760px)");
+    const sync = () => sidebar.toggleAttribute("inert", media.matches && !open);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, [open]);
+  useLayoutEffect(() => {
+    if (!open) return;
+    const trigger = document.querySelector(
+      '[aria-controls="care-navigation"]',
+    );
+    const previous = document.activeElement;
+    const firstLink = document.querySelector("#care-navigation .nav a");
+    const handleKeyDown = (event) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      trigger?.focus();
+      closeRef.current?.();
+    };
+    const focusTimer = window.setTimeout(() => firstLink?.focus(), 0);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener("keydown", handleKeyDown);
+      if (previous?.isConnected) previous.focus();
+    };
+  }, [open]);
   const current = activePath === "/" ? "/index.html" : activePath;
   return (
     <>
       <aside
+        id="care-navigation"
         className={"sidebar care-sidebar" + (open ? " open" : "")}
         aria-label="Menú de GeriReport"
       >

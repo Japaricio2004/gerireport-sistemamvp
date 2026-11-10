@@ -30,7 +30,8 @@ export default function DashboardPage() {
         <header className="topbar">
           <button
             className="menu-btn"
-            aria-label="Abrir menú"
+            aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-controls="care-navigation"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen(!menuOpen)}
           >
@@ -38,7 +39,7 @@ export default function DashboardPage() {
           </button>
           <div className="page-heading">
             <span className="eyebrow">{today}</span>
-            <h1>Dashboard</h1>
+            <h1>Inicio</h1>
           </div>
           <div className="topbar-actions">
             <a className="quiet-link" href="pages/reportes.html">
@@ -206,7 +207,7 @@ export default function DashboardPage() {
         </section>
         <footer className="dashboard-footer">
           <span>
-            GeriReport <span>·</span> Gestión de cuidados
+            GeriReport <span>·</span> Gestión de cuidados de los pacientes
           </span>
           <a href="pages/vista-familiar.html">
             Acceso para familiares{" "}

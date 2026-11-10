@@ -109,7 +109,8 @@ function useOriginal() {
       sidebar: { className: "sidebar" + (menu ? " open" : "") },
       menuBtn: {
         onClick: () => setMenu(!menu),
-        "aria-label": "Abrir menú",
+        "aria-label": menu ? "Cerrar menú" : "Abrir menú",
+        "aria-controls": "care-navigation",
         "aria-expanded": menu,
       },
     },
@@ -170,6 +171,12 @@ function ReviewNotice({ entries = [] }) {
   );
 }
 function Badge({ status }) {
+  const label =
+    status === "Revisar"
+      ? "Requiere revisión"
+      : status === "Estable"
+        ? "Sin observaciones"
+        : status;
   return (
     <span
       className={
@@ -191,7 +198,7 @@ function Badge({ status }) {
               : "fa-circle-check")
         }
       />{" "}
-      {status}
+      {label}
     </span>
   );
 }
@@ -314,7 +321,6 @@ export function Patients() {
         ...base.slots,
         pageIntro: (
           <>
-            {base.slots.pageIntro}
             <div className="patients-toolbar">
               <label className="patient-search">
                 <span>Buscar paciente</span>
@@ -348,16 +354,21 @@ export function Patients() {
             </div>
           </>
         ),
-        patientGrid: cards.length ? (
-          cards
-        ) : (
-          <div className="section-empty">
-            <span className="section-empty-icon">
-              <i className="fas fa-magnifying-glass" aria-hidden="true" />
-            </span>
-            <h3>No encontramos pacientes</h3>
-            <p>Prueba con otro nombre o cambia el estado seleccionado.</p>
-          </div>
+        patientGrid: (
+          <>
+            {cards.length ? (
+              cards
+            ) : (
+              <div className="section-empty">
+                <span className="section-empty-icon">
+                  <i className="fas fa-magnifying-glass" aria-hidden="true" />
+                </span>
+                <h3>No encontramos pacientes</h3>
+                <p>Prueba con otro nombre o cambia el estado seleccionado.</p>
+              </div>
+            )}
+            {base.slots.pageIntro}
+          </>
         ),
       }}
       bindings={{
@@ -513,7 +524,10 @@ export function Shift() {
         ? `${turn.dateLabel} · Inicio ${turn.startLabel} · Técnico: ${turn.technician}`
         : "",
     },
-    recordCount: { children: `${turn?.records.length || 0} registros` },
+    recordCount: {
+      children: `${turn?.records.length || 0} registros`,
+      "aria-live": "polite",
+    },
     finalizarTurnoBtn: { onClick: () => setModal("summaryModal") },
     summaryNotes: { value: notes, onChange: (e) => setNotes(e.target.value) },
     alertBanner: {
@@ -941,6 +955,24 @@ export function History() {
 }
 export function ReportContent({ report }) {
   const s = summarizeReport(report);
+  const reportStatus =
+    s.status === "Revisar"
+      ? {
+          className: "status-warning",
+          icon: "fa-triangle-exclamation",
+          label: "Requiere revisión",
+        }
+      : s.status === "Sin registros"
+        ? {
+            className: "status-neutral",
+            icon: "fa-clipboard",
+            label: "Sin registros",
+          }
+        : {
+            className: "status-ok",
+            icon: "fa-circle-check",
+            label: "Sin observaciones",
+          };
   return (
     <>
       <div className="pdf-masthead">
@@ -973,20 +1005,17 @@ export function ReportContent({ report }) {
           )}
         </div>
         <div
-          className={
-            "report-status " +
-            (s.status === "Revisar"
-              ? "status-warning"
-              : s.status === "Sin registros"
-                ? "status-neutral"
-                : "status-ok")
-          }
+          className={"report-status " + reportStatus.className}
+          role="status"
+          aria-label={`${report.type === "turno" ? "Estado del turno" : "Estado del reporte"}: ${reportStatus.label}`}
         >
-          {s.status === "Revisar"
-            ? "⚠️ Revisar"
-            : s.status === "Sin registros"
-              ? "Sin registros"
-              : "🟢 Estable"}
+          <span className="report-status-label">
+            {report.type === "turno" ? "Estado del turno" : "Estado del reporte"}
+          </span>
+          <strong>
+            <i className={"fas " + reportStatus.icon} aria-hidden="true" />
+            {reportStatus.label}
+          </strong>
         </div>
       </div>
       <ReviewNotice entries={reportReview(report)} />
@@ -1213,7 +1242,11 @@ export function Family() {
     .sort((a, b) => b.id - a.id)[0];
   const s = report ? summarizeReport(report) : null;
   const state =
-    s?.status === "Revisar" ? "Alerta" : s?.status || "Sin reportes";
+    s?.status === "Revisar"
+      ? "Requiere revisión"
+      : s?.status === "Estable"
+        ? "Sin observaciones"
+        : s?.status || "Sin reportes";
   return (
     <FamilyTemplate
       bindings={{

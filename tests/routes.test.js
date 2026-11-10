@@ -26,7 +26,7 @@ test("all original routes render React screens including saved shift and report"
     const { App } = await server.ssrLoadModule("/src/main.jsx");
     let referenceSidebar;
     for (const [path, expected] of [
-      ["/", "Dashboard"],
+      ["/", "Inicio"],
       ["/pages/login.html", "Usuario"],
       ["/pages/pacientes.html", "Nuevo paciente"],
       ["/pages/turno.html", "Sin turno activo"],
@@ -90,6 +90,22 @@ test("all original routes render React screens including saved shift and report"
         assert.ok(
           !content.includes("Crear cuenta"),
           "demo login has no registration",
+        );
+        assert.ok(
+          content.includes("Gestión de cuidados de los pacientes"),
+          "login identifies the patient-care purpose",
+        );
+      }
+      if (path === "/pages/pacientes.html") {
+        assert.ok(
+          html.indexOf("Buscar paciente") < html.indexOf("Tu red de cuidados"),
+          "patient search appears before secondary summary metrics",
+        );
+      }
+      if (path === "/pages/reporte-detalle.html") {
+        assert.ok(
+          html.includes('aria-label="Estado del turno: Requiere revisión"'),
+          "shift report status is explicit and accessible",
         );
       }
       if (

@@ -32,72 +32,107 @@ export default function AuthPage() {
       <style>{polish}</style>
       <style>{responsive}</style>
       <main className="login-container">
-        <section className="login-card auth-card">
-          <div className="brand">
-            <div className="brand-icon">
-              <i className="fas fa-heart-pulse" aria-hidden="true" />
+        <div className="auth-layout">
+          <section className="auth-overview" aria-labelledby="auth-brand-title">
+            <div className="brand">
+              <div className="brand-icon">
+                <i className="fas fa-heart-pulse" aria-hidden="true" />
+              </div>
+              <div className="brand-text">
+                <h1 id="auth-brand-title">GeriReport</h1>
+                <span>Gestión de cuidados de los pacientes</span>
+              </div>
             </div>
-            <div className="brand-text">
-              <h1>GeriReport</h1>
-              <span>Gestión de cuidados</span>
+            <div className="auth-overview-copy">
+              <span className="auth-kicker">Cuidado conectado</span>
+              <h2>Todo el turno, en un solo lugar.</h2>
+              <p>
+                Registra atenciones, revisa alertas y entrega reportes claros a
+                tu equipo.
+              </p>
             </div>
-          </div>
-          <h2>Iniciar sesión</h2>
-          <p>Entra a la demo para organizar tus turnos y registrar cuidados.</p>
-          {error && (
-            <p className="auth-error" role="alert">
-              {error}
+            <ul className="auth-benefits">
+              <li>
+                <i className="fas fa-check" aria-hidden="true" />
+                Registro diario ordenado
+              </li>
+              <li>
+                <i className="fas fa-check" aria-hidden="true" />
+                Información accesible por paciente
+              </li>
+              <li>
+                <i className="fas fa-check" aria-hidden="true" />
+                Reportes listos para revisar
+              </li>
+            </ul>
+          </section>
+          <section
+            className="login-card auth-card"
+            aria-labelledby="login-title"
+          >
+            <span className="auth-kicker">Acceso al sistema</span>
+            <h2 id="login-title">Iniciar sesión</h2>
+            <p>
+              Entra a la demo para organizar tus turnos y registrar cuidados.
             </p>
-          )}
-          <form className="form" onSubmit={submit} aria-busy={busy}>
-            <div className="form-group">
-              <label htmlFor="username">Usuario</label>
-              <div className="input-wrapper">
-                <i className="fas fa-user" aria-hidden="true" />
-                <input
-                  id="username"
-                  name="username"
-                  autoComplete="username"
-                  placeholder="Ej. Ana Martínez"
-                  maxLength={100}
-                  required
-                  disabled={busy}
-                />
+            {error && (
+              <p className="auth-error" role="alert">
+                {error}
+              </p>
+            )}
+            <form className="form" onSubmit={submit} aria-busy={busy}>
+              <div className="form-group">
+                <label htmlFor="username">Usuario</label>
+                <div className="input-wrapper">
+                  <i className="fas fa-user" aria-hidden="true" />
+                  <input
+                    id="username"
+                    name="username"
+                    autoComplete="username"
+                    placeholder="Ej. Ana Martínez"
+                    maxLength={100}
+                    required
+                    disabled={busy}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Contraseña</label>
-              <div className="input-wrapper">
-                <i className="fas fa-lock" aria-hidden="true" />
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="off"
-                  placeholder="Cualquier contraseña para la demo"
-                  required
-                  disabled={busy}
-                />
+              <div className="form-group">
+                <label htmlFor="password">Contraseña</label>
+                <div className="input-wrapper">
+                  <i className="fas fa-lock" aria-hidden="true" />
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="off"
+                    placeholder="Cualquier contraseña"
+                    required
+                    disabled={busy}
+                  />
+                </div>
               </div>
-            </div>
-            <label className="auth-remember">
-              <input name="remember" type="checkbox" />
-              Mantener mi sesión iniciada
-            </label>
-            <button
-              className="primary-btn auth-submit"
-              type="submit"
-              disabled={busy}
-            >
-              <i className="fas fa-arrow-right-to-bracket" aria-hidden="true" />
-              {busy ? "Ingresando…" : "Ingresar al sistema"}
-            </button>
-          </form>
-          <small className="auth-local-note">
-            <i className="fas fa-circle-info" aria-hidden="true" />
-            Demo: escribe el nombre que quieres mostrar y cualquier contraseña.
-          </small>
-        </section>
+              <label className="auth-remember">
+                <input name="remember" type="checkbox" />
+                Mantener mi sesión iniciada
+              </label>
+              <button
+                className="primary-btn auth-submit"
+                type="submit"
+                disabled={busy}
+              >
+                <i
+                  className="fas fa-arrow-right-to-bracket"
+                  aria-hidden="true"
+                />
+                {busy ? "Ingresando…" : "Ingresar al sistema"}
+              </button>
+            </form>
+            <small className="auth-local-note">
+              <i className="fas fa-circle-info" aria-hidden="true" />
+              Demo: escribe el nombre que quieres mostrar y cualquier contraseña.
+            </small>
+          </section>
+        </div>
       </main>
     </>
   );

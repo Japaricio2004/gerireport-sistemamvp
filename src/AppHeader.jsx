@@ -40,7 +40,7 @@ export default function AppHeader({ section = "Dashboard" }) {
         </span>
         <div className="workspace-wordmark">
           <strong>GeriReport</strong>
-          <span>Gestión de cuidados</span>
+          <span>Gestión de cuidados de los pacientes</span>
         </div>
       </div>
       <div className="workspace-location" aria-label="Sección actual">

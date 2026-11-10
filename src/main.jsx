@@ -24,8 +24,8 @@ import "./sidebar.css";
 import "./responsive.css";
 initialize();
 const pages = {
-  "/": [DashboardPage, "Dashboard"],
-  "/index.html": [DashboardPage, "Dashboard"],
+  "/": [DashboardPage, "Inicio"],
+  "/index.html": [DashboardPage, "Inicio"],
   "/pages/pacientes.html": [Patients, "Pacientes"],
   "/pages/turno.html": [Shift, "Modo turno"],
   "/pages/nuevo-reporte.html": [Manual, "Nuevo reporte"],
@@ -143,6 +143,9 @@ export function App() {
           className="workspace-frame"
           style={!user ? { "--workspace-header-height": "0px" } : undefined}
         >
+          <a className="skip-link" href="#workspace-main">
+            Saltar al contenido principal
+          </a>
           <AppHeader section={title} />
           <div className="workspace-layout">
             <Sidebar
@@ -150,7 +153,12 @@ export function App() {
               onClose={() => setMenuOpen(false)}
               activePath={url.split("?")[0]}
             />
-            <div className="workspace-page">
+            <div
+              className="workspace-page"
+              id="workspace-main"
+              tabIndex="-1"
+              aria-label="Contenido principal"
+            >
               <Page key={url} />
             </div>
           </div>

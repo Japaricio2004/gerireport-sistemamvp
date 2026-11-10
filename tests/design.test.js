@@ -87,7 +87,9 @@ test("original screen CSS and DOM layout are preserved during React conversion",
         "utf8",
       );
       assert.equal(
-        createHash("sha256").update(css).digest("hex"),
+        createHash("sha256")
+          .update(css.replace(/\r\n/g, "\n"))
+          .digest("hex"),
         baseline.cssSha256,
         name + " original CSS",
       );

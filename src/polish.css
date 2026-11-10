@@ -1097,26 +1097,77 @@ body:has(.login-container) .auth-card {
 }
 .auth-card h2 {
   margin-bottom: 12px;
-  font-size: 1.3rem;
+  color: #1e3430;
+  font-size: 1.45rem;
   font-weight: 600;
   letter-spacing: -0.5px;
 }
-.auth-card > p {
-  font-size: 0.8rem;
+.auth-card .brand-text span {
+  color: #35564b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.auth-card > p:not(.auth-error) {
+  color: #465e53;
+  font-size: 0.95rem;
   line-height: 1.8;
 }
 .auth-card .input-wrapper input {
   min-height: 50px;
   border: 1px solid #dfe8d8;
   border-radius: 10px;
+  color: #1e3430;
+  font-size: 1rem;
+}
+.auth-card .input-wrapper input::placeholder {
+  color: #62786f;
+  opacity: 1;
 }
 .auth-card .form-group {
   margin-bottom: 22px;
 }
 .auth-card .form-group label {
-  font-size: 0.76rem;
+  color: #294a3e;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: #67805c;
+}
+.auth-card .auth-remember {
+  color: #40584f;
+  font-size: 0.9rem;
+}
+.auth-card .auth-local-note {
+  color: #52665d;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+.auth-card .auth-local-note i {
+  color: #216d5d;
+}
+.app-shell .report-status {
+  display: grid;
+  gap: 5px;
+  min-width: 176px;
+  max-width: 100%;
+  white-space: normal;
+}
+.app-shell .report-status-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.app-shell .report-status > strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.app-shell .report-status.status-neutral {
+  border: 1px solid #d6e0db;
+  background: #edf1ef;
+  color: #40584f;
 }
 .app-wrapper .stat-card,
 .app-wrapper .chart-box,
