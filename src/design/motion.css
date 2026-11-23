@@ -1,0 +1,55 @@
+/* ==========================================================================
+   05 · MOVIMIENTO — entrada progresiva, cascada de tarjetas, barras y
+   progreso. Solo transform/opacity (compositor). "backwards" devuelve el
+   control de hover/transform al terminar. Todo se anula con
+   prefers-reduced-motion.
+   ========================================================================== */
+@keyframes gr-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes gr-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes gr-pop { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes gr-slide-in { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+@keyframes gr-pulse { 0% { box-shadow: 0 0 0 0 rgba(58,197,154,.55); } 70%, 100% { box-shadow: 0 0 0 9px rgba(58,197,154,0); } }
+@keyframes gr-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes gr-grow-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes gr-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes gr-ecg { to { stroke-dashoffset: 0; } }
+
+@media screen {
+  /* Secciones: entran en secuencia */
+  #root #workspace-main .main-content > *,
+  #root #workspace-main .dashboard-shell .main-content > *,
+  #root .admin-page > * { animation: gr-rise .7s var(--gr-ease) backwards; }
+  #root #workspace-main .main-content > :nth-child(2) { animation-delay: 70ms; }
+  #root #workspace-main .main-content > :nth-child(3) { animation-delay: 140ms; }
+  #root #workspace-main .main-content > :nth-child(4) { animation-delay: 210ms; }
+  #root #workspace-main .main-content > :nth-child(5) { animation-delay: 280ms; }
+  #root #workspace-main .main-content > :nth-child(n + 6) { animation-delay: 340ms; }
+  /* Tarjetas: cascada escalonada (--i lo fija :nth-child) */
+  #root #workspace-main :is(.patient-grid, .metrics-grid, .context-grid, .section-guide, .kanban, .turno-actions-grid, .reports-list, .info-grid, .patient-list, .vitales-grid, .admin-users, .history-stack) > * {
+    animation: gr-rise .6s var(--gr-ease) backwards; animation-delay: calc(140ms + var(--i, 0) * 60ms);
+  }
+  #root #workspace-main :is(.patient-grid, .metrics-grid, .context-grid, .section-guide, .kanban, .turno-actions-grid, .reports-list, .info-grid, .patient-list, .vitales-grid, .admin-users) > :nth-child(1) { --i: 0; }
+  #root #workspace-main :is(.patient-grid, .metrics-grid, .context-grid, .section-guide, .kanban, .turno-actions-grid, .reports-list, .info-grid, .patient-list, .vitales-grid, .admin-users) > :nth-child(2) { --i: 1; }
+  #root #workspace-main :is(.patient-grid, .metrics-grid, .context-grid, .section-guide, .kanban, .turno-actions-grid, .reports-list, .info-grid, .patient-list, .vitales-grid, .admin-users) > :nth-child(3) { --i: 2; }
+  #root #workspace-main :is(.patient-grid, .metrics-grid, .context-grid, .section-guide, .kanban, .turno-actions-grid, .reports-list, .info-grid, .patient-list, .vitales-grid, .admin-users) > :nth-child(4) { --i: 3; }
+  #root #workspace-main :is(.patient-grid, .metrics-grid, .context-grid, .section-guide, .kanban, .turno-actions-grid, .reports-list, .info-grid, .patient-list, .vitales-grid, .admin-users) > :nth-child(5) { --i: 4; }
+  #root #workspace-main :is(.patient-grid, .metrics-grid, .context-grid, .section-guide, .kanban, .turno-actions-grid, .reports-list, .info-grid, .patient-list, .vitales-grid, .admin-users) > :nth-child(n + 6) { --i: 5; }
+  /* Entrada de acceso y portal */
+  #root .login-container .auth-layout, #root .login-box { animation: gr-pop .8s var(--gr-ease) backwards; }
+  #root .app-wrapper .section.active { animation: gr-rise .55s var(--gr-ease) backwards; }
+  #root .chart-bars .bar { transform-origin: bottom; animation: gr-grow-y .9s var(--gr-ease) backwards; }
+  #root .context-progress progress { transform-origin: left; animation: gr-grow 1s var(--gr-ease) backwards; }
+  /* Línea ECG decorativa (portada) */
+  #root .dash-ecg path { stroke-dasharray: 600; stroke-dashoffset: 600; animation: gr-ecg 2.4s var(--gr-ease) .4s forwards; }
+  /* Menú desplegable de contenido: aparece con ligera escala */
+  #root details[open] > :not(summary) { animation: gr-rise .35s var(--gr-ease) backwards; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important;
+  }
+  #root .dash-ecg path { stroke-dashoffset: 0; }
+  #root #workspace-main :is(.patient-card, .task-card, .report-item, .context-stat, .metric-card):hover { transform: none; }
+}

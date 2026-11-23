@@ -1,0 +1,602 @@
+/* ==========================================================================
+   04 · PANTALLAS — una composición propia por función.
+   1 Inicio · 2 Pacientes · 3 Turno · 4 Nuevo reporte · 5 Historial ·
+   6 Detalle · 7 Seguimiento · 8 Vista familiar · 9 Administración ·
+   10 Acceso · 11 Portal familiar
+   ========================================================================== */
+
+/* 1 · INICIO — retícula "bento": portada oscura + indicadores apilados ---- */
+#root #workspace-main .dashboard-shell .topbar { align-items: flex-end; }
+#root #workspace-main .dashboard-shell .page-heading { flex: 1 1 320px; }
+#root #workspace-main .dashboard-shell .page-heading h1 { font-size: clamp(2.3rem, 1.5rem + 2.6vw, 3.5rem); }
+#root #workspace-main .topbar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+#root #workspace-main .quiet-link {
+  display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 8px 16px; border-radius: 14px; color: var(--gr-ink-2) !important; font-size: .86rem; font-weight: 700; text-decoration: none;
+  transition: background-color var(--gr-t-fast) var(--gr-ease);
+}
+#root #workspace-main .quiet-link:hover { background: var(--gr-sage-100); }
+#root #workspace-main .dash-overview { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); gap: 20px; margin: 0 0 22px; }
+#root #workspace-main .dashboard-shell .welcome-panel {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; min-height: 440px; margin: 0; padding: clamp(32px, 4vw, 56px);
+  overflow: hidden; border: 0 !important; border-radius: 32px !important; color: #fff;
+  background:
+    radial-gradient(70% 90% at 100% 0%, rgba(58,197,154,.26), transparent 62%),
+    radial-gradient(60% 70% at 0% 110%, rgba(180,134,58,.16), transparent 60%),
+    linear-gradient(160deg, var(--gr-forest-800), var(--gr-forest-950)) !important;
+  box-shadow: var(--gr-sh-3) !important;
+}
+#root #workspace-main .welcome-panel::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1.4px); background-size: 22px 22px; -webkit-mask-image: linear-gradient(110deg, transparent 30%, #000 100%); mask-image: linear-gradient(110deg, transparent 30%, #000 100%); pointer-events: none; }
+#root #workspace-main .welcome-copy { position: relative; z-index: 1; display: grid; justify-items: start; gap: 0; }
+#root #workspace-main .status-label {
+  display: inline-flex; align-items: center; gap: 10px; margin: 0 0 22px; padding: 7px 14px; border: 1px solid rgba(134,224,191,.3); border-radius: 999px;
+  background: rgba(134,224,191,.08); color: var(--gr-emerald-300); font-size: .68rem; font-weight: 800; letter-spacing: .18em;
+}
+#root #workspace-main .welcome-copy h2 {
+  margin: 0; color: #fff; max-width: 11ch; font-size: clamp(2.4rem, 1.3rem + 2.4vw, 3.7rem); font-weight: 400; letter-spacing: -.035em; line-height: 1.02; text-wrap: balance;
+}
+#root #workspace-main .welcome-copy h2 span { color: var(--gr-emerald-300); font-style: italic; font-weight: 300; }
+#root #workspace-main .welcome-copy p { max-width: 40ch; margin: 22px 0 0; color: #c2dacd; font-size: 1.02rem; line-height: 1.65; }
+#root #workspace-main .welcome-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 32px; }
+#root #workspace-main .welcome-panel .primary-btn { background: var(--gr-card) !important; color: var(--gr-forest-900) !important; border-color: transparent !important; box-shadow: 0 14px 28px -12px rgba(0,0,0,.6) !important; }
+#root #workspace-main .welcome-panel .primary-btn:hover { filter: none; background: #fff !important; }
+#root #workspace-main .text-link { display: inline-flex; align-items: center; gap: 9px; color: var(--gr-emerald-600) !important; font-size: .86rem; font-weight: 700; text-decoration: none; }
+#root #workspace-main .text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+#root #workspace-main .welcome-panel .text-link { color: var(--gr-emerald-300) !important; }
+#root #workspace-main .welcome-visual { position: absolute; z-index: 0; right: 0; top: 0; display: grid; place-items: center; width: 230px; height: 230px; margin: 18px 18px 0 0; pointer-events: none; background: none !important; }
+#root #workspace-main .welcome-visual::before, #root #workspace-main .welcome-visual::after { content: none !important; }
+#root #workspace-main .welcome-visual > .care-symbol { transform: translate(-6px, -4px); }
+#root #workspace-main .dash-ecg { position: absolute; left: -90px; top: 50%; width: 320px; height: 90px; transform: translateY(-50%); color: rgba(134,224,191,.42); }
+#root #workspace-main .care-orbit { position: absolute; border: 1px solid rgba(134,224,191,.16); border-radius: 50%; }
+#root #workspace-main .orbit-one { width: 190px; height: 190px; }
+#root #workspace-main .orbit-two { width: 130px; height: 130px; border-color: rgba(134,224,191,.26); }
+#root #workspace-main .care-symbol {
+  position: relative; display: grid; place-items: center; width: 74px; height: 74px; border-radius: 24px; color: #fff; font-size: 1.9rem;
+  background: linear-gradient(150deg, var(--gr-emerald-400), var(--gr-emerald-600)); box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 20px 36px -12px rgba(16,155,115,.8);
+  animation: gr-float 5.5s ease-in-out infinite;
+}
+#root #workspace-main .visual-caption { display: none; position: absolute; right: 28px; bottom: 26px; color: var(--gr-sidebar-ink-2); font-size: .72rem; line-height: 1.5; text-align: right; }
+
+/* Indicadores apilados a la derecha de la portada */
+#root #workspace-main .dashboard-shell .metrics-grid { display: grid; grid-template-columns: minmax(0, 1fr); grid-auto-rows: 1fr; gap: 14px; margin: 0; padding: 0; background: none; border: 0; box-shadow: none; }
+#root #workspace-main .dashboard-shell .metric-card {
+  position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "icon label num" "icon small num" "stack stack stack"; align-content: center; align-items: center; column-gap: 16px; row-gap: 3px;
+  margin: 0; padding: 22px 24px; border: 1px solid var(--gr-line) !important; border-radius: var(--gr-r-lg) !important; background: var(--gr-card) !important; box-shadow: var(--gr-sh-1) !important; text-align: left; justify-items: stretch;
+}
+#root #workspace-main .dashboard-shell .metric-card + .metric-card { border-left: 1px solid var(--gr-line) !important; border-top: 1px solid var(--gr-line) !important; }
+#root #workspace-main .dashboard-shell .metric-card:hover { transform: translateY(-3px); box-shadow: var(--gr-sh-2) !important; border-color: var(--gr-sage-300) !important; }
+#root #workspace-main .metric-icon { grid-area: icon; display: grid; place-items: center; width: 50px; height: 50px; margin: 0; border-radius: 16px; font-size: 1.05rem; background: var(--gr-sage-100); color: var(--gr-emerald-600); }
+#root #workspace-main .metric-icon.blue { background: var(--gr-info-bg); color: var(--gr-info-ink); }
+#root #workspace-main .metric-icon.amber { background: var(--gr-warn-bg); color: var(--gr-warn-ink); }
+#root #workspace-main .metric-label { grid-area: label; color: var(--gr-ink-3); font-size: .78rem; font-weight: 700; letter-spacing: .02em; }
+#root #workspace-main .metric-card strong { grid-area: num; color: var(--gr-ink); font-size: 3rem; font-weight: 400; letter-spacing: -.04em; line-height: 1; }
+#root #workspace-main .metric-card small { grid-area: small; color: var(--gr-ink-3); font-size: .78rem; font-weight: 500; overflow-wrap: anywhere; }
+#root #workspace-main .metric-stack { grid-area: stack; display: flex; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--gr-hairline); }
+#root #workspace-main .metric-stack > span { display: grid; place-items: center; width: 32px; height: 32px; margin-left: -8px; border: 2px solid var(--gr-card); border-radius: 50%; background: var(--gr-forest-800); color: var(--gr-emerald-300); font-size: .62rem; font-weight: 800; }
+#root #workspace-main .metric-stack > span:first-child { margin-left: 0; }
+#root #workspace-main .metric-stack > .tone-1 { background: var(--gr-emerald-600); color: #fff; }
+#root #workspace-main .metric-stack > .tone-2 { background: var(--gr-sage-200); color: var(--gr-forest-800); }
+
+/* Pacientes + turno */
+#root #workspace-main .dashboard-content { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr); gap: 20px; margin: 0 0 22px; }
+#root #workspace-main .dashboard-content .surface { padding: 28px 30px; }
+#root #workspace-main .dashboard-content .section-heading, #root #workspace-main .dashboard-activity .section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 0 0 18px; padding: 0 0 18px; border-bottom: 1px solid var(--gr-hairline); }
+#root #workspace-main .patient-list { display: grid; gap: 2px; margin: 0 -12px; }
+#root #workspace-main .patient-row {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 16px; padding: 14px 12px; border-radius: 16px; color: inherit; text-decoration: none;
+  transition: background-color var(--gr-t-fast) var(--gr-ease), transform var(--gr-t-base) var(--gr-ease);
+}
+#root #workspace-main .patient-row:hover { background: var(--gr-sage-50); transform: translateX(4px); }
+#root #workspace-main .patient-avatar, #root #workspace-main .avatar {
+  display: grid; place-items: center; width: 46px; height: 46px; border-radius: 15px; background: var(--gr-forest-900); color: var(--gr-emerald-300); font-size: .8rem; font-weight: 800; letter-spacing: .02em;
+}
+#root #workspace-main .patient-avatar.tone-1 { background: var(--gr-emerald-600); color: #fff; }
+#root #workspace-main .patient-avatar.tone-2 { background: var(--gr-sage-200); color: var(--gr-forest-800); }
+#root #workspace-main .patient-info { display: grid; gap: 3px; min-width: 0; }
+#root #workspace-main .patient-info strong { color: var(--gr-ink); font-size: 1rem; font-weight: 700; }
+#root #workspace-main .patient-info small { color: var(--gr-ink-3); font-size: .8rem; line-height: 1.45; }
+#root #workspace-main .row-chevron { color: var(--gr-sage-300); font-size: .8rem; transition: transform var(--gr-t-base) var(--gr-ease), color var(--gr-t-fast) var(--gr-ease); }
+#root #workspace-main .patient-row:hover .row-chevron { color: var(--gr-emerald-600); transform: translateX(4px); }
+#root #workspace-main .shift-surface { background: linear-gradient(180deg, var(--gr-sage-50), var(--gr-sage-100)) !important; box-shadow: none !important; }
+#root #workspace-main .shift-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: var(--gr-forest-900); color: var(--gr-emerald-300); }
+#root #workspace-main :is(.empty-turn, .active-turn) { display: grid; justify-items: start; gap: 8px; padding: 12px 0 0; }
+#root #workspace-main .empty-turn-icon { display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: 8px; border-radius: 18px; background: var(--gr-card); color: var(--gr-brass-500); font-size: 1.3rem; box-shadow: var(--gr-sh-1); }
+#root #workspace-main :is(.empty-turn, .active-turn) h3 { margin: 0; font-family: var(--gr-font-display) !important; font-size: 1.6rem; font-weight: 500; letter-spacing: -.02em; line-height: 1.15; color: var(--gr-ink); }
+#root #workspace-main :is(.empty-turn, .active-turn) p { margin: 0 0 12px; color: var(--gr-ink-3); line-height: 1.6; }
+#root #workspace-main .turn-state { display: inline-flex; align-items: center; gap: 9px; padding: 6px 13px; border-radius: 999px; background: var(--gr-forest-900); color: var(--gr-emerald-300); font-size: .68rem; font-weight: 800; letter-spacing: .14em; }
+
+/* Actividad: línea de tiempo */
+#root #workspace-main .dashboard-activity { padding: 28px 30px; margin: 0 0 22px; }
+#root #workspace-main .activity-item { position: relative; margin: 0; padding: 12px 0 12px 30px; color: var(--gr-ink-2); font-size: .92rem; line-height: 1.5; }
+#root #workspace-main .activity-item::before { content: ""; position: absolute; left: 4px; top: 19px; width: 10px; height: 10px; border: 2px solid var(--gr-emerald-500); border-radius: 50%; background: var(--gr-card); }
+#root #workspace-main .activity-item::after { content: ""; position: absolute; left: 8px; top: 33px; bottom: -12px; width: 2px; background: var(--gr-sage-100); }
+#root #workspace-main .activity-item:last-of-type::after { content: none; }
+#root #workspace-main .activity-item strong { color: var(--gr-ink); font-weight: 700; }
+#root #workspace-main .dashboard-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 6px; color: var(--gr-ink-3); font-size: .82rem; }
+#root #workspace-main .dashboard-footer a { color: var(--gr-emerald-600); font-weight: 700; text-decoration: none; }
+@media (max-width: 1180px) { #root #workspace-main .dash-overview { grid-template-columns: minmax(0, 1fr); } #root #workspace-main .dashboard-shell .metrics-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: auto; } #root #workspace-main .dashboard-shell .metric-card { grid-template-areas: "icon num" "label label" "small small" "stack stack"; grid-template-columns: auto 1fr; } #root #workspace-main .dashboard-shell .metric-card strong { justify-self: end; } }
+@media (max-width: 900px) { #root #workspace-main .dashboard-content { grid-template-columns: minmax(0, 1fr); } #root #workspace-main .dashboard-shell .welcome-panel { grid-template-columns: minmax(0, 1fr); min-height: 0; } #root #workspace-main .welcome-visual { display: none; } }
+@media (max-width: 700px) { #root #workspace-main .dashboard-shell .metrics-grid { grid-template-columns: minmax(0, 1fr); } #root #workspace-main .patient-row { grid-template-columns: auto minmax(0, 1fr) auto; } #root #workspace-main .patient-row .row-chevron { display: none; } #root #workspace-main .dashboard-content .surface, #root #workspace-main .dashboard-activity { padding: 22px 18px; } }
+
+/* 2 · PACIENTES — directorio en filas anchas ------------------------------ */
+#root #workspace-main .patients-toolbar {
+  display: grid; grid-template-columns: minmax(240px, 1.6fr) minmax(200px, 1fr) auto; align-items: end; gap: 18px 24px; margin: 0 0 24px; padding: 18px 22px;
+  background: var(--gr-forest-900) !important; border: 0 !important; box-shadow: var(--gr-sh-2) !important; border-radius: var(--gr-r-lg) !important;
+}
+#root #workspace-main .patients-toolbar label { display: grid; gap: 8px; color: var(--gr-sidebar-ink) !important; font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+#root #workspace-main .patient-search > div { position: relative; }
+#root #workspace-main .patient-search > div > i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--gr-emerald-600); pointer-events: none; z-index: 1; }
+#root #workspace-main .patient-search input { width: 100%; padding-left: 44px; }
+#root #workspace-main .patient-result-count { align-self: center; padding: 8px 14px; border-radius: 999px; background: rgba(134,224,191,.12); color: var(--gr-emerald-300) !important; font-size: .76rem; font-weight: 700; white-space: nowrap; }
+#root #workspace-main .patient-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin: 0 0 32px; }
+#root #workspace-main .patient-card {
+  position: relative; display: grid; grid-template-columns: 290px minmax(0, 1fr) 232px; align-items: stretch; gap: 0; padding: 0; overflow: hidden;
+}
+#root #workspace-main .patient-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--gr-emerald-500); }
+#root #workspace-main .patient-card.patient-state-alerta::before { background: var(--gr-brass-500); }
+#root #workspace-main .patient-card.patient-state-critico::before { background: #c4402f; }
+#root #workspace-main .patient-card .card-header {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "av info" "av st"; align-content: center; align-items: center; gap: 4px 16px; padding: 26px 24px 26px 30px; border: 0; background: transparent;
+}
+#root #workspace-main .patient-card .avatar { grid-area: av; width: 56px; height: 56px; border-radius: 18px; font-size: .95rem; }
+#root #workspace-main .patient-card .header-info { grid-area: info; display: grid; gap: 3px; min-width: 0; }
+#root #workspace-main .patient-card .name { color: var(--gr-ink); text-wrap: balance; font-family: var(--gr-font-display) !important; font-size: 1.35rem; font-weight: 500; letter-spacing: -.02em; line-height: 1.15; }
+#root #workspace-main .patient-card .age { color: var(--gr-ink-3); font-size: .78rem; font-weight: 600; letter-spacing: .02em; }
+#root #workspace-main .patient-card .status-badge { grid-area: st; justify-self: start; margin-top: 8px; }
+#root #workspace-main .patient-card .status-badge.estable { background: var(--gr-ok-bg); }
+#root #workspace-main .patient-card .card-body {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; gap: 16px 24px; padding: 24px 26px; border-left: 1px solid var(--gr-hairline); border-right: 1px solid var(--gr-hairline); background: transparent;
+}
+#root #workspace-main .patient-card .detail:first-child { grid-column: 1 / -1; }
+#root #workspace-main .patient-card .detail { display: grid; grid-template-columns: 24px minmax(0, 1fr); grid-template-areas: "i label" ". value"; gap: 2px 8px; align-items: center; margin: 0; padding: 0; border: 0; }
+#root #workspace-main .patient-card .detail i { grid-area: i; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; background: var(--gr-sage-100); color: var(--gr-emerald-600); font-size: .68rem; }
+#root #workspace-main .patient-card .detail .label { grid-area: label; color: var(--gr-ink-3); font-size: .66rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+#root #workspace-main .patient-card .detail .value { grid-area: value; color: var(--gr-ink); font-size: .88rem; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+#root #workspace-main .patient-card .card-footer {
+  display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; gap: 8px; padding: 22px 24px; border: 0; background: var(--gr-sage-50);
+}
+#root #workspace-main .patient-card .card-footer .btn-turno { width: 100%; }
+#root #workspace-main .patient-card .card-footer .btn-historial { width: 100%; min-height: 40px; padding: 7px 12px; font-size: .78rem; }
+#root #workspace-main .patient-card.patient-with-turn { outline: 2px solid var(--gr-emerald-500); outline-offset: -2px; }
+@media (max-width: 1180px) {
+  #root #workspace-main .patient-card { grid-template-columns: minmax(0, 1fr) minmax(220px, auto); grid-template-areas: "head foot" "body foot"; }
+  #root #workspace-main .patient-card .card-header { grid-area: head; padding-bottom: 8px; }
+  #root #workspace-main .patient-card .card-body { grid-area: body; border: 0; padding: 8px 26px 24px 30px; }
+  #root #workspace-main .patient-card .card-footer { grid-area: foot; }
+}
+@media (max-width: 760px) {
+  #root #workspace-main .patients-toolbar { grid-template-columns: minmax(0, 1fr); padding: 16px; }
+  #root #workspace-main .patient-card { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "body" "foot"; }
+  #root #workspace-main .patient-card .card-header { padding: 22px 18px 6px 24px; }
+  #root #workspace-main .patient-card .card-body { grid-template-columns: minmax(0, 1fr); padding: 14px 18px 20px 24px; }
+  #root #workspace-main .patient-card .card-footer { padding: 16px 18px 20px 24px; }
+}
+
+/* 3 · MODO TURNO — cabecera de sesión oscura + teclado de registros ------- */
+#root #workspace-main .turno-header {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 28px; margin: 0 0 18px; padding: 30px 34px;
+  border: 0 !important; border-radius: var(--gr-r-xl) !important; color: #fff;
+  background: radial-gradient(70% 140% at 100% 0%, rgba(58,197,154,.26), transparent 60%), linear-gradient(160deg, var(--gr-forest-800), var(--gr-forest-950)) !important; box-shadow: var(--gr-sh-3) !important;
+}
+#root #workspace-main .turno-header .badge { margin-bottom: 14px; background: rgba(134,224,191,.1); border-color: rgba(134,224,191,.32); color: var(--gr-emerald-300); }
+#root #workspace-main .turno-header h3 { margin: 0; color: #fff !important; font-family: var(--gr-font-display) !important; font-size: clamp(1.9rem, 1.3rem + 1.6vw, 2.6rem); font-weight: 400; letter-spacing: -.03em; line-height: 1.08; }
+#root #workspace-main .turno-header p { margin: 10px 0 0; color: #bcd6c7 !important; font-size: .9rem; }
+#root #workspace-main .turno-header .danger-btn { background: rgba(255,255,255,.06) !important; border-color: rgba(255,255,255,.22) !important; color: #fff !important; }
+#root #workspace-main .turno-header .danger-btn:hover { background: #c4402f !important; border-color: #c4402f !important; }
+#root #workspace-main .turno-actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 0 0 22px; }
+#root #workspace-main .turno-action-btn {
+  display: grid; justify-items: start; align-content: space-between; gap: 18px; min-height: 124px; padding: 18px; border: 1px solid var(--gr-line) !important; border-radius: var(--gr-r-lg) !important;
+  background: var(--gr-card) !important; color: var(--gr-ink) !important; font-size: .9rem; font-weight: 700; text-align: left; cursor: pointer; box-shadow: var(--gr-sh-1) !important;
+}
+#root #workspace-main .turno-action-btn:hover { transform: translateY(-4px); border-color: var(--gr-emerald-500) !important; box-shadow: var(--gr-sh-2) !important; background: var(--gr-sage-50) !important; }
+#root #workspace-main .turno-action-btn:active { transform: scale(.98); }
+#root #workspace-main .turno-action-icon { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 15px; background: var(--gr-sage-100); font-size: 1.35rem; }
+#root #workspace-main .turno-action-btn.alert-variant { background: var(--gr-warn-bg) !important; border-color: var(--gr-warn-line) !important; color: var(--gr-warn-ink) !important; }
+#root #workspace-main .turno-action-btn.alert-variant .turno-action-icon { background: rgba(255,255,255,.7); }
+#root #workspace-main .panel { padding: 28px 30px; }
+#root #workspace-main .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 20px; padding: 0 0 18px; border-bottom: 1px solid var(--gr-hairline); }
+#root #workspace-main .panel-heading .muted, #root #workspace-main .muted { color: var(--gr-ink-3); font-size: .84rem; }
+#root #workspace-main .timeline { display: grid; gap: 0; }
+#root #workspace-main .timeline-item, #root #workspace-main .timeline > .record { position: relative; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 18px; padding: 16px 0 16px 0; border: 0; border-bottom: 1px solid var(--gr-hairline); background: none; }
+#root #workspace-main .timeline-item:last-child { border-bottom: 0; }
+#root #workspace-main .timeline-time { color: var(--gr-emerald-700); font-family: var(--gr-font-display) !important; font-size: 1.15rem; font-weight: 500; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+#root #workspace-main .timeline-title { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: var(--gr-ink); font-weight: 700; }
+#root #workspace-main .timeline-body p { margin: 6px 0 0; color: var(--gr-ink-2); line-height: 1.55; }
+#root #workspace-main .timeline-body small { color: var(--gr-ink-3); }
+#root #workspace-main .timeline-item.timeline-alert { margin: 0 -14px; padding-inline: 14px; border-radius: 14px; background: var(--gr-warn-bg); border-bottom-color: transparent; }
+#root #workspace-main .report-timeline-section .timeline-item.timeline-alert { margin: 0; }
+#root #workspace-main .panel.empty-state { display: grid; justify-items: center; gap: 12px; padding: 56px 24px; text-align: center; }
+#root #workspace-main .panel.empty-state p { max-width: 46ch; margin: 0; color: var(--gr-ink-3); }
+#root #workspace-main .generated-report { padding: 22px; border: 1px solid var(--gr-line); border-radius: var(--gr-r-lg); background: var(--gr-card); box-shadow: var(--gr-sh-1); }
+#root .modal-card .form, #root .report-form { display: grid; gap: 18px; }
+#root :is(.two-cols, .three-cols) { display: grid; gap: 16px; }
+#root .two-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#root .three-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#root .wellbeing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+#root .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+#root .wellbeing-btn { min-height: 52px; }
+#root .wellbeing-btn[aria-pressed="true"], #root .wellbeing-btn.active, #root .wellbeing-btn.selected { background: var(--gr-forest-900) !important; border-color: var(--gr-forest-900) !important; color: #fff !important; }
+@media (max-width: 760px) { #root .two-cols, #root .three-cols { grid-template-columns: minmax(0, 1fr); } #root #workspace-main .turno-header { padding: 24px 20px; } #root #workspace-main .section-guide > li + li { border-left: 0 !important; border-top: 1px solid var(--gr-hairline) !important; } #root #workspace-main .panel { padding: 22px 18px; } #root #workspace-main .timeline-item, #root #workspace-main .timeline > .record { grid-template-columns: 54px minmax(0, 1fr); gap: 12px; } }
+
+/* 4 · NUEVO REPORTE — formulario + hoja de vista previa fija ---------------- */
+#root #workspace-main .form-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr); gap: 24px; align-items: start; }
+#root #workspace-main .report-form { padding: 32px; }
+#root #workspace-main .preview-card { position: sticky; top: calc(var(--workspace-header-height, 76px) + 20px); padding: 28px; background: var(--gr-sage-50) !important; box-shadow: none !important; border-style: dashed !important; border-color: var(--gr-sage-300) !important; }
+#root #workspace-main .preview-card .generated-report { box-shadow: var(--gr-sh-2); }
+@media (max-width: 1100px) { #root #workspace-main .form-layout { grid-template-columns: minmax(0, 1fr); } #root #workspace-main .preview-card { position: static; } }
+@media (max-width: 760px) { #root #workspace-main .report-form, #root #workspace-main .preview-card { padding: 22px 18px; } }
+
+#root #sidebarTurnoCard .shift-card-live { color: var(--gr-emerald-300) !important; }
+
+/* 5 · HISTORIAL — libro de registros por paciente --------------------------- */
+#root #workspace-main .history-extra-filters { margin: 0 0 14px; }
+#root #workspace-main .filter-bar {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; margin: 0 0 26px; padding: 18px 22px;
+  background: var(--gr-forest-900) !important; border: 0 !important; box-shadow: var(--gr-sh-2) !important;
+}
+#root #workspace-main .filter-bar > div { display: grid; flex: 1 1 280px; gap: 8px; }
+#root #workspace-main .filter-bar label { color: var(--gr-sidebar-ink); font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+#root #workspace-main .filter-bar label i { color: var(--gr-emerald-300) !important; margin-right: 6px; }
+#root #workspace-main .filter-bar .ghost-btn { background: rgba(255,255,255,.07) !important; border-color: rgba(255,255,255,.2) !important; color: #fff !important; box-shadow: none !important; }
+#root #workspace-main .filter-bar .ghost-btn:hover { background: rgba(255,255,255,.14) !important; }
+#root #workspace-main .history-group { display: block; margin: 0 0 22px; padding: 0; overflow: hidden; }
+#root #workspace-main .history-group > .panel-heading { margin: 0; padding: 22px 30px; border: 0; border-bottom: 1px solid var(--gr-hairline); background: linear-gradient(90deg, var(--gr-sage-50), transparent); }
+#root #workspace-main .history-group > .panel-heading h3 { margin: 0; color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: 1.5rem; font-weight: 500; letter-spacing: -.02em; }
+#root #workspace-main .history-group > .panel-heading a { color: var(--gr-emerald-600); font-size: .8rem; font-weight: 700; text-decoration: none; }
+#root #workspace-main .history-group > .panel-heading a:hover { text-decoration: underline; text-underline-offset: 4px; }
+#root #workspace-main .reports-list { display: grid; gap: 0; padding: 0; }
+#root #workspace-main .report-item {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 14px 24px; margin: 0; padding: 22px 30px;
+  border: 0 !important; border-bottom: 1px solid var(--gr-hairline) !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important;
+}
+#root #workspace-main .report-item:last-child { border-bottom: 0 !important; }
+#root #workspace-main .report-item:hover { transform: none; background: var(--gr-sage-50) !important; box-shadow: none !important; }
+#root #workspace-main .report-info { display: flex; align-items: center; gap: 18px; min-width: 0; }
+#root #workspace-main .report-icon { display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 46px; border-radius: 15px; background: var(--gr-forest-900); color: var(--gr-emerald-300); }
+#root #workspace-main .report-details { display: grid; gap: 8px; min-width: 0; }
+#root #workspace-main .report-details .patient-name { color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: 1.3rem; font-weight: 500; letter-spacing: -.015em; }
+#root #workspace-main .report-details .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; color: var(--gr-ink-3); font-size: .82rem; font-weight: 500; }
+#root #workspace-main .report-actions { display: flex; align-items: center; gap: 10px; }
+#root #workspace-main .report-summary { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px 20px; margin: 4px 0 0; padding: 14px 18px; border-radius: 14px; background: var(--gr-canvas); color: var(--gr-ink-2); font-size: .84rem; }
+#root #workspace-main .report-summary > * { display: grid; gap: 3px; margin: 0; }
+#root #workspace-main .report-summary strong, #root #workspace-main .report-summary b { color: var(--gr-ink-3); font-size: .64rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+@media (max-width: 760px) {
+  #root #workspace-main .report-item { grid-template-columns: minmax(0, 1fr); padding: 20px 18px; }
+  #root #workspace-main .history-group > .panel-heading { padding: 18px; }
+  #root #workspace-main .report-actions { justify-content: flex-start; }
+  #root #workspace-main .filter-bar { padding: 16px; }
+}
+
+/* 6 · DETALLE — hoja de informe sobre mesa de trabajo ----------------------- */
+@media screen {
+  #root #workspace-main:has(.report-sheet) { background: var(--gr-paper-2); }
+  #root #workspace-main .report-sheet {
+    display: block; width: 100%; max-width: 960px; margin: 0 auto; padding: 0 !important; overflow: hidden; background: var(--gr-card) !important;
+    border: 0 !important; border-radius: 6px 6px 22px 22px !important; box-shadow: var(--gr-sh-3) !important;
+  }
+  #root #workspace-main .pdf-masthead {
+    display: flex !important; width: 100%; box-sizing: border-box; align-items: center; justify-content: space-between; gap: 20px; padding: 26px 44px; color: #fff;
+    background: linear-gradient(120deg, var(--gr-forest-900), var(--gr-forest-700)) !important;
+  }
+  #root #workspace-main .pdf-masthead strong { display: block; color: #fff; font-family: var(--gr-font-display) !important; font-size: 1.7rem; font-weight: 500; letter-spacing: -.02em; }
+  #root #workspace-main .pdf-masthead span { color: #b7d3c4; font-size: .8rem; }
+  #root #workspace-main .pdf-masthead p { margin: 0; color: var(--gr-emerald-300); font-size: .7rem; font-weight: 800; letter-spacing: .16em; line-height: 1.7; text-align: right; }
+  #root #workspace-main .report-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 20px; margin: 0; padding: 38px 44px 28px; border: 0; }
+  #root #workspace-main .report-header h3 { margin: 12px 0 10px; color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: clamp(2.1rem, 1.4rem + 2vw, 3rem); font-weight: 400; letter-spacing: -.035em; line-height: 1.05; }
+  #root #workspace-main .report-header .muted { margin: 4px 0 0; }
+  #root #workspace-main .report-status { display: grid; gap: 6px; min-width: 200px; padding: 16px 20px; border: 1px solid var(--gr-ok-line); border-radius: 18px; background: var(--gr-ok-bg); color: var(--gr-ok-ink); }
+  #root #workspace-main .report-status.status-warning { border-color: var(--gr-warn-line); background: var(--gr-warn-bg); color: var(--gr-warn-ink); }
+  #root #workspace-main .report-status-label { font-size: .64rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+  #root #workspace-main .report-status strong { display: flex; align-items: center; gap: 9px; font-size: 1rem; font-weight: 800; }
+  #root #workspace-main .review-notice { margin: 0 44px 26px; padding: 16px 20px; display: block; }
+  #root #workspace-main .report-sheet > .report-section, #root #workspace-main .report-sheet > div:not(.pdf-masthead):not(.report-header):not(.report-status) { margin-inline: 0; }
+  #root #workspace-main .report-section { margin: 0; padding: 22px 44px; border: 0; border-top: 1px solid var(--gr-hairline); background: transparent; border-radius: 0; box-shadow: none; }
+  #root #workspace-main .report-section h4 { margin: 0 0 14px; color: var(--gr-forest-800); font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+  #root #workspace-main .report-line { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 14px; align-items: baseline; padding: 11px 14px; margin: 0 -14px; border-radius: 12px; }
+  #root #workspace-main .report-line > span { color: var(--gr-emerald-700); font-family: var(--gr-font-display) !important; font-size: 1.05rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+  #root #workspace-main .report-line p { margin: 0; color: var(--gr-ink-2); line-height: 1.6; }
+  #root #workspace-main .report-sheet .report-timeline-section .timeline-item { grid-template-columns: 72px minmax(0, 1fr); padding: 14px 14px; margin: 0 -14px; }
+  #root #workspace-main .report-sheet .timeline::before, #root #workspace-main .report-sheet .timeline-body::before, #root #workspace-main .report-sheet .timeline-item::before, #root #workspace-main .report-sheet .timeline-item::after, #root #workspace-main .report-sheet .timeline-time::before, #root #workspace-main .report-sheet .timeline-time::after { content: none !important; }
+  #root #workspace-main .report-sheet .timeline-item .timeline-body { padding: 0; border: 0; background: none; box-shadow: none; }
+  #root #workspace-main .report-line.line-alert { background: var(--gr-warn-bg); }
+  #root #workspace-main .report-line.line-alert > span { color: var(--gr-warn-ink); }
+  #root #workspace-main .pdf-footer { margin: 0; padding: 22px 44px; border-top: 1px solid var(--gr-hairline); background: var(--gr-canvas); color: var(--gr-ink-3); font-size: .78rem; }
+  #root #workspace-main .main-content > .topbar .report-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+}
+@media (max-width: 760px) {
+  #root #workspace-main .pdf-masthead, #root #workspace-main .report-header, #root #workspace-main .report-section, #root #workspace-main .pdf-footer { padding-inline: 20px; }
+  #root #workspace-main .review-notice { margin-inline: 20px; }
+}
+
+/* 7 · SEGUIMIENTO — carriles de trabajo ------------------------------------- */
+#root #workspace-main .context-progress { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px; margin: 18px 0 0; padding: 16px 22px; border: 1px solid var(--gr-line); border-radius: var(--gr-r-md); background: var(--gr-card); box-shadow: var(--gr-sh-1); }
+#root #workspace-main .context-progress > span { color: var(--gr-ink-3); font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+#root #workspace-main .context-progress strong { color: var(--gr-emerald-700); font-family: var(--gr-font-display) !important; font-size: 1.4rem; font-weight: 500; }
+#root #workspace-main .kanban { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: start; }
+#root #workspace-main .kanban-col { display: grid; gap: 12px; padding: 14px !important; background: var(--gr-sage-50) !important; border: 1px solid var(--gr-sage-100) !important; box-shadow: none !important; border-radius: var(--gr-r-xl) !important; }
+#root #workspace-main .kanban-col > h3 { display: flex; align-items: center; gap: 10px; margin: 0; padding: 8px 8px 12px; border: 0; color: var(--gr-ink); font-size: .84rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+#root #workspace-main .kanban-col > h3 > i { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 10px; background: var(--gr-card); color: var(--gr-emerald-600); font-size: .78rem; box-shadow: var(--gr-sh-1); }
+#root #workspace-main .kanban-col:nth-child(1) > h3 > i { color: var(--gr-brass-500); }
+#root #workspace-main .kanban-col:nth-child(2) > h3 > i { color: var(--gr-info-ink); }
+#root #workspace-main .kanban-col .count { margin-left: auto; min-width: 28px; padding: 3px 9px; border-radius: 999px; background: var(--gr-forest-900); color: #fff; font-size: .72rem; font-weight: 800; text-align: center; letter-spacing: 0; }
+#root #workspace-main .task-card { display: grid; gap: 8px; padding: 18px 18px 16px; }
+#root #workspace-main .task-card strong { color: var(--gr-ink); font-size: .98rem; font-weight: 700; line-height: 1.3; }
+#root #workspace-main .task-card p { margin: 0; color: var(--gr-ink-3); font-size: .82rem; }
+#root #workspace-main .task-card .task-priority { justify-self: start; }
+#root #workspace-main .task-card.done { background: transparent !important; box-shadow: none !important; border-style: dashed !important; }
+#root #workspace-main .task-card.done strong { color: var(--gr-ink-3); text-decoration: line-through; text-decoration-color: var(--gr-sage-300); }
+#root #workspace-main .task-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--gr-hairline); }
+#root #workspace-main .task-control { min-height: 40px; padding: 7px 14px; font-size: .76rem; }
+@media (max-width: 1100px) { #root #workspace-main .kanban { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) { #root #workspace-main .context-progress { grid-template-columns: minmax(0, 1fr) auto; } #root #workspace-main .context-progress progress { grid-column: 1 / -1; grid-row: 2; } }
+
+/* 8 · VISTA FAMILIAR — ficha cálida y tranquila ------------------------------ */
+#root #workspace-main .family-select { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin: 0 0 22px; padding: 16px 22px; }
+#root #workspace-main .family-select label { flex: 0 0 auto; margin: 0; }
+#root #workspace-main .family-select select { flex: 1 1 260px; max-width: 420px; }
+#root #workspace-main .family-card { padding: 0 !important; overflow: hidden; }
+#root #workspace-main .patient-header { display: flex; align-items: center; gap: 22px; padding: 34px 38px; border: 0; background: radial-gradient(90% 160% at 0% 0%, var(--gr-sage-100), transparent 70%), var(--gr-sage-50); }
+#root #workspace-main .patient-header .avatar { flex: 0 0 76px; width: 76px; height: 76px; border-radius: 26px; font-size: 1.3rem; }
+#root #workspace-main .family-card .info h3 { margin: 0 0 10px; color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: clamp(1.9rem, 1.3rem + 1.6vw, 2.6rem); font-weight: 400; letter-spacing: -.03em; line-height: 1.05; }
+#root #workspace-main .family-card .sub { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; color: var(--gr-ink-3); font-size: .86rem; }
+#root #workspace-main .family-card .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0; padding: 0; border-bottom: 1px solid var(--gr-hairline); }
+#root #workspace-main .family-card .info-grid .item { display: grid; gap: 8px; padding: 22px 28px; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+#root #workspace-main .family-card .info-grid .item + .item { border-left: 1px solid var(--gr-hairline) !important; }
+#root #workspace-main .family-card .label { display: flex; align-items: center; gap: 8px; color: var(--gr-ink-3); font-size: .66rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+#root #workspace-main .family-card .label i { color: var(--gr-brass-500); }
+#root #workspace-main .family-card .info-grid .value { color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: 1.7rem; font-weight: 400; letter-spacing: -.02em; }
+#root #workspace-main .family-card .review-notice { margin: 24px 38px 0; }
+#root #workspace-main .vitales-section, #root #workspace-main .ultimo-reporte { padding: 28px 38px; }
+#root #workspace-main .vitales-section h4, #root #workspace-main .ultimo-reporte h4, #root #workspace-main .vitales-section > div:first-child, #root #workspace-main .ultimo-reporte > div:first-child { color: var(--gr-forest-800); font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+#root #workspace-main .vitales-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-top: 16px; }
+#root #workspace-main .vital-item { padding: 18px; background: var(--gr-canvas) !important; box-shadow: none !important; border-radius: var(--gr-r-md) !important; text-align: left; }
+#root #workspace-main .vital-label { color: var(--gr-ink-3); font-size: .66rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+#root #workspace-main .vital-value { margin-top: 6px; color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: 1.3rem; font-weight: 500; }
+#root #workspace-main .reporte-preview { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px; margin-top: 14px; padding: 20px 24px; background: var(--gr-sage-50) !important; box-shadow: none !important; }
+#root #workspace-main .reporte-preview .fecha { color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: 1.25rem; }
+@media (max-width: 760px) { #root #workspace-main .patient-header { flex-direction: column; align-items: flex-start; padding: 26px 20px; } #root #workspace-main .family-card .info-grid .item + .item { border-left: 0 !important; border-top: 1px solid var(--gr-hairline) !important; } #root #workspace-main .vitales-section, #root #workspace-main .ultimo-reporte { padding: 24px 20px; } #root #workspace-main .family-card .review-notice { margin: 20px 20px 0; } }
+
+/* 9 · ADMINISTRACIÓN — panel de control con banda de cifras --------------- */
+#root .admin-page { display: block; max-width: var(--gr-content-max); margin: 0 auto; padding: 40px var(--gr-gutter) 72px; color: var(--gr-ink); }
+#root .admin-hero {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px;
+  margin-bottom: 28px; padding-bottom: 26px; border-bottom: 1px solid var(--gr-line);
+}
+#root .admin-hero .eyebrow { color: var(--gr-emerald-600); font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+#root .admin-hero h1 { margin: 8px 0 0; color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: clamp(2.1rem, 1.4rem + 2.2vw, 3.1rem); font-weight: 500; letter-spacing: -.03em; line-height: 1.05; }
+#root .admin-hero p { margin: 10px 0 0; color: var(--gr-ink-3); font-size: .98rem; font-weight: 500; }
+#root .admin-stats { display: flex; gap: 0; margin: 0; background: linear-gradient(160deg, var(--gr-forest-800), var(--gr-forest-950)); border-radius: var(--gr-r-lg); box-shadow: var(--gr-sh-3); overflow: hidden; }
+#root .admin-stats > div { display: grid; gap: 4px; min-width: 112px; padding: 16px 22px; }
+#root .admin-stats > div + div { border-left: 1px solid rgba(255, 255, 255, .1); }
+#root .admin-stats dt { color: var(--gr-sidebar-ink-2); font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+#root .admin-stats dd { margin: 0; color: #fff; font-family: var(--gr-font-display) !important; font-size: 2.3rem; font-weight: 400; letter-spacing: -.03em; line-height: 1; }
+#root .admin-layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); gap: 24px; align-items: start; }
+#root .admin-side { display: grid; gap: 24px; min-width: 0; }
+#root .admin-panel { min-width: 0; padding: 30px; background: var(--gr-card); border: 1px solid var(--gr-line); border-radius: var(--gr-r-lg); box-shadow: var(--gr-sh-1); }
+#root .admin-page h2 { margin: 0 0 6px; color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: 1.5rem; font-weight: 500; letter-spacing: -.02em; }
+#root .admin-page h3 { margin: 28px 0 14px; padding-top: 24px; border-top: 1px solid var(--gr-line); color: var(--gr-ink); font-size: 1rem; font-weight: 700; }
+#root .admin-panel > p { color: var(--gr-ink-3); line-height: 1.65; }
+#root .admin-users { display: grid; gap: 12px; margin-top: 18px; }
+#root .admin-user {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 14px 16px;
+  padding: 18px; border: 1px solid var(--gr-line); border-radius: var(--gr-r-md); background: var(--gr-canvas);
+  transition: border-color var(--gr-t-base) var(--gr-ease), box-shadow var(--gr-t-base) var(--gr-ease);
+}
+#root .admin-user:hover { border-color: var(--gr-sage-200); box-shadow: var(--gr-sh-1); }
+#root .admin-user > div:first-child { display: grid; gap: 3px; min-width: 0; }
+#root .admin-user strong { color: var(--gr-ink); font-weight: 700; overflow-wrap: anywhere; }
+#root .admin-user small { color: var(--gr-ink-3); font-size: .86rem; overflow-wrap: anywhere; }
+#root .admin-user label, #root .admin-form label, #root .admin-backup label { display: grid; gap: 6px; color: var(--gr-ink); font-size: .8rem; font-weight: 700; }
+#root .admin-password { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: end; gap: 10px; padding-top: 14px; border-top: 1px dashed var(--gr-line-strong); }
+#root .admin-password label { flex: 1 1 200px; }
+#root .admin-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; align-items: end; }
+#root .admin-form .primary-btn { grid-column: 1 / -1; justify-self: start; }
+#root .admin-backup { display: grid; gap: 16px; margin-top: 18px; }
+#root .admin-audit { max-height: 22rem; margin: 18px 0 0; padding: 0 0 0 4px; list-style: none; overflow: auto; }
+#root .admin-audit li { position: relative; padding: 10px 0 10px 22px; border-bottom: 1px solid var(--gr-line); color: var(--gr-ink-2); font-size: .9rem; line-height: 1.5; }
+#root .admin-audit li::before { content: ""; position: absolute; left: 0; top: 17px; width: 8px; height: 8px; border-radius: 50%; background: var(--gr-emerald-500); }
+#root .admin-message { margin: 0 0 24px; padding: 14px 18px; background: var(--gr-ok-bg); border: 1px solid var(--gr-ok-line); border-left: 4px solid var(--gr-emerald-500); border-radius: var(--gr-r-md); color: var(--gr-ok-ink); font-weight: 600; animation: gr-pop var(--gr-t-base) var(--gr-ease) backwards; }
+#root .admin-page button:not(.primary-btn) { border-radius: 13px;
+  min-height: 44px; padding: 9px 16px; border: 1px solid var(--gr-line-strong); border-radius: var(--gr-r-sm);
+  background: var(--gr-card); color: var(--gr-forest-800); font: inherit; font-weight: 700; cursor: pointer;
+  transition: background-color var(--gr-t-fast) var(--gr-ease), border-color var(--gr-t-fast) var(--gr-ease), transform var(--gr-t-fast) var(--gr-ease);
+}
+#root .admin-page button:not(.primary-btn):hover:not(:disabled) { background: var(--gr-sage-50); border-color: var(--gr-emerald-500); transform: translateY(-1px); }
+#root .admin-page button:disabled { opacity: .5; cursor: not-allowed; }
+#root .admin-page input[type="file"] { padding: 8px 10px; color: var(--gr-ink-2); font-size: .9rem; }
+#root .admin-page input[type="file"]::file-selector-button { margin-right: 12px; padding: 9px 15px; border: 1px solid var(--gr-line-strong); border-radius: var(--gr-r-sm); background: var(--gr-sage-50); color: var(--gr-forest-800); font: inherit; font-weight: 700; cursor: pointer; }
+#root .admin-page input[type="file"]::file-selector-button:hover { background: var(--gr-sage-100); }
+@media (max-width: 1100px) { #root .admin-layout { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) {
+  #root .admin-page { padding: 24px 16px 40px; }
+  #root .admin-panel { padding: 20px 16px; }
+  #root .admin-user { grid-template-columns: minmax(0, 1fr); }
+  #root .admin-stats { width: 100%; }
+  #root .admin-stats > div { flex: 1; min-width: 0; padding: 14px 12px; }
+}
+
+/* Icono no incluido en la versión 6.0 de Font Awesome (el JSX original no puede editarse) */
+#root .chart-title i.fa-chart-simple::before { content: "\f080"; }
+
+/* 10 · ACCESO — pantalla dividida: manifiesto a la izquierda, formulario a la derecha */
+#root .login-container { display: block !important; width: 100% !important; max-width: none !important; min-height: 100dvh; margin: 0 !important; padding: 0 !important; background: var(--gr-canvas) !important; }
+#root .login-container::before, #root .login-container::after { content: none !important; }
+#root .login-container .auth-layout { display: grid !important; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); width: 100% !important; max-width: none !important; min-height: 100dvh; margin: 0 !important; gap: 0; background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+#root .auth-overview {
+  position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 40px; padding: clamp(32px, 5vw, 72px); overflow: hidden; color: #fff;
+  background: radial-gradient(80% 60% at 100% 0%, rgba(58,197,154,.28), transparent 62%), radial-gradient(70% 50% at 0% 100%, rgba(180,134,58,.2), transparent 60%), linear-gradient(165deg, var(--gr-forest-800), var(--gr-forest-950)) !important;
+  border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+}
+#root .auth-overview::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1.4px); background-size: 24px 24px; -webkit-mask-image: linear-gradient(200deg, #000 10%, transparent 70%); mask-image: linear-gradient(200deg, #000 10%, transparent 70%); pointer-events: none; }
+#root .auth-overview > * { position: relative; }
+#root .auth-overview .brand { display: flex; align-items: center; gap: 16px; }
+#root .auth-overview .brand-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 17px; color: #fff !important; font-size: 1.3rem; background: linear-gradient(150deg, var(--gr-emerald-400), var(--gr-emerald-600)) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 14px 26px -10px rgba(16,155,115,.8); }
+#root .auth-overview .brand-text h1 { margin: 0; color: #fff !important; font-family: var(--gr-font-display) !important; font-size: 1.7rem; font-weight: 600; letter-spacing: -.02em; }
+#root .auth-overview .brand-text span { color: var(--gr-sidebar-ink-2) !important; font-size: .8rem; }
+#root .auth-kicker { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 16px; color: var(--gr-emerald-300) !important; font-size: .7rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+#root .auth-kicker::before { content: ""; width: 20px; height: 2px; border-radius: 2px; background: var(--gr-brass-500); }
+#root .auth-card .auth-kicker { color: var(--gr-emerald-600) !important; }
+#root .auth-overview-copy { max-width: 560px; }
+#root .auth-overview-copy h2 { margin: 0; color: #fff !important; font-family: var(--gr-font-display) !important; font-size: clamp(2.6rem, 1.6rem + 3.2vw, 4.6rem); font-weight: 400; letter-spacing: -.04em; line-height: 1; text-wrap: balance; }
+#root .auth-overview-copy p { max-width: 42ch; margin: 22px 0 0; color: #bcd6c7 !important; font-size: 1.05rem; line-height: 1.65; }
+#root .auth-benefits { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(255,255,255,.12); }
+#root .auth-benefits li { display: flex; align-items: center; gap: 14px; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,.12); color: #e5f2ea; font-size: .92rem; font-weight: 500; }
+#root .auth-benefits li i { display: grid; place-items: center; flex: 0 0 26px; width: 26px; height: 26px; border-radius: 50%; background: rgba(134,224,191,.16); color: var(--gr-emerald-300); font-size: .64rem; }
+#root .login-container .auth-card { display: flex; flex-direction: column; justify-content: center; width: 100%; max-width: 560px; margin: 0 auto; padding: clamp(32px, 5vw, 72px) !important; background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+#root .auth-card h2 { margin: 0; color: var(--gr-ink) !important; font-family: var(--gr-font-display) !important; font-size: clamp(2.2rem, 1.6rem + 1.8vw, 3rem); font-weight: 400; letter-spacing: -.035em; line-height: 1.05; }
+#root .auth-card > p { margin: 14px 0 32px; color: var(--gr-ink-3); line-height: 1.6; }
+#root .auth-card .form { display: grid; gap: 20px; }
+#root .auth-card .form-group { display: grid; gap: 8px; margin: 0; }
+#root .auth-card .input-wrapper { position: relative; }
+#root .auth-card .input-wrapper > i { position: absolute; z-index: 1; left: 17px; top: 50%; transform: translateY(-50%); color: var(--gr-emerald-600); pointer-events: none; }
+#root .auth-card .input-wrapper input { width: 100%; min-height: 54px; padding-left: 48px !important; }
+#root .auth-remember { display: flex; align-items: center; gap: 11px; color: var(--gr-ink-2); font-size: .86rem; font-weight: 600; cursor: pointer; }
+#root .auth-submit { width: 100%; min-height: 56px; font-size: .96rem; }
+#root .auth-local-note { display: flex; gap: 12px; margin-top: 26px; padding: 16px 18px; border: 1px dashed var(--gr-sage-300); border-radius: var(--gr-r-md); background: var(--gr-sage-50); color: var(--gr-ink-3); font-size: .78rem; line-height: 1.6; }
+#root .auth-local-note i { margin-top: 3px; color: var(--gr-brass-500); }
+@media (max-width: 980px) {
+  #root .login-container .auth-layout { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  #root .auth-overview { gap: 28px; padding: 32px 24px 36px; }
+  #root .auth-overview-copy h2 { font-size: clamp(2.2rem, 9vw, 3.2rem); }
+  #root .auth-benefits { display: none; }
+  #root .login-container .auth-card { padding: 36px 24px 48px !important; max-width: 560px; }
+}
+
+/* 11 · PORTAL FAMILIAR (LANDING.html) -------------------------------------- */
+#root .app-wrapper { max-width: none !important; width: 100%; min-height: 100dvh; margin: 0; background: var(--gr-canvas) !important; box-shadow: none !important; border-radius: 0 !important; }
+#root #loginScreen {
+  position: relative; min-height: 100dvh; padding: 24px !important; overflow: hidden;
+  background: radial-gradient(60% 50% at 85% 0%, rgba(58,197,154,.3), transparent 60%), radial-gradient(50% 50% at 0% 100%, rgba(180,134,58,.18), transparent 60%), linear-gradient(165deg, var(--gr-forest-800), var(--gr-forest-950)) !important;
+}
+#root #loginScreen::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1.4px); background-size: 24px 24px; pointer-events: none; }
+#root #loginScreen .login-box { position: relative; max-width: 460px; padding: 48px 44px 40px !important; border: 1px solid rgba(255,255,255,.5); border-radius: 32px !important; background: var(--gr-card) !important; box-shadow: var(--gr-sh-3) !important; text-align: left; }
+#root #loginScreen .login-box .brand-icon { width: 60px; height: 60px; margin-bottom: 26px; border-radius: 20px; font-size: 1.6rem; background: linear-gradient(150deg, var(--gr-emerald-400), var(--gr-emerald-600)); }
+#root #loginScreen .login-box h1 { margin: 0; color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: 2.6rem; font-weight: 500; letter-spacing: -.035em; }
+#root #loginScreen .login-box > p { margin: 8px 0 30px; color: var(--gr-ink-3); font-size: .95rem; }
+#root #loginScreen .form-group { display: grid; gap: 8px; margin: 0 0 18px; text-align: left; }
+#root #loginScreen .form-group label i { margin-right: 8px; color: var(--gr-emerald-600); }
+#root #loginScreen .btn-primary { width: 100%; min-height: 54px; margin-top: 6px; }
+#root #loginScreen .login-footer { display: flex; align-items: center; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--gr-hairline); color: var(--gr-ink-3); font-size: .78rem; }
+#root #loginScreen .login-footer i { color: var(--gr-emerald-600); }
+
+/* Cabecera del portal: banda oscura de marca */
+#root .app-wrapper > #dashboardScreen > .topbar, #root .app-wrapper .topbar:has(.user-area) {
+  position: sticky; top: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 72px; margin: 0; padding: 12px var(--gr-gutter);
+  border: 0; background: var(--gr-forest-900) !important; color: #fff; box-shadow: none;
+}
+#root .app-wrapper .topbar .brand { display: flex; align-items: center; gap: 12px; margin: 0; color: #fff !important; font-family: var(--gr-font-display) !important; font-size: 1.4rem; font-weight: 600; letter-spacing: -.02em; }
+#root .app-wrapper .topbar .brand *, #root .app-wrapper .topbar .brand { color: #fff; }
+#root .app-wrapper .brand-icon-small { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 13px; background: linear-gradient(150deg, var(--gr-emerald-400), var(--gr-emerald-600)); color: #fff; font-size: 1rem; }
+#root .app-wrapper .user-area { display: flex; align-items: center; gap: 14px; }
+#root .app-wrapper .user-info { display: flex; align-items: center; gap: 10px; padding: 6px 16px 6px 8px; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: rgba(255,255,255,.06); color: #fff; }
+#root .app-wrapper .user-info > i { font-size: 1.6rem; color: var(--gr-emerald-300); }
+#root .app-wrapper .user-info .name { color: #fff !important; font-size: .86rem; font-weight: 700; }
+#root .app-wrapper .user-info .role { color: var(--gr-sidebar-ink-2) !important; font-size: .72rem; }
+#root .app-wrapper .btn-logout { width: 44px; height: 44px; padding: 0; background: rgba(255,255,255,.07) !important; border-color: rgba(255,255,255,.16) !important; color: #fff !important; box-shadow: none !important; }
+#root .app-wrapper .btn-logout:hover { background: rgba(255,255,255,.16) !important; }
+
+/* Navegación lateral del portal */
+#root .app-wrapper .dashboard-body { display: grid; grid-template-columns: 252px minmax(0, 1fr); align-items: start; min-height: calc(100dvh - 72px); background: linear-gradient(90deg, var(--gr-forest-900) 252px, var(--gr-canvas) 252px); }
+#root .app-wrapper .sidebar { position: sticky; top: 72px; display: flex; flex-direction: column; gap: 4px; width: auto; height: calc(100dvh - 72px); padding: 24px 16px; border: 0 !important; background: var(--gr-forest-900) !important; box-shadow: none !important; }
+#root .app-wrapper .sidebar .nav-item {
+  display: flex; align-items: center; gap: 13px; width: 100%; min-height: 48px; padding: 8px 14px; border: 0 !important; border-radius: 14px; background: transparent !important; color: var(--gr-sidebar-ink) !important; font-size: .9rem; font-weight: 500; text-align: left; cursor: pointer;
+  transition: background-color var(--gr-t-fast) var(--gr-ease), color var(--gr-t-fast) var(--gr-ease), transform var(--gr-t-fast) var(--gr-ease);
+}
+#root .app-wrapper .sidebar .nav-item i { display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; border-radius: 10px; background: rgba(255,255,255,.06); color: var(--gr-sidebar-ink-2); font-size: .82rem; }
+#root .app-wrapper .sidebar .nav-item:hover { background: rgba(255,255,255,.07) !important; color: #fff !important; }
+#root .app-wrapper .sidebar .nav-item.active { background: var(--gr-card) !important; color: var(--gr-forest-900) !important; font-weight: 700; box-shadow: 0 10px 22px -10px rgba(0,0,0,.55); }
+#root .app-wrapper .sidebar .nav-item.active i { background: var(--gr-forest-900); color: var(--gr-emerald-300); }
+#root .app-wrapper .app-wrapper-main, #root .app-wrapper .dashboard-body > .main-content { min-width: 0; max-width: 1180px; width: 100%; margin: 0 auto; padding: 40px var(--gr-gutter) 72px; background: transparent !important; }
+
+/* Secciones del portal */
+#root .app-wrapper .section-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px 20px; margin: 0 0 26px; padding: 0 0 22px; border: 0; border-bottom: 1px solid var(--gr-hairline); }
+#root .app-wrapper .section-header h2 { display: flex; align-items: center; gap: 14px; margin: 0; color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.5rem); font-weight: 500; letter-spacing: -.03em; }
+#root .app-wrapper .section-header h2 i { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: var(--gr-forest-900); color: var(--gr-emerald-300); font-size: .95rem; }
+#root .app-wrapper .section-header .sub { color: var(--gr-ink-3); font-size: .86rem; font-weight: 600; }
+#root .app-wrapper .card-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 0 0 24px; }
+#root .app-wrapper .stat-card { position: relative; display: grid; align-content: start; gap: 4px; padding: 22px; border: 1px solid var(--gr-line) !important; border-radius: var(--gr-r-lg) !important; background: var(--gr-card) !important; box-shadow: var(--gr-sh-1) !important; transition: transform var(--gr-t-base) var(--gr-ease), box-shadow var(--gr-t-base) var(--gr-ease); }
+#root .app-wrapper .stat-card:hover { transform: translateY(-3px); box-shadow: var(--gr-sh-2) !important; }
+#root .app-wrapper .stat-card:first-child { background: linear-gradient(165deg, var(--gr-forest-800), var(--gr-forest-950)) !important; border-color: transparent !important; color: #fff; }
+#root .app-wrapper .stat-card:first-child :is(.label, .sub-text) { color: var(--gr-sidebar-ink-2) !important; }
+#root .app-wrapper .stat-card:first-child .value { color: #fff !important; }
+#root .app-wrapper .stat-card .icon-circle { position: absolute; top: 18px; right: 18px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: var(--gr-sage-100); color: var(--gr-emerald-600); font-size: .85rem; }
+#root .app-wrapper .stat-card:first-child .icon-circle { background: rgba(134,224,191,.14); color: var(--gr-emerald-300); }
+#root .app-wrapper .stat-card .label { color: var(--gr-ink-3); font-size: .68rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+#root .app-wrapper .stat-card .value { margin-top: 6px; color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: 1.9rem; font-weight: 400; letter-spacing: -.03em; line-height: 1.1; }
+#root .app-wrapper .stat-card .sub-text { color: var(--gr-ink-3); font-size: .78rem; }
+#root .app-wrapper :is(.chart-box, .alert-list, .vital-grid, .table-wrap, .report-document, .filter-bar) { border-radius: var(--gr-r-lg); }
+#root .app-wrapper .chart-box { margin: 0 0 24px; padding: 26px 28px; border: 1px solid var(--gr-line); background: var(--gr-card); box-shadow: var(--gr-sh-1); }
+#root .app-wrapper .chart-title { display: flex; align-items: center; gap: 10px; margin: 0 0 20px; color: var(--gr-ink); font-size: .95rem; font-weight: 700; }
+#root .app-wrapper .chart-title i { color: var(--gr-emerald-600); }
+#root .app-wrapper .chart-bars { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; min-height: 180px; }
+#root .app-wrapper .bar { border-radius: 8px 8px 3px 3px; }
+#root .app-wrapper .bar.normal { background: var(--gr-emerald-500); }
+#root .app-wrapper .bar.medium { background: var(--gr-brass-500); }
+#root .app-wrapper .bar.high { background: #c4402f; }
+#root .app-wrapper .alert-item { display: flex; align-items: center; gap: 14px; margin: 0 0 10px; padding: 14px 18px; border: 1px solid var(--gr-bad-line); border-left: 4px solid #c4402f; border-radius: var(--gr-r-md); background: var(--gr-bad-bg); color: var(--gr-bad-ink); }
+#root .app-wrapper .alert-item .alert-text { flex: 1; font-size: .88rem; }
+#root .app-wrapper .alert-item .alert-time { font-size: .74rem; font-weight: 700; opacity: .8; }
+#root .app-wrapper .vital-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin: 0 0 24px; border: 1px solid var(--gr-line); background: var(--gr-card); box-shadow: var(--gr-sh-1); overflow: hidden; }
+#root .app-wrapper .vital-item { padding: 22px 24px; text-align: left; }
+#root .app-wrapper .vital-item + .vital-item { border-left: 1px solid var(--gr-hairline); }
+#root .app-wrapper .vital-label { color: var(--gr-ink-3); font-size: .66rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+#root .app-wrapper .vital-value { margin: 6px 0 2px; color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: 2rem; font-weight: 400; letter-spacing: -.03em; }
+#root .app-wrapper .vital-unit { color: var(--gr-ink-3); font-size: .74rem; }
+#root .app-wrapper .section > h3, #root .app-wrapper .section h3 { margin: 26px 0 14px; color: var(--gr-ink); font-size: .84rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+#root .app-wrapper .filter-bar { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 18px; padding: 14px; border: 1px solid var(--gr-line); background: var(--gr-card); box-shadow: var(--gr-sh-1); }
+#root .app-wrapper .filter-bar > * { flex: 1 1 180px; }
+#root .app-wrapper .table-wrap { overflow-x: auto; border: 1px solid var(--gr-line); background: var(--gr-card); box-shadow: var(--gr-sh-1); }
+#root .app-wrapper .table-wrap table { width: 100%; min-width: 640px; border-collapse: collapse; }
+#root .app-wrapper .table-wrap th { padding: 14px 18px; background: var(--gr-sage-50); color: var(--gr-ink-3); font-size: .66rem; font-weight: 800; letter-spacing: .1em; text-align: left; text-transform: uppercase; }
+#root .app-wrapper .table-wrap td { padding: 15px 18px; border-top: 1px solid var(--gr-hairline); color: var(--gr-ink-2); font-size: .86rem; }
+#root .app-wrapper .table-wrap tbody tr { transition: background-color var(--gr-t-fast) var(--gr-ease); }
+#root .app-wrapper .table-wrap tbody tr:hover { background: var(--gr-sage-50); }
+#root .app-wrapper .btn-ver { min-height: 38px; padding: 6px 16px; }
+#root .app-wrapper .report-document { padding: 0; overflow: hidden; border: 0; background: var(--gr-card); box-shadow: var(--gr-sh-3); }
+#root .app-wrapper .doc-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 32px; background: linear-gradient(120deg, var(--gr-forest-900), var(--gr-forest-700)); color: #fff; border: 0; }
+#root .app-wrapper .doc-title { color: #fff; font-family: var(--gr-font-display) !important; font-size: 1.5rem; font-weight: 500; }
+#root .app-wrapper .doc-title i { color: var(--gr-emerald-300) !important; }
+#root .app-wrapper .doc-meta { color: var(--gr-emerald-300); font-size: .74rem; font-weight: 700; letter-spacing: .08em; }
+#root .app-wrapper .doc-patient { display: flex; flex-wrap: wrap; gap: 10px 28px; padding: 18px 32px; background: var(--gr-sage-50); border: 0; border-bottom: 1px solid var(--gr-hairline); border-radius: 0; font-size: .86rem; }
+#root .app-wrapper .section-block { padding: 20px 32px; border-top: 1px solid var(--gr-hairline); }
+#root .app-wrapper .section-block h4 { margin: 0 0 14px; color: var(--gr-forest-800); font-size: .74rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+#root .app-wrapper .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 36px; }
+#root .app-wrapper .grid-2 .item { display: flex; justify-content: space-between; gap: 14px; padding: 8px 0; border-bottom: 1px dashed var(--gr-line); font-size: .88rem; }
+#root .app-wrapper .doc-footer { padding: 18px 32px; background: var(--gr-canvas); color: var(--gr-ink-3); font-size: .8rem; border-top: 1px solid var(--gr-hairline); }
+#root .app-wrapper .report-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 22px; }
+#root .app-wrapper .bottom-nav { border: 0; border-top: 1px solid rgba(255,255,255,.08); background: var(--gr-forest-900) !important; box-shadow: 0 -10px 30px -12px rgba(4,32,26,.5); }
+#root .app-wrapper .bottom-nav .nav-btn { color: var(--gr-sidebar-ink-2) !important; font-weight: 600; }
+#root .app-wrapper .bottom-nav .nav-btn.active { color: var(--gr-emerald-300) !important; background: transparent !important; }
+@media (max-width: 1100px) { #root .app-wrapper .card-grid, #root .app-wrapper .vital-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } #root .app-wrapper .vital-item:nth-child(3) { border-left: 0; } #root .app-wrapper .vital-item:nth-child(n+3) { border-top: 1px solid var(--gr-hairline); } }
+@media (max-width: 768px) {
+  #root .app-wrapper .dashboard-body { display: block; background: var(--gr-canvas); }
+  #root .app-wrapper .dashboard-body > .main-content { padding: 28px 18px 110px; }
+  #root .app-wrapper .user-info .role, #root .app-wrapper .user-info .name { display: none; }
+  #root .app-wrapper .grid-2 { grid-template-columns: minmax(0, 1fr); }
+  #root .app-wrapper .doc-header, #root .app-wrapper .doc-patient, #root .app-wrapper .section-block, #root .app-wrapper .doc-footer { padding-inline: 20px; }
+  #root #loginScreen .login-box { padding: 36px 24px 30px !important; }
+}
+@media (max-width: 520px) { #root .app-wrapper .card-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Móvil: filtros y selectores apilados sin heredar flex-basis como altura */
+@media (max-width: 760px) {
+  #root #workspace-main .filter-bar { flex-direction: column; align-items: stretch; }
+  #root #workspace-main .filter-bar > div { flex: 0 0 auto; }
+  #root #workspace-main .family-select { flex-direction: column; align-items: stretch; }
+  #root #workspace-main .family-select select { flex: 0 0 auto; max-width: none; width: 100%; }
+  #root #workspace-main .patients-toolbar > * { flex: 0 0 auto; }
+  #root #workspace-main .pdf-masthead { flex-wrap: wrap; gap: 12px; }
+  #root #workspace-main .pdf-masthead strong { white-space: nowrap; }
+  #root #workspace-main .pdf-masthead p { text-align: left; }
+  #root .app-wrapper .sidebar { display: none !important; }
+}
+
+/* Ajustes finos móvil */
+@media (max-width: 700px) {
+  #root #workspace-main .welcome-copy h2 { max-width: none; }
+  #root #workspace-main .dashboard-shell .page-heading { width: 100%; margin: 0; padding: 0; }
+  #root .admin-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #root .admin-stats > * { min-width: 0; padding-inline: 14px; }
+  #root .admin-stats dt { font-size: .58rem; letter-spacing: .06em; overflow: hidden; text-overflow: ellipsis; }
+  #root .admin-stats dd { font-size: 1.9rem; }
+}
+@media (max-width: 480px) { #root #workspace-main .welcome-copy h2 { font-size: clamp(1.9rem, 8.2vw, 2.4rem); } #root #workspace-main .status-label { letter-spacing: .12em; } }

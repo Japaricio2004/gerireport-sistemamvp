@@ -1,0 +1,105 @@
+/* ==========================================================================
+   GERIREPORT · DESIGN SYSTEM V3  "Clinical Editorial"
+   01 · TOKENS  — única fuente de color, tipografía, espacio, radio, sombra y
+   movimiento. Todo el resto de src/design/*.css consume estas variables.
+   Los alias --line / --ink / --soft-bg / --muted-ink existen porque los CSS
+   heredados (assets/css y src/original) los referencian.
+   ========================================================================== */
+:root {
+  /* Verdes profundos · identidad */
+  --gr-forest-950: #04201a;
+  --gr-forest-900: #08281f;
+  --gr-forest-800: #0d382c;
+  --gr-forest-700: #145040;
+  /* Esmeralda · acción y estado "ok" */
+  --gr-emerald-700: #0a6a51;
+  --gr-emerald-600: #0c7a5c;
+  --gr-emerald-500: #109b73;
+  --gr-emerald-400: #3ac59a;
+  --gr-emerald-300: #86e0bf;
+  /* Sage · superficies tintadas */
+  --gr-sage-300: #b4cbbc;
+  --gr-sage-200: #d0e0d5;
+  --gr-sage-100: #e3eee7;
+  --gr-sage-50: #f0f6f1;
+  /* Neutros cálidos · lienzo y papel */
+  --gr-canvas: #f6f3ec;
+  --gr-paper: #f6f3ec;
+  --gr-paper-2: #eeeadf;
+  --gr-card: #fffdf8;
+  --gr-line: #e6e1d3;
+  --gr-line-strong: #6f877a;
+  --gr-hairline: rgba(8, 40, 31, 0.09);
+  /* Latón · acento muy escaso (detalles de lujo, nunca superficies) */
+  --gr-brass-500: #b4863a;
+  --gr-brass-100: #f4e8cb;
+  /* Texto */
+  --gr-ink: #0f241d;
+  --gr-ink-2: #2d4439;
+  --gr-ink-3: #50655a;
+  --gr-sidebar-ink: #c9ded2;
+  --gr-sidebar-ink-2: #93b5a3;
+  /* Estados semánticos (texto sobre fondo: contraste AA) */
+  --gr-ok-bg: #e0f1e7;   --gr-ok-ink: #11573e;   --gr-ok-line: #b5dcc4;
+  --gr-warn-bg: #fbefd2; --gr-warn-ink: #75470a;  --gr-warn-line: #ecd292;
+  --gr-bad-bg: #fbe5e0;  --gr-bad-ink: #9a2a1e;   --gr-bad-line: #f0bcb4;
+  --gr-info-bg: #e2eef5; --gr-info-ink: #214e67;  --gr-info-line: #b6d3e3;
+  /* Tipografía */
+  --gr-font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --gr-font-ui: "Plus Jakarta Sans", "Montserrat", "Segoe UI", system-ui, sans-serif;
+  /* Radios */
+  --gr-r-xs: 8px; --gr-r-sm: 11px; --gr-r-md: 16px; --gr-r-lg: 22px; --gr-r-xl: 30px;
+  /* Elevación multicapa (tinte verde, nunca negro puro) */
+  --gr-sh-1: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 1px 2px rgba(8, 40, 31, 0.05), 0 2px 6px -2px rgba(8, 40, 31, 0.05);
+  --gr-sh-2: 0 1px 2px rgba(8, 40, 31, 0.05), 0 8px 16px -6px rgba(8, 40, 31, 0.08), 0 22px 36px -16px rgba(8, 40, 31, 0.12);
+  --gr-sh-3: 0 2px 4px rgba(8, 40, 31, 0.06), 0 14px 28px -8px rgba(8, 40, 31, 0.14), 0 40px 64px -24px rgba(8, 40, 31, 0.22);
+  --gr-ring: 0 0 0 4px rgba(16, 155, 115, 0.26);
+  /* Movimiento */
+  --gr-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --gr-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --gr-t-fast: 150ms;
+  --gr-t-base: 280ms;
+  --gr-t-slow: 460ms;
+  /* Layout */
+  --gr-sidebar-w: 276px;
+  --gr-content-max: 1360px;
+  --gr-gutter: clamp(20px, 3.4vw, 56px);
+  /* Alias para CSS heredado */
+  --care-shadow: var(--gr-sh-1);
+  --care-border: var(--gr-line);
+  --line: var(--gr-line);
+  --soft-bg: var(--gr-canvas);
+  --muted-ink: var(--gr-ink-3);
+  --ink: var(--gr-ink);
+  --primary: var(--gr-emerald-600);
+  --accent: var(--gr-emerald-500);
+  --soft-green: var(--gr-sage-50);
+}
+
+/* 02 · BASE -------------------------------------------------------------- */
+html { -webkit-text-size-adjust: 100%; text-rendering: optimizeLegibility; scroll-behavior: smooth; }
+body {
+  background: var(--gr-canvas) !important;
+  color: var(--gr-ink) !important;
+  font-family: var(--gr-font-ui) !important;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+#root :is(button, input, select, textarea, a, p, span, small, li, label, th, td, strong, b, em, div) { font-family: var(--gr-font-ui) !important; }
+#root :is(h1, h2, h3, h4) { font-family: var(--gr-font-ui) !important; }
+::selection { background: var(--gr-emerald-300); color: var(--gr-forest-950); }
+#root :focus-visible { outline: 3px solid var(--gr-emerald-500) !important; outline-offset: 2px !important; border-radius: 8px; }
+#root :is(input, select, textarea):focus-visible { outline: none !important; }
+.skip-link:focus { background: var(--gr-forest-900); color: #fff; }
+html, body, * { scrollbar-color: #b6c6bc transparent; }
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-thumb { background-color: #b6c6bc; border: 3px solid transparent; background-clip: content-box; border-radius: 99px; }
+
+/* Display: Fraunces solo en titulares y cifras clave */
+#root :is(.gr-display, .page-heading h1, .main-content > .topbar h2, .main-content > .topbar h1, .welcome-copy h2,
+  .section-heading h2, .panel-heading h2, .auth-overview-copy h2, .admin-hero h1, .turno-header h2,
+  .metric-card strong, .context-stat strong, .context-value, .login-box h2, .family-card .info h2, .report-header h1, .report-header h2) {
+  font-family: var(--gr-font-display) !important;
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 30, "WONK" 0;
+}
