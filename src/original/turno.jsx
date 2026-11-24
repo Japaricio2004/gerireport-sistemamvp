@@ -249,31 +249,35 @@ export default function OriginalTemplate({
             <div className={"two-cols"}>
               <div className={"pressure-input-group"}>
                 <label htmlFor={"v_pressure_sys"}>{"Presión arterial"}</label>
-                <div className={"split-input"}>
+                <div className={"pressure-pair"}>
                   <input
                     id={"v_pressure_sys"}
+                    className={"pressure-reading"}
                     type={"number"}
                     placeholder={"120"}
+                    aria-label={"Presión sistólica"}
                     min={"60"}
                     max={"200"}
                     required={true}
                     name={"pressure_sys"}
                     {...bindings["v_pressure_sys"]}
                   />
-                  <span className={"separator"}>/</span>
+                  <span className={"pressure-slash"} aria-hidden={"true"}>/</span>
                   <input
                     id={"v_pressure_dia"}
+                    className={"pressure-reading"}
                     type={"number"}
                     placeholder={"80"}
+                    aria-label={"Presión diastólica"}
                     min={"40"}
                     max={"130"}
                     required={true}
                     name={"pressure_dia"}
                     {...bindings["v_pressure_dia"]}
                   />
-                  <span className={"unit"}>mmHg</span>
+                  <span className={"pressure-unit"}>mmHg</span>
                 </div>
-                <small>Sistólica / Diastólica</small>
+                <small className={"pressure-help"}>Sistólica <span>/</span> Diastólica</small>
               </div>
               <div>
                 <label htmlFor={"v_heart"}>{"Frecuencia cardíaca (lpm)"}</label>

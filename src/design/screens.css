@@ -211,6 +211,16 @@
 #root :is(.two-cols, .three-cols) { display: grid; gap: 16px; }
 #root .two-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 #root .three-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#root .pressure-input-group { display: grid; align-content: start; justify-items: start; gap: 9px; min-width: 0; }
+#root .pressure-input-group > label { margin: 0; }
+#root .pressure-pair { display: grid; grid-template-columns: minmax(58px, 1fr) auto minmax(58px, 1fr) auto; align-items: center; gap: clamp(8px, 1vw, 13px); width: 100%; max-width: 320px; min-width: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
+#root .pressure-pair .pressure-reading { box-sizing: border-box; width: 100%; min-width: 0; height: 48px; margin: 0; padding: 0 10px; border: 1px solid var(--gr-sage-300) !important; border-radius: 13px !important; background: #fff !important; color: var(--gr-ink) !important; font-size: 1.05rem; font-weight: 700; font-variant-numeric: tabular-nums; text-align: center; box-shadow: 0 1px 2px rgba(8,40,31,.04) !important; }
+#root .pressure-pair .pressure-reading::placeholder { color: #82958a !important; opacity: 1; }
+#root .pressure-pair .pressure-reading:focus { border-color: var(--gr-emerald-600) !important; box-shadow: 0 0 0 3px rgba(16,155,115,.14) !important; }
+#root .pressure-pair .pressure-slash { color: var(--gr-emerald-700); font-size: 1.5rem; font-weight: 700; line-height: 1; }
+#root .pressure-pair .pressure-unit { color: var(--gr-ink-3); font-size: .82rem; white-space: nowrap; }
+#root .pressure-input-group .pressure-help { margin: 0 0 0 2px; color: var(--gr-ink-3); font-size: .72rem; }
+#root .pressure-input-group .pressure-help span { margin: 0 4px; color: var(--gr-sage-300); }
 #root .wellbeing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
 #root .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
 #root .wellbeing-btn { min-height: 52px; }
@@ -239,8 +249,12 @@
 #root #workspace-main .filter-bar .ghost-btn { background: rgba(255,255,255,.07) !important; border-color: rgba(255,255,255,.2) !important; color: #fff !important; box-shadow: none !important; }
 #root #workspace-main .filter-bar .ghost-btn:hover { background: rgba(255,255,255,.14) !important; }
 #root #workspace-main .history-group { display: block; margin: 0 0 22px; padding: 0; overflow: hidden; }
-#root #workspace-main .history-group > .panel-heading { margin: 0; padding: 22px 30px; border: 0; border-bottom: 1px solid var(--gr-hairline); background: linear-gradient(90deg, var(--gr-sage-50), transparent); }
+#root #workspace-main .history-group > .panel-heading { align-items: flex-start; gap: 12px 20px; margin: 0; padding: 22px 30px; border: 0; border-bottom: 1px solid var(--gr-hairline); background: linear-gradient(90deg, var(--gr-sage-50), transparent); }
+#root #workspace-main .history-patient-heading { display: grid; gap: 8px; min-width: 0; }
 #root #workspace-main .history-group > .panel-heading h3 { margin: 0; color: var(--gr-ink); font-family: var(--gr-font-display) !important; font-size: 1.5rem; font-weight: 500; letter-spacing: -.02em; }
+#root #workspace-main .history-patient-context { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; color: var(--gr-ink-3); font-size: .76rem; line-height: 1.45; }
+#root #workspace-main .history-patient-context span { display: inline-flex; align-items: flex-start; gap: 6px; min-width: 0; }
+#root #workspace-main .history-patient-context i { margin-top: 2px; color: var(--gr-emerald-700); }
 #root #workspace-main .history-group > .panel-heading a { color: var(--gr-emerald-600); font-size: .8rem; font-weight: 700; text-decoration: none; }
 #root #workspace-main .history-group > .panel-heading a:hover { text-decoration: underline; text-underline-offset: 4px; }
 #root #workspace-main .reports-list { display: grid; gap: 0; padding: 0; }
@@ -321,13 +335,40 @@
 #root #workspace-main .task-card { display: grid; gap: 8px; padding: 18px 18px 16px; }
 #root #workspace-main .task-card strong { color: var(--gr-ink); font-size: .98rem; font-weight: 700; line-height: 1.3; }
 #root #workspace-main .task-card p { margin: 0; color: var(--gr-ink-3); font-size: .82rem; }
+#root #workspace-main .task-card .task-patient-context { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; color: var(--gr-ink-3); font-size: .76rem; line-height: 1.45; overflow-wrap: anywhere; }
+#root #workspace-main .task-card .task-patient-context i { color: var(--gr-emerald-700); }
+#root #workspace-main .task-card .task-status-time { color: var(--gr-info-ink); font-weight: 700; }
+#root #workspace-main .task-card .task-note { display: flex; align-items: flex-start; gap: 9px; padding: 11px 12px; border: 1px solid var(--gr-sage-200); border-radius: 12px; background: var(--gr-card); color: var(--gr-ink-2); line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+#root #workspace-main .task-card .task-note > i { margin-top: 3px; color: var(--gr-emerald-700); }
+#root #workspace-main .task-card .task-note strong { font-size: inherit; }
 #root #workspace-main .task-card .task-priority { justify-self: start; }
-#root #workspace-main .task-card.done { background: transparent !important; box-shadow: none !important; border-style: dashed !important; }
-#root #workspace-main .task-card.done strong { color: var(--gr-ink-3); text-decoration: line-through; text-decoration-color: var(--gr-sage-300); }
+#root #workspace-main .task-card.done { background: var(--gr-sage-50) !important; box-shadow: none !important; border-color: var(--gr-sage-200) !important; }
+#root #workspace-main .task-card.done > strong { color: var(--gr-emerald-700); text-decoration: none; }
+#root #workspace-main .task-complete-badge { display: inline-flex; align-items: center; justify-self: start; gap: 7px; padding: 6px 10px; border: 1px solid var(--gr-sage-200); border-radius: 999px; background: #fff; color: var(--gr-emerald-700); font-size: .72rem; font-weight: 700; }
+#root #workspace-main .task-card .vital-alert-badge { align-items: flex-start; }
+#root #workspace-main .task-card .vital-alert-badge small { display: block; margin-top: 4px; line-height: 1.45; overflow-wrap: anywhere; }
+#root #workspace-main .trend-status-group { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+#root #workspace-main .trend-status-group .trend-status { gap: 6px; padding: 7px 10px; font-size: .72rem; }
+#root #workspace-main .trend-insufficient { border: 1px solid var(--gr-line); background: var(--gr-sage-50); color: var(--gr-ink-3); }
+#root #workspace-main .trends-disclaimer { margin: -12px 0 14px; color: var(--gr-ink-3); font-size: .73rem; line-height: 1.5; }
 #root #workspace-main .task-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--gr-hairline); }
 #root #workspace-main .task-control { min-height: 40px; padding: 7px 14px; font-size: .76rem; }
 @media (max-width: 1100px) { #root #workspace-main .kanban { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) { #root #workspace-main .context-progress { grid-template-columns: minmax(0, 1fr) auto; } #root #workspace-main .context-progress progress { grid-column: 1 / -1; grid-row: 2; } }
+
+/* Patient context shown as soon as a patient is selected in the manual report. */
+#root #workspace-main .manual-patient-summary { display: grid; gap: 16px; margin: 4px 0 24px; padding: 18px; border: 1px solid var(--gr-sage-200); border-radius: var(--gr-r-lg); background: linear-gradient(135deg, var(--gr-sage-50), #fff); }
+#root #workspace-main .manual-patient-summary-heading { display: flex; align-items: center; gap: 12px; min-width: 0; }
+#root #workspace-main .manual-patient-summary-icon { display: grid; flex: 0 0 42px; place-items: center; width: 42px; height: 42px; border-radius: 14px; background: var(--gr-forest-900); color: var(--gr-emerald-300); }
+#root #workspace-main .manual-patient-summary-heading > div { display: grid; gap: 3px; min-width: 0; }
+#root #workspace-main .manual-patient-summary-heading > div > span { color: var(--gr-ink-3); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+#root #workspace-main .manual-patient-summary-heading strong { color: var(--gr-ink); font-size: 1rem; overflow-wrap: anywhere; }
+#root #workspace-main .manual-patient-summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
+#root #workspace-main .manual-patient-summary-grid > div { min-width: 0; padding: 11px 12px; border: 1px solid var(--gr-hairline); border-radius: 12px; background: #fff; }
+#root #workspace-main .manual-patient-summary-grid dt { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; color: var(--gr-ink-3); font-size: .72rem; font-weight: 700; }
+#root #workspace-main .manual-patient-summary-grid dt i { color: var(--gr-emerald-700); }
+#root #workspace-main .manual-patient-summary-grid dd { margin: 0; color: var(--gr-ink); font-size: .82rem; line-height: 1.45; overflow-wrap: anywhere; }
+@media (max-width: 520px) { #root #workspace-main .manual-patient-summary { padding: 14px; } #root #workspace-main .manual-patient-summary-grid { grid-template-columns: minmax(0, 1fr); } }
 
 /* 8 · VISTA FAMILIAR — ficha cálida y tranquila ------------------------------ */
 #root #workspace-main .family-select { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin: 0 0 22px; padding: 16px 22px; }

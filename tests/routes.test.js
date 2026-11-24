@@ -1,9 +1,29 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { createServer } from "vite";
 import { createServer as createHttpServer } from "node:http";
 import React from "react";
 import { renderToString } from "react-dom/server";
+test("HTML entry points do not render escaped newline artifacts", async () => {
+  const files = [
+    "index.html",
+    "LANDING.html",
+    "pages/login.html",
+    "pages/nuevo-reporte.html",
+    "pages/pacientes.html",
+    "pages/reporte-detalle.html",
+    "pages/reportes.html",
+    "pages/seguimiento.html",
+    "pages/turno.html",
+    "pages/usuarios.html",
+    "pages/vista-familiar.html",
+  ];
+  for (const file of files) {
+    const html = await readFile(new URL("../" + file, import.meta.url), "utf8");
+    assert.ok(!html.includes("`n"), file + " has no escaped newline text");
+  }
+});
 test("all original routes render React screens including saved shift and report", async () => {
   const values = new Map();
   globalThis.localStorage = {

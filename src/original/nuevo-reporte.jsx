@@ -121,13 +121,17 @@ export default function OriginalTemplate({
                   </select>
                 </div>
               </div>
+              {slots.patientSummary}
               <h3>{"Signos vitales"}</h3>
               <div className={"three-cols"}>
                 <div>
                   <label htmlFor={"pressure"}>{"Presión arterial"}</label>
                   <input
                     id={"pressure"}
+                    type={"text"}
+                    inputMode={"numeric"}
                     placeholder={"120/80"}
+                    title={"Escribe la presión sistólica y diastólica, por ejemplo 120/80."}
                     required={true}
                     name={"pressure"}
                     {...bindings["pressure"]}

@@ -210,11 +210,13 @@ function Badge({ status }) {
   );
 }
 function archiveTurn(store, turn, notes = "") {
+  const patientRecord = store.patients.find((patient) => patient.name === turn.patient);
   const report = {
     id: Date.now(),
     type: "turno",
     createdAt: formatDate(),
     patient: turn.patient,
+    patientDni: patientRecord?.dni || "",
     technician: turn.technician,
     date: turn.dateLabel,
     shift: "Turno completo",
@@ -307,6 +309,7 @@ export function Patients() {
       </div>
       <div className="card-body">
         {[
+          ["fa-id-card", "DNI:", p.dni || "Sin registrar"],
           ["fa-stethoscope", "Condición:", p.condition],
           ["fa-user", "Familiar:", p.family],
           ["fa-user-nurse", "Técnico:", p.assignedTo],
@@ -407,6 +410,7 @@ export function Patients() {
           "aria-label": editing ? "Editar paciente" : "Registrar paciente",
         },
         patientName: { defaultValue: editing || "", readOnly: Boolean(editing) },
+        patientDni: { defaultValue: patients.find((p) => p.name === editing)?.dni || "", minLength: 8, maxLength: 8, pattern: "[0-9]{8}", inputMode: "numeric" },
         patientAge: { min: 0, max: 120, defaultValue: patients.find((p) => p.name === editing)?.age || "" },
         patientCondition: { defaultValue: patients.find((p) => p.name === editing)?.condition || "" },
         patientFamily: { defaultValue: patients.find((p) => p.name === editing)?.family || "" },
@@ -419,6 +423,21 @@ export function Patients() {
             e.preventDefault();
             if (!validateText(e.currentTarget)) return;
             const d = formData(e);
+            const dni = d.patientDni.trim();
+            if (!/^\d{8}$/.test(dni)) {
+              const field = e.currentTarget.elements.patientDni;
+              field.setCustomValidity("El DNI debe tener exactamente 8 dígitos.");
+              field.oninput = () => field.setCustomValidity("");
+              field.reportValidity();
+              return;
+            }
+            if (patients.some((p) => p.dni === dni && p.name !== editing)) {
+              const field = e.currentTarget.elements.patientDni;
+              field.setCustomValidity("Ese DNI ya está registrado en otro paciente.");
+              field.oninput = () => field.setCustomValidity("");
+              field.reportValidity();
+              return;
+            }
             if (!editing &&
               patients.some(
                 (p) => searchable(p.name) === searchable(d.patientName.trim()),
@@ -441,6 +460,7 @@ export function Patients() {
             const next = {
               ...previous,
               name: d.patientName.trim(),
+              dni,
               code: previous?.code || `PAC-${Date.now().toString(36).toUpperCase()}`,
               age: d.patientAge,
               condition: d.patientCondition.trim(),
@@ -831,6 +851,7 @@ export function Manual() {
   const { patients, reports, setReports, user } = useStore();
   const [data, setData] = useState({});
   const assignedPatients = patients.filter((p) => canAccessPatient(p, user) && p.active && p.consent?.by);
+  const selectedPatient = assignedPatients.find((patient) => patient.name === data.patient);
   return (
     <ManualTemplate
       bindings={{
@@ -847,9 +868,11 @@ export function Manual() {
           onSubmit: (e) => {
             e.preventDefault();
             if (!validateText(e.currentTarget)) return;
-            if (!assignedPatients.some((p) => p.name === e.currentTarget.elements.patient.value)) return;
+            const patientRecord = assignedPatients.find((p) => p.name === e.currentTarget.elements.patient.value);
+            if (!patientRecord) return;
             const r = {
               ...formData(e),
+              patientDni: patientRecord.dni || "",
               id: Date.now(),
               type: "manual",
               technician: user.name,
@@ -863,6 +886,24 @@ export function Manual() {
       }}
       slots={{
         ...base.slots,
+        patientSummary: selectedPatient ? (
+          <section className="manual-patient-summary" aria-live="polite" aria-label="Información del paciente seleccionado">
+            <div className="manual-patient-summary-heading">
+              <span className="manual-patient-summary-icon" aria-hidden="true"><i className="fas fa-user" /></span>
+              <div>
+                <span>Paciente seleccionado</span>
+                <strong>{selectedPatient.name}</strong>
+              </div>
+            </div>
+            <dl className="manual-patient-summary-grid">
+              <div><dt><i className="fas fa-cake-candles" /> Edad</dt><dd>{selectedPatient.age ? `${selectedPatient.age} años` : "Sin registrar"}</dd></div>
+              <div><dt><i className="fas fa-heart-pulse" /> Condición</dt><dd>{selectedPatient.condition || "Sin registrar"}</dd></div>
+              <div><dt><i className="fas fa-user-group" /> Familiar responsable</dt><dd>{selectedPatient.family || "Sin registrar"}</dd></div>
+              <div><dt><i className="fas fa-address-card" /> DNI</dt><dd>{selectedPatient.dni || "Sin registrar"}</dd></div>
+              <div><dt><i className="fas fa-id-card" /> Código</dt><dd>{selectedPatient.code || "Sin registrar"}</dd></div>
+            </dl>
+          </section>
+        ) : null,
         livePreview:
           !data.patient && !data.pressure && !data.notes ? (
             <p className="muted">
@@ -978,10 +1019,22 @@ export function History() {
             </div>
           </div>
         ) : (
-          [...new Set(filtered.map((r) => r.patient))].map((patient) => (
-            <section className="history-group" key={patient}>
+          [...new Set(filtered.map((r) => r.patient))].map((patient) => {
+            const details = assignedPatients.find((entry) => entry.name === patient);
+            return <section className="history-group" key={patient}>
               <div className="panel-heading">
-                <h3>{patient}</h3>
+                <div className="history-patient-heading">
+                  <h3>{patient}</h3>
+                  {details && (
+                    <p className="history-patient-context">
+                      <span><i className="fas fa-id-card" /> {details.code || "Sin código"}</span>
+                      <span><i className="fas fa-address-card" /> DNI: {details.dni || "Sin registrar"}</span>
+                      <span><i className="fas fa-cake-candles" /> {details.age ? `${details.age} años` : "Edad sin registrar"}</span>
+                      <span><i className="fas fa-heart-pulse" /> {details.condition || "Condición sin registrar"}</span>
+                      <span><i className="fas fa-user-group" /> Familiar: {details.family || "Sin registrar"}</span>
+                    </p>
+                  )}
+                </div>
                 <a
                   href={
                     "/pages/vista-familiar.html?paciente=" +
@@ -1028,6 +1081,10 @@ export function History() {
                           <a
                             className="btn-ver"
                             href={"/pages/reporte-detalle.html?id=" + r.id}
+                            onClick={(event) => {
+                              event.preventDefault();
+                              go("/pages/reporte-detalle.html?id=" + encodeURIComponent(r.id));
+                            }}
                           >
                             <i className="fas fa-eye" /> Ver reporte
                           </a>
@@ -1050,8 +1107,8 @@ export function History() {
                     );
                   })}
               </div>
-            </section>
-          ))
+            </section>;
+          })
         ),
       }}
       onAction={reset}
@@ -1128,6 +1185,10 @@ export function ReportContent({ report, patients = [], reports = [] }) {
         <div className="report-patient-info">
           <h4>👤 Información del Paciente</h4>
           <div className="patient-info-grid">
+            <div className="info-item">
+              <label>DNI:</label>
+              <span>{report.patientDni || patient.dni || "Sin registrar"}</span>
+            </div>
             <div className="info-item">
               <label>Código:</label>
               <span className="patient-code">{patient.code}</span>
@@ -1242,7 +1303,15 @@ export function Detail() {
     setDownloading(true);
     try {
       const { downloadReportPdf } = await import("./reportPdf.js");
-      await downloadReportPdf(report);
+      const patient = patients.find((entry) => entry.name === report.patient);
+      await downloadReportPdf({
+        ...report,
+        patientDni: report.patientDni || patient?.dni || "",
+        patientAge: report.patientAge || patient?.age || "",
+        patientCondition: report.patientCondition || patient?.condition || "",
+        patientFamily: report.patientFamily || patient?.family || "",
+        patientCode: report.patientCode || patient?.code || "",
+      });
     } catch {
       await ask(
         "No se pudo descargar",
@@ -1309,11 +1378,16 @@ export function FollowUp() {
   const labels = ["Pendiente", "En proceso", "Completado"];
   const icons = ["fa-hourglass-start", "fa-spinner", "fa-circle-check"];
   const moveTask = (task, status) => {
-    const updatedTask = { ...task, status };
-    if (status === "done" && !task.completedAt) {
-      updatedTask.completedAt = new Date().toISOString();
-      updatedTask.completedBy = user.name;
-    }
+    if (task.status === status) return;
+    const changedAt = new Date().toISOString();
+    const updatedTask = {
+      ...task,
+      status,
+      statusChangedAt: changedAt,
+      statusChangedBy: user.name,
+      completedAt: status === "done" ? changedAt : null,
+      completedBy: status === "done" ? user.name : null,
+    };
     setTasks(allTasks.map((entry) => entry.id === task.id ? updatedTask : entry));
     logActivity(user, "Actualizó tarea", task.title);
   };
@@ -1332,7 +1406,14 @@ export function FollowUp() {
             </h3>
             {tasks
               .filter((t) => t.status === status)
-              .map((t) => (
+              .map((t) => {
+                const patient = patients.find((entry) => entry.name === t.patient);
+                const statusTime = t.statusChangedAt || (status === "done" ? t.completedAt : null) || t.createdAt;
+                const statusDate = statusTime ? new Date(statusTime) : null;
+                const statusDateLabel = statusDate && !Number.isNaN(statusDate.getTime())
+                  ? `${statusDate.toLocaleDateString("es-PE")} a las ${statusDate.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" })}`
+                  : "Hora sin registrar";
+                return (
                 <article
                   className={"task-card" + (status === "done" ? " done" : "")}
                   key={t.id}
@@ -1341,28 +1422,40 @@ export function FollowUp() {
                   <p>
                     {t.patient} · {t.time}
                   </p>
+                  <small className="task-patient-context">
+                    <i className="fas fa-user" aria-hidden="true" /> {patient?.age ? `${patient.age} años` : "Edad sin registrar"}
+                    <span aria-hidden="true"> · </span>
+                    <i className="fas fa-address-card" aria-hidden="true" /> DNI: {patient?.dni || "Sin registrar"}
+                  </small>
                   {patientVitals[t.patient]?.hasAlert && status !== "done" && (
                     <div className="vital-alert-badge">
                       <i className="fas fa-triangle-exclamation"></i>
                       <div>
-                        <strong>Alerta de signos vitales</strong>
-                        <small>Presión: {patientVitals[t.patient].pressure}</small>
+                        <strong>Signos vitales para revisar</strong>
+                        <small>{patientVitals[t.patient].issues.join(" · ")}</small>
+                        <small>
+                          Presión: {patientVitals[t.patient].pressure || "Sin dato"} · FC: {patientVitals[t.patient].heart || "Sin dato"} lpm · Temp: {patientVitals[t.patient].temp || "Sin dato"} °C · SpO₂: {patientVitals[t.patient].spo2 || "Sin dato"}%
+                        </small>
                       </div>
                     </div>
                   )}
-                  {t.createdAt && (
-                    <div className="task-metadata">
+                  {t.notes && (
+                    <p className="task-note">
+                      <i className="fas fa-note-sticky" aria-hidden="true" />
+                      <span><strong>Nota del registro:</strong> {t.notes}</span>
+                    </p>
+                  )}
+                  <div className="task-metadata">
+                    {t.createdAt && (
                       <small>
                         <i className="fas fa-calendar-plus" /> Creada: {new Date(t.createdAt).toLocaleDateString("es-PE")} · {t.shift}
                       </small>
-                      {status === "done" && t.completedAt && (
-                        <small className="task-completed-info">
-                          <i className="fas fa-check-circle" /> Completada: {new Date(t.completedAt).toLocaleDateString("es-PE")} a las {new Date(t.completedAt).toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" })}
-                          {t.completedBy && ` por ${t.completedBy}`}
-                        </small>
-                      )}
-                    </div>
-                  )}
+                    )}
+                    <small className={status === "done" ? "task-completed-info" : "task-status-time"}>
+                      <i className={"fas " + icons[i]} aria-hidden="true" /> {labels[i]}: {statusDateLabel}
+                      {(t.statusChangedBy || (status === "done" && t.completedBy)) && ` · ${t.statusChangedBy || t.completedBy}`}
+                    </small>
+                  </div>
                   <span
                     className={
                       "task-priority " +
@@ -1374,6 +1467,12 @@ export function FollowUp() {
                     )}{" "}
                     {t.priority}
                   </span>
+                  {status === "done" && (
+                    <span className="task-complete-badge">
+                      <i className="fas fa-circle-check" aria-hidden="true" />
+                      Tarea completada
+                    </span>
+                  )}
                   <div className="task-controls">
                     {i > 0 && (
                       <button
@@ -1393,7 +1492,8 @@ export function FollowUp() {
                     )}
                   </div>
                 </article>
-              ))}
+                );
+              })}
           </article>
         )),
       }}
@@ -1447,7 +1547,7 @@ export function Family() {
                 <h3>{name}</h3>
                 <div className="sub">
                   <span>
-                    {patient?.age} años · {patient?.condition}
+                    DNI: {patient?.dni || "Sin registrar"} · {patient?.age} años · {patient?.condition}
                   </span>
                   {s && (
                     <span className={"badge-estado " + statusClass(s.status)}>
@@ -1519,6 +1619,10 @@ export function Family() {
                     <a
                       className="btn-ver family-report-link"
                       href={"/pages/reporte-detalle.html?id=" + report.id}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        go("/pages/reporte-detalle.html?id=" + encodeURIComponent(report.id));
+                      }}
                     >
                       <i className="fas fa-file-lines" aria-hidden="true" />
                       <span>Ver reporte</span>

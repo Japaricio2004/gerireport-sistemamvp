@@ -9,6 +9,7 @@ import {
   reportReview,
   canAccessPatient,
   reportsForUser,
+  compareVitalTrends,
 } from "../src/data.js";
 const values = new Map();
 globalThis.localStorage = {
@@ -70,6 +71,60 @@ test("vital alert rules distinguish configured ranges", () => {
     }).issues.length,
     5,
   );
+});
+
+test("vital trends compare distance from configured ranges and handle insufficient data", () => {
+  const reports = [
+    {
+      id: 2,
+      type: "turno",
+      patient: "Paciente demo",
+      records: [{
+        type: "vitals",
+        data: { pressure: "150/95", heart: "90", temp: "37.8", spo2: "93" },
+      }],
+    },
+    {
+      id: 1,
+      type: "turno",
+      patient: "Paciente demo",
+      records: [{
+        type: "vitals",
+        data: { pressure: "180/110", heart: "120", temp: "39", spo2: "88" },
+      }],
+    },
+  ];
+  const improving = compareVitalTrends("Paciente demo", reports);
+  assert.equal(improving.pressure.systolic.trend, "improving");
+  assert.equal(improving.pressure.diastolic.trend, "improving");
+  assert.equal(improving.heart.trend, "improving");
+  assert.equal(improving.temp.trend, "improving");
+  assert.equal(improving.spo2.trend, "improving");
+
+  const lowPressure = compareVitalTrends("Paciente demo", [
+    { ...reports[0], records: [{ type: "vitals", data: { pressure: "80/50" } }] },
+    { ...reports[1], records: [{ type: "vitals", data: { pressure: "90/60" } }] },
+  ]);
+  assert.equal(lowPressure.pressure.systolic.trend, "worsening");
+  assert.equal(lowPressure.pressure.diastolic.trend, "worsening");
+
+  const insufficient = compareVitalTrends("Paciente demo", [reports[0]]);
+  assert.equal(insufficient.recordsCount, 1);
+  assert.equal(insufficient.pressure.systolic.trend, "insufficient");
+  assert.equal(insufficient.heart.trend, "insufficient");
+  assert.deepEqual(insufficient.heart.history, ["90"]);
+
+  const sameShift = compareVitalTrends("Paciente demo", [{
+    id: 3,
+    type: "turno",
+    patient: "Paciente demo",
+    records: [
+      { type: "vitals", time: "08:00", data: { pressure: "180/110" } },
+      { type: "vitals", time: "14:00", data: { pressure: "150/95" } },
+    ],
+  }]);
+  assert.equal(sameShift.pressure.latest, "150/95");
+  assert.deepEqual(sameShift.pressure.history, ["150/95", "180/110"]);
 });
 
 test("empty turns are not classified as stable", () => {

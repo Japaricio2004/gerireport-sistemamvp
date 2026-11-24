@@ -153,6 +153,7 @@ export default function DashboardPage() {
             <small>{assignedReports.length} en el historial</small>
           </article>
         </section>
+        </div>
         
         {/* Widgets de estadísticas adicionales */}
         <section className="stats-widgets-grid" aria-label="Estadísticas del día">
@@ -191,7 +192,6 @@ export default function DashboardPage() {
             link="/pages/pacientes.html"
           />
         </section>
-        </div>
 
         <section className="dashboard-content">
           <article className="surface patients-surface">

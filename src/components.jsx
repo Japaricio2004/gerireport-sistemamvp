@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useId } from "react";
+import { compareVitalTrends } from "./data";
 export function Modal({ title, children, onClose }) {
   const ref = useRef(null);
   const titleId = useId();
@@ -102,8 +103,9 @@ export function Timeline({ records = [] }) {
 }
 
 export function VitalTrendsCard({ patientName, reports }) {
-  const trends = reports && patientName ? 
-    require("./data").compareVitalTrends(patientName, reports) : null;
+  const trends = reports && patientName
+    ? compareVitalTrends(patientName, reports)
+    : null;
   
   if (!trends || trends.recordsCount < 2) {
     return (
@@ -118,6 +120,7 @@ export function VitalTrendsCard({ patientName, reports }) {
   const getTrendClass = (trend) => {
     if (trend === "improving") return "trend-improving";
     if (trend === "worsening") return "trend-worsening";
+    if (trend === "insufficient") return "trend-insufficient";
     return "trend-stable";
   };
   
@@ -125,6 +128,7 @@ export function VitalTrendsCard({ patientName, reports }) {
     <div className="vital-trends">
       <h4>📊 Evolución de Signos Vitales</h4>
       <p className="trends-subtitle">Últimos {trends.recordsCount} registros</p>
+      <p className="trends-disclaimer">Comparativa orientativa según los rangos configurados en la demo.</p>
       
       <div className="trend-item">
         <div className="trend-label">
@@ -136,9 +140,13 @@ export function VitalTrendsCard({ patientName, reports }) {
             <span key={i} className={i === 0 ? "current" : "old"}>{val}</span>
           ))}
         </div>
-        <div className={`trend-status ${getTrendClass(trends.pressure.systolic.trend)}`}>
-          <i className={`fas ${trends.pressure.systolic.icon}`}></i>
-          <span>{trends.pressure.systolic.label}</span>
+        <div className="trend-status-group">
+          {[ ["Sistólica", trends.pressure.systolic], ["Diastólica", trends.pressure.diastolic] ].map(([label, result]) => (
+            <div className={`trend-status ${getTrendClass(result.trend)}`} key={label}>
+              <i className={`fas ${result.icon}`}></i>
+              <span>{label}: {result.label}</span>
+            </div>
+          ))}
         </div>
       </div>
       

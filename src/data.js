@@ -1,6 +1,7 @@
 export const defaultPatients = [
   {
     name: "María López",
+    dni: "00000001",
     age: 82,
     condition: "Control de medicación y movilidad reducida",
     family: "Lucía López",
@@ -8,6 +9,7 @@ export const defaultPatients = [
   },
   {
     name: "Jorge Gálvez",
+    dni: "00000002",
     age: 77,
     condition: "Hipertensión y control de presión arterial",
     family: "Carlos Gálvez",
@@ -15,6 +17,7 @@ export const defaultPatients = [
   },
   {
     name: "Elena Campos",
+    dni: "00000003",
     age: 89,
     condition: "Seguimiento diario, hidratación y alimentación",
     family: "Rosa Campos",
@@ -22,6 +25,7 @@ export const defaultPatients = [
   },
   {
     name: "Alberto Morales",
+    dni: "00000004",
     age: 81,
     condition: "Insuficiencia cardíaca, control de líquidos",
     family: "Laura Morales",
@@ -29,6 +33,7 @@ export const defaultPatients = [
   },
   {
     name: "Clara Vargas",
+    dni: "00000005",
     age: 84,
     condition: "Acompañamiento y estimulación cognitiva",
     family: "Pedro Vargas",
@@ -36,6 +41,7 @@ export const defaultPatients = [
   },
   {
     name: "Rosa Paredes",
+    dni: "00000006",
     age: 76,
     condition: "EPOC, oxígeno domiciliario, control respiratorio",
     family: "Carlos Paredes",
@@ -551,11 +557,25 @@ export function initialize() {
     localStorage.setItem(keys.patients, JSON.stringify(defaultPatients));
   else {
     const saved = read(keys.patients, []);
-    const upgraded = saved.map((patient) => {
+    const usedDnis = new Set(saved.map((patient) => String(patient.dni || "").trim()).filter((dni) => /^\d{8}$/.test(dni)));
+    const assignedDnis = new Set();
+    let nextDemoDni = 1;
+    const upgraded = saved.map((patient, index) => {
       const sample = defaultPatients.find((item) => item.name === patient.name);
+      let dni = String(patient.dni || "").trim();
+      if (!/^\d{8}$/.test(dni) || assignedDnis.has(dni)) {
+        const sampleDni = String(sample?.dni || "");
+        if (/^\d{8}$/.test(sampleDni) && !assignedDnis.has(sampleDni) && (sampleDni === dni || !usedDnis.has(sampleDni))) dni = sampleDni;
+        else {
+          do { dni = String(nextDemoDni++).padStart(8, "0"); }
+          while (usedDnis.has(dni) || assignedDnis.has(dni));
+        }
+      }
+      assignedDnis.add(dni);
       return {
         ...patient,
-        code: patient.code || sample?.code || `PAC-${String(saved.indexOf(patient) + 1).padStart(3, "0")}`,
+        dni,
+        code: patient.code || sample?.code || `PAC-${String(index + 1).padStart(3, "0")}`,
         assignedTo: patient.assignedTo || "Renzo C.",
         active: patient.active !== false,
         consent: patient.consent || sample?.consent || null,
@@ -793,8 +813,13 @@ export function getLatestVitals(patientName, reports, limit = 5) {
     .filter(r => r.patient === patientName && isTurnoReport(r))
     .sort((a, b) => (b.id || 0) - (a.id || 0))
     .forEach(report => {
-      const vitals = recordsByType(report, "vitals");
-      vitals.forEach(v => {
+      const vitals = recordsByType(report, "vitals")
+        .map((record, index) => ({ record, index }))
+        .sort((a, b) =>
+          String(b.record.time || "").localeCompare(String(a.record.time || "")) ||
+          b.index - a.index,
+        );
+      vitals.forEach(({ record: v }) => {
         vitalsRecords.push({
           ...v.data,
           recordedAt: v.createdAt || report.createdAt,
@@ -812,75 +837,68 @@ export function getLatestVitals(patientName, reports, limit = 5) {
  */
 export function compareVitalTrends(patientName, reports) {
   const vitals = getLatestVitals(patientName, reports, 3);
-  
-  if (vitals.length < 2) {
-    return {
-      pressure: { trend: "insufficient", label: "Datos insuficientes", icon: "fa-minus" },
-      heart: { trend: "insufficient", label: "Datos insuficientes", icon: "fa-minus" },
-      temp: { trend: "insufficient", label: "Datos insuficientes", icon: "fa-minus" },
-      spo2: { trend: "insufficient", label: "Datos insuficientes", icon: "fa-minus" },
-    };
-  }
-  
-  const analyzeTrend = (values, isLowerBetter = false) => {
-    if (values.length < 2 || values.some(v => v == null || isNaN(v))) {
-      return { trend: "insufficient", label: "Sin datos", icon: "fa-minus" };
-    }
-    
+  const insufficient = () => ({
+    trend: "insufficient",
+    label: "Datos insuficientes",
+    icon: "fa-minus",
+  });
+  const parseValue = (value) => {
+    if (value == null || String(value).trim() === "") return null;
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const analyzeTrend = (values, range) => {
     const latest = values[0];
     const previous = values[1];
-    const diff = latest - previous;
-    
-    // Para presión y FC, menor es mejor (dentro de rangos)
-    // Para SpO2, mayor es mejor
-    const improving = isLowerBetter ? diff < -3 : diff > 2;
-    const worsening = isLowerBetter ? diff > 3 : diff < -2;
-    
-    if (improving) {
-      return { trend: "improving", label: "Mejorando", icon: "fa-arrow-trend-down", value: diff };
-    } else if (worsening) {
-      return { trend: "worsening", label: "Empeorando", icon: "fa-arrow-trend-up", value: diff };
-    } else {
-      return { trend: "stable", label: "Estable", icon: "fa-minus", value: diff };
-    }
+    if (values.length < 2 || latest == null || previous == null) return insufficient();
+    const distanceFromRange = (value) =>
+      value < range.min ? range.min - value : value > range.max ? value - range.max : 0;
+    const previousDistance = distanceFromRange(previous);
+    const latestDistance = distanceFromRange(latest);
+    const trend = latestDistance < previousDistance
+      ? "improving"
+      : latestDistance > previousDistance
+        ? "worsening"
+        : "stable";
+    return {
+      trend,
+      label: trend === "improving" ? "Mejorando" : trend === "worsening" ? "Empeorando" : "Estable",
+      icon: trend === "improving" ? "fa-arrow-trend-down" : trend === "worsening" ? "fa-arrow-trend-up" : "fa-minus",
+      value: latest - previous,
+      latest,
+      previous,
+    };
   };
-  
-  // Extraer valores de presión
-  const systolicValues = vitals.map(v => {
-    if (!v.pressure) return null;
-    const parts = String(v.pressure).split("/");
-    return parseFloat(parts[0]);
+
+  const pressureParts = vitals.map((vital) => {
+    const [systolic, diastolic] = String(vital.pressure || "").split("/");
+    return { systolic: parseValue(systolic), diastolic: parseValue(diastolic) };
   });
-  
-  const diastolicValues = vitals.map(v => {
-    if (!v.pressure) return null;
-    const parts = String(v.pressure).split("/");
-    return parseFloat(parts[1]);
-  });
-  
-  const heartValues = vitals.map(v => parseFloat(v.heart)).filter(v => !isNaN(v));
-  const tempValues = vitals.map(v => parseFloat(v.temp)).filter(v => !isNaN(v));
-  const spo2Values = vitals.map(v => parseFloat(v.spo2)).filter(v => !isNaN(v));
-  
+  const systolicValues = pressureParts.map((value) => value.systolic);
+  const diastolicValues = pressureParts.map((value) => value.diastolic);
+  const heartValues = vitals.map((vital) => parseValue(vital.heart));
+  const tempValues = vitals.map((vital) => parseValue(vital.temp));
+  const spo2Values = vitals.map((vital) => parseValue(vital.spo2));
+
   return {
     pressure: {
-      systolic: analyzeTrend(systolicValues, true),
-      diastolic: analyzeTrend(diastolicValues, true),
+      systolic: analyzeTrend(systolicValues, VITAL_RANGES.systolic),
+      diastolic: analyzeTrend(diastolicValues, VITAL_RANGES.diastolic),
       latest: vitals[0]?.pressure || "N/A",
       history: vitals.map(v => v.pressure).filter(Boolean)
     },
     heart: {
-      ...analyzeTrend(heartValues, true),
+      ...analyzeTrend(heartValues, VITAL_RANGES.heart),
       latest: vitals[0]?.heart || "N/A",
       history: vitals.map(v => v.heart).filter(Boolean)
     },
     temp: {
-      ...analyzeTrend(tempValues, false),
+      ...analyzeTrend(tempValues, VITAL_RANGES.temp),
       latest: vitals[0]?.temp || "N/A",
       history: vitals.map(v => v.temp).filter(Boolean)
     },
     spo2: {
-      ...analyzeTrend(spo2Values, false),
+      ...analyzeTrend(spo2Values, VITAL_RANGES.spo2),
       latest: vitals[0]?.spo2 || "N/A",
       history: vitals.map(v => v.spo2).filter(Boolean)
     },

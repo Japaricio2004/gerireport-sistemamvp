@@ -135,6 +135,20 @@ export default function OriginalTemplate({
               name={"patientName"}
               {...bindings["patientName"]}
             />
+            <label htmlFor="patientDni">DNI del paciente (8 dígitos)</label>
+            <input
+              id="patientDni"
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              maxLength={8}
+              pattern="[0-9]{8}"
+              title="Ingresa 8 dígitos. Usa un DNI ficticio para esta demo."
+              placeholder="00000001"
+              required={true}
+              name="patientDni"
+              {...bindings.patientDni}
+            />
             <label htmlFor={"patientAge"}>{"Edad"}</label>
             <input
               id={"patientAge"}
