@@ -247,15 +247,33 @@ export default function OriginalTemplate({
             {...bindings["vitalsForm"]}
           >
             <div className={"two-cols"}>
-              <div>
-                <label htmlFor={"v_pressure"}>{"Presión arterial"}</label>
-                <input
-                  id={"v_pressure"}
-                  placeholder={"120/80"}
-                  required={true}
-                  name={"v_pressure"}
-                  {...bindings["v_pressure"]}
-                />
+              <div className={"pressure-input-group"}>
+                <label htmlFor={"v_pressure_sys"}>{"Presión arterial"}</label>
+                <div className={"split-input"}>
+                  <input
+                    id={"v_pressure_sys"}
+                    type={"number"}
+                    placeholder={"120"}
+                    min={"60"}
+                    max={"200"}
+                    required={true}
+                    name={"pressure_sys"}
+                    {...bindings["v_pressure_sys"]}
+                  />
+                  <span className={"separator"}>/</span>
+                  <input
+                    id={"v_pressure_dia"}
+                    type={"number"}
+                    placeholder={"80"}
+                    min={"40"}
+                    max={"130"}
+                    required={true}
+                    name={"pressure_dia"}
+                    {...bindings["v_pressure_dia"]}
+                  />
+                  <span className={"unit"}>mmHg</span>
+                </div>
+                <small>Sistólica / Diastólica</small>
               </div>
               <div>
                 <label htmlFor={"v_heart"}>{"Frecuencia cardíaca (lpm)"}</label>

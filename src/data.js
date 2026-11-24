@@ -65,40 +65,65 @@ export const demoTasks = [
     title: "Control de presión",
     patient: "Jorge Gálvez",
     time: "16:00",
+    createdAt: "2025-01-05T08:00:00",
+    shift: "Turno de mañana",
+    createdBy: "Renzo C.",
     priority: "Alta",
     status: "pending",
+    completedAt: null,
+    completedBy: null,
   },
   {
     id: 2,
     title: "Revisar hidratación",
     patient: "Elena Campos",
     time: "Durante el turno",
+    createdAt: "2025-01-05T09:30:00",
+    shift: "Turno de mañana",
+    createdBy: "Renzo C.",
     priority: "Media",
     status: "pending",
+    completedAt: null,
+    completedBy: null,
   },
   {
     id: 3,
     title: "Registrar medicación",
     patient: "María López",
     time: "Dosis nocturna",
+    createdAt: "2025-01-05T07:45:00",
+    shift: "Turno de mañana",
+    createdBy: "Renzo C.",
     priority: "Media",
     status: "active",
+    completedAt: null,
+    completedBy: null,
   },
   {
     id: 4,
     title: "Reporte de alimentación",
     patient: "María López",
     time: "Almuerzo registrado",
+    createdAt: "2025-01-04T12:00:00",
+    shift: "Turno completo",
+    createdBy: "Renzo C.",
     priority: "Completada",
     status: "done",
+    completedAt: "2025-01-04T13:30:00",
+    completedBy: "Renzo C.",
   },
   {
     id: 5,
     title: "Observación de movilidad",
     patient: "Elena Campos",
     time: "Sin incidencias",
+    createdAt: "2025-01-04T10:00:00",
+    shift: "Turno completo",
+    createdBy: "Renzo C.",
     priority: "Completada",
     status: "done",
+    completedAt: "2025-01-04T16:00:00",
+    completedBy: "Renzo C.",
   },
 ];
 
@@ -756,4 +781,144 @@ export function checkVitalAlerts({ pressure, heart, temp, spo2 }) {
   }
 
   return { alert: issues.length > 0, issues };
+}
+
+/**
+ * Obtiene los últimos registros de signos vitales de un paciente
+ */
+export function getLatestVitals(patientName, reports, limit = 5) {
+  const vitalsRecords = [];
+  
+  reports
+    .filter(r => r.patient === patientName && isTurnoReport(r))
+    .sort((a, b) => (b.id || 0) - (a.id || 0))
+    .forEach(report => {
+      const vitals = recordsByType(report, "vitals");
+      vitals.forEach(v => {
+        vitalsRecords.push({
+          ...v.data,
+          recordedAt: v.createdAt || report.createdAt,
+          time: v.time,
+          reportId: report.id
+        });
+      });
+    });
+  
+  return vitalsRecords.slice(0, limit);
+}
+
+/**
+ * Compara tendencias de signos vitales (mejorando, empeorando, estable)
+ */
+export function compareVitalTrends(patientName, reports) {
+  const vitals = getLatestVitals(patientName, reports, 3);
+  
+  if (vitals.length < 2) {
+    return {
+      pressure: { trend: "insufficient", label: "Datos insuficientes", icon: "fa-minus" },
+      heart: { trend: "insufficient", label: "Datos insuficientes", icon: "fa-minus" },
+      temp: { trend: "insufficient", label: "Datos insuficientes", icon: "fa-minus" },
+      spo2: { trend: "insufficient", label: "Datos insuficientes", icon: "fa-minus" },
+    };
+  }
+  
+  const analyzeTrend = (values, isLowerBetter = false) => {
+    if (values.length < 2 || values.some(v => v == null || isNaN(v))) {
+      return { trend: "insufficient", label: "Sin datos", icon: "fa-minus" };
+    }
+    
+    const latest = values[0];
+    const previous = values[1];
+    const diff = latest - previous;
+    
+    // Para presión y FC, menor es mejor (dentro de rangos)
+    // Para SpO2, mayor es mejor
+    const improving = isLowerBetter ? diff < -3 : diff > 2;
+    const worsening = isLowerBetter ? diff > 3 : diff < -2;
+    
+    if (improving) {
+      return { trend: "improving", label: "Mejorando", icon: "fa-arrow-trend-down", value: diff };
+    } else if (worsening) {
+      return { trend: "worsening", label: "Empeorando", icon: "fa-arrow-trend-up", value: diff };
+    } else {
+      return { trend: "stable", label: "Estable", icon: "fa-minus", value: diff };
+    }
+  };
+  
+  // Extraer valores de presión
+  const systolicValues = vitals.map(v => {
+    if (!v.pressure) return null;
+    const parts = String(v.pressure).split("/");
+    return parseFloat(parts[0]);
+  });
+  
+  const diastolicValues = vitals.map(v => {
+    if (!v.pressure) return null;
+    const parts = String(v.pressure).split("/");
+    return parseFloat(parts[1]);
+  });
+  
+  const heartValues = vitals.map(v => parseFloat(v.heart)).filter(v => !isNaN(v));
+  const tempValues = vitals.map(v => parseFloat(v.temp)).filter(v => !isNaN(v));
+  const spo2Values = vitals.map(v => parseFloat(v.spo2)).filter(v => !isNaN(v));
+  
+  return {
+    pressure: {
+      systolic: analyzeTrend(systolicValues, true),
+      diastolic: analyzeTrend(diastolicValues, true),
+      latest: vitals[0]?.pressure || "N/A",
+      history: vitals.map(v => v.pressure).filter(Boolean)
+    },
+    heart: {
+      ...analyzeTrend(heartValues, true),
+      latest: vitals[0]?.heart || "N/A",
+      history: vitals.map(v => v.heart).filter(Boolean)
+    },
+    temp: {
+      ...analyzeTrend(tempValues, false),
+      latest: vitals[0]?.temp || "N/A",
+      history: vitals.map(v => v.temp).filter(Boolean)
+    },
+    spo2: {
+      ...analyzeTrend(spo2Values, false),
+      latest: vitals[0]?.spo2 || "N/A",
+      history: vitals.map(v => v.spo2).filter(Boolean)
+    },
+    recordsCount: vitals.length
+  };
+}
+
+/**
+ * Crea una tarea de seguimiento desde un registro o nota
+ */
+export function createTaskFromNote(record, patient, turn, user) {
+  const taskId = Date.now();
+  const priority = record.alert || record.type === "incident" ? "Alta" : "Media";
+  
+  let title = "";
+  if (record.type === "vitals" && record.alert) {
+    title = "Revisar signos vitales anormales";
+  } else if (record.type === "medication" && record.data?.status === "No administrado") {
+    title = "Administrar medicación pendiente";
+  } else if (record.type === "incident") {
+    title = `Seguimiento: ${record.data?.incidentType || "Incidente"}`;
+  } else {
+    title = `Seguimiento: ${record.title}`;
+  }
+  
+  return {
+    id: taskId,
+    title,
+    patient: patient.name || patient,
+    time: "Pendiente de asignar horario",
+    createdAt: new Date().toISOString(),
+    shift: turn ? `${turn.dateLabel} - ${turn.startLabel}` : "Turno actual",
+    createdBy: user?.name || "Sistema",
+    priority,
+    status: "pending",
+    completedAt: null,
+    completedBy: null,
+    notes: record.detail || "",
+    linkedRecordId: record.id,
+  };
 }

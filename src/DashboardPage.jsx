@@ -1,6 +1,7 @@
 import React from "react";
 import { useStore } from "./store";
 import { canAccessPatient, reportsForUser, formatDateOnly } from "./data";
+import { StatsWidget } from "./components";
 import "../assets/css/redesign.css";
 
 export default function DashboardPage() {
@@ -8,6 +9,7 @@ export default function DashboardPage() {
     patients,
     reports,
     turn: activeTurn,
+    tasks,
     menuOpen,
     setMenuOpen,
     user,
@@ -15,6 +17,22 @@ export default function DashboardPage() {
   const assignedPatients = patients.filter((patient) => canAccessPatient(patient, user));
   const assignedReports = reportsForUser(reports, patients, user);
   const ownTurn = activeTurn?.technician === user.name ? activeTurn : null;
+  
+  // Calcular estadísticas
+  const todayReports = assignedReports.filter((report) => 
+    (report.date || report.createdAt || "").startsWith(formatDateOnly())
+  );
+  const pendingTasks = tasks.filter(task => 
+    task.status === "pending" && 
+    assignedPatients.some(p => p.name === task.patient)
+  );
+  const todayRecords = ownTurn?.records?.length || 0;
+  const recordsByCategory = {
+    vitals: (ownTurn?.records || []).filter(r => r.type === "vitals").length,
+    medication: (ownTurn?.records || []).filter(r => r.type === "medication").length,
+    food: (ownTurn?.records || []).filter(r => r.type === "food").length,
+  };
+  
   const activities = [
     ...(ownTurn?.records || []).map((record) => ({ id: record.id, patient: ownTurn.patient, label: record.title, at: record.time, technician: record.responsible || ownTurn.technician })),
     ...assignedReports.map((report) => ({ id: report.id, patient: report.patient, label: report.type === "turno" ? "Turno finalizado" : "Reporte manual", at: report.createdAt, technician: report.technician })),
@@ -134,6 +152,44 @@ export default function DashboardPage() {
             <strong>{assignedReports.filter((report) => (report.date || report.createdAt || "").startsWith(formatDateOnly())).length}</strong>
             <small>{assignedReports.length} en el historial</small>
           </article>
+        </section>
+        
+        {/* Widgets de estadísticas adicionales */}
+        <section className="stats-widgets-grid" aria-label="Estadísticas del día">
+          <StatsWidget
+            icon="fa-user-clock"
+            label="Turnos hoy"
+            value={ownTurn ? "1 activo" : "0"}
+            change={ownTurn ? `Iniciado ${ownTurn.startLabel}` : "Sin turno en curso"}
+            variant={ownTurn ? "success" : "default"}
+            link={ownTurn ? "/pages/turno.html" : "/pages/pacientes.html"}
+          />
+          
+          <StatsWidget
+            icon="fa-triangle-exclamation"
+            label="Tareas pendientes"
+            value={pendingTasks.length}
+            change={pendingTasks.length > 0 ? "Requieren atención" : "Todo al día"}
+            variant={pendingTasks.length > 0 ? "alert" : "success"}
+            link="/pages/seguimiento.html"
+          />
+          
+          <StatsWidget
+            icon="fa-clipboard-check"
+            label="Registros hoy"
+            value={todayRecords}
+            change={todayRecords > 0 ? `${recordsByCategory.vitals} signos · ${recordsByCategory.medication} medicación · ${recordsByCategory.food} comidas` : "Comienza un turno para registrar"}
+            variant={todayRecords > 0 ? "success" : "default"}
+          />
+          
+          <StatsWidget
+            icon="fa-users"
+            label="Pacientes activos"
+            value={assignedPatients.filter(p => p.active).length}
+            change={`${assignedPatients.length} total asignados`}
+            variant="default"
+            link="/pages/pacientes.html"
+          />
         </section>
         </div>
 

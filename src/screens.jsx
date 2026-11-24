@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useStore, go } from "./store";
-import { Modal, Field } from "./components";
+import { Modal, Field, VitalTrendsCard } from "./components";
 import SectionContext from "./SectionContext";
 import { USERS_KEY, clearSession } from "./auth";
 import {
@@ -15,6 +15,8 @@ import {
   canAccessPatient,
   reportsForUser,
   logActivity,
+  getLatestVitals,
+  createTaskFromNote,
 } from "./data";
 import PatientsTemplate from "./original/pacientes";
 import ShiftTemplate from "./original/turno";
@@ -478,25 +480,41 @@ export function Shift() {
   const review = reportReview(turn);
   function add(type, data, detail, alert = false, title) {
     const [icon, label] = categories[type];
+    const newRecord = {
+      id: Date.now(),
+      time: data.time || formatTime(),
+      createdAt: new Date().toISOString(),
+      responsible: store.user.name,
+      type,
+      icon,
+      title: title || label,
+      detail,
+      alert,
+      data,
+    };
+    
     setTurn({
       ...turn,
       records: [
         ...turn.records,
-        {
-          id: Date.now(),
-          time: data.time || formatTime(),
-          createdAt: new Date().toISOString(),
-          responsible: store.user.name,
-          type,
-          icon,
-          title: title || label,
-          detail,
-          alert,
-          data,
-        },
+        newRecord,
       ],
     });
     logActivity(store.user, "Registró atención", `${turn.patient}: ${label}`);
+    
+    // Si hay alerta, mostrar opción de crear tarea
+    if (alert && ["vitals", "medication", "incident"].includes(type)) {
+      const shouldCreateTask = confirm(
+        `Se detectó una situación que requiere seguimiento.\n\n¿Deseas crear una tarea pendiente en Seguimiento?`
+      );
+      if (shouldCreateTask) {
+        const patient = store.patients.find(p => p.name === turn.patient);
+        const newTask = createTaskFromNote(newRecord, patient, turn, store.user);
+        store.setTasks([...store.tasks, newTask]);
+        logActivity(store.user, "Creó tarea desde registro", newTask.title);
+      }
+    }
+    
     setModal(null);
     setError("");
   }
@@ -506,11 +524,16 @@ export function Shift() {
     const d = formData(e);
     switch (type) {
       case "vitals":
+        // Combinar presión sistólica y diastólica
+        const combinedData = {
+          ...d,
+          pressure: d.pressure_sys && d.pressure_dia ? `${d.pressure_sys}/${d.pressure_dia}` : d.pressure || ""
+        };
         add(
           type,
-          d,
-          `Presión: ${d.pressure} · FC: ${d.heart} lpm · FR: ${d.resp} rpm · Temp: ${d.temp} °C · SpO₂: ${d.spo2}%`,
-          checkVitalAlerts(d).alert,
+          combinedData,
+          `Presión: ${combinedData.pressure} · FC: ${combinedData.heart} lpm · FR: ${combinedData.resp} rpm · Temp: ${combinedData.temp} °C · SpO₂: ${combinedData.spo2}%`,
+          checkVitalAlerts(combinedData).alert,
         );
         break;
       case "medication":
@@ -550,7 +573,8 @@ export function Shift() {
     }
   }
   const names = {
-    v_pressure: "pressure",
+    v_pressure_sys: "pressure_sys",
+    v_pressure_dia: "pressure_dia",
     v_heart: "heart",
     v_resp: "resp",
     v_temp: "temp",
@@ -600,12 +624,8 @@ export function Shift() {
         ? { defaultValue: formatTime() }
         : {}),
       ...(id === "v_spo2" ? { min: 0, max: 100 } : {}),
-      ...(id === "v_pressure"
-        ? {
-            pattern: "[0-9]{2,3}/[0-9]{2,3}",
-            title: "Escribe dos números separados por /, por ejemplo 120/80.",
-          }
-        : {}),
+      ...(id === "v_pressure_sys" ? { min: 60, max: 200 } : {}),
+      ...(id === "v_pressure_dia" ? { min: 40, max: 130 } : {}),
       ...(id === "v_heart" ? { min: 1 } : {}),
       ...(id === "v_resp" ? { min: 1 } : {}),
       ...(id === "v_temp" ? { min: 0.1 } : {}),
@@ -1038,8 +1058,9 @@ export function History() {
     />
   );
 }
-export function ReportContent({ report }) {
+export function ReportContent({ report, patients = [], reports = [] }) {
   const s = summarizeReport(report);
+  const patient = patients.find(p => p.name === report.patient);
   const reportStatus =
     s.status === "Revisar"
       ? {
@@ -1103,6 +1124,36 @@ export function ReportContent({ report }) {
           </strong>
         </div>
       </div>
+      {patient && (
+        <div className="report-patient-info">
+          <h4>👤 Información del Paciente</h4>
+          <div className="patient-info-grid">
+            <div className="info-item">
+              <label>Código:</label>
+              <span className="patient-code">{patient.code}</span>
+            </div>
+            <div className="info-item">
+              <label>Edad:</label>
+              <span>{patient.age} años</span>
+            </div>
+            <div className="info-item">
+              <label>Condición:</label>
+              <span>{patient.condition}</span>
+            </div>
+            <div className="info-item">
+              <label>Familiar responsable:</label>
+              <span>{patient.family}</span>
+            </div>
+            <div className="info-item">
+              <label>Técnico asignado:</label>
+              <span>{patient.assignedTo}</span>
+            </div>
+          </div>
+        </div>
+      )}
+      {reports.length > 0 && (
+        <VitalTrendsCard patientName={report.patient} reports={reports} />
+      )}
       <ReviewNotice entries={reportReview(report)} />
       {report.type === "turno" ? (
         <>
@@ -1215,7 +1266,7 @@ export function Detail() {
       slots={{
         ...base.slots,
         reportSheet: report ? (
-          <ReportContent report={report} />
+          <ReportContent report={report} patients={patients} reports={reports} />
         ) : (
           <>
             <p className="muted">
@@ -1234,13 +1285,36 @@ export function Detail() {
 }
 export function FollowUp() {
   const base = useOriginal();
-  const { tasks: allTasks, setTasks, patients, user } = useStore();
+  const { tasks: allTasks, setTasks, patients, reports, user } = useStore();
   const tasks = allTasks.filter((task) => patients.some((patient) => patient.name === task.patient && canAccessPatient(patient, user)));
+  
+  // Obtener últimos signos vitales por paciente
+  const patientVitals = {};
+  tasks.forEach(task => {
+    if (!patientVitals[task.patient]) {
+      const vitals = getLatestVitals(task.patient, reports, 1);
+      if (vitals.length > 0) {
+        const v = vitals[0];
+        const alerts = checkVitalAlerts(v);
+        patientVitals[task.patient] = {
+          ...v,
+          hasAlert: alerts.alert,
+          issues: alerts.issues
+        };
+      }
+    }
+  });
+  
   const statuses = ["pending", "active", "done"];
   const labels = ["Pendiente", "En proceso", "Completado"];
   const icons = ["fa-hourglass-start", "fa-spinner", "fa-circle-check"];
   const moveTask = (task, status) => {
-    setTasks(allTasks.map((entry) => entry.id === task.id ? { ...entry, status } : entry));
+    const updatedTask = { ...task, status };
+    if (status === "done" && !task.completedAt) {
+      updatedTask.completedAt = new Date().toISOString();
+      updatedTask.completedBy = user.name;
+    }
+    setTasks(allTasks.map((entry) => entry.id === task.id ? updatedTask : entry));
     logActivity(user, "Actualizó tarea", task.title);
   };
   return (
@@ -1267,6 +1341,28 @@ export function FollowUp() {
                   <p>
                     {t.patient} · {t.time}
                   </p>
+                  {patientVitals[t.patient]?.hasAlert && status !== "done" && (
+                    <div className="vital-alert-badge">
+                      <i className="fas fa-triangle-exclamation"></i>
+                      <div>
+                        <strong>Alerta de signos vitales</strong>
+                        <small>Presión: {patientVitals[t.patient].pressure}</small>
+                      </div>
+                    </div>
+                  )}
+                  {t.createdAt && (
+                    <div className="task-metadata">
+                      <small>
+                        <i className="fas fa-calendar-plus" /> Creada: {new Date(t.createdAt).toLocaleDateString("es-PE")} · {t.shift}
+                      </small>
+                      {status === "done" && t.completedAt && (
+                        <small className="task-completed-info">
+                          <i className="fas fa-check-circle" /> Completada: {new Date(t.completedAt).toLocaleDateString("es-PE")} a las {new Date(t.completedAt).toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" })}
+                          {t.completedBy && ` por ${t.completedBy}`}
+                        </small>
+                      )}
+                    </div>
+                  )}
                   <span
                     className={
                       "task-priority " +
